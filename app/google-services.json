@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "519295772156",
+    "project_id": "mollert-fb39e",
+    "storage_bucket": "mollert-fb39e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:519295772156:android:bf83d8255ad82f1a5c3e79",
+        "android_client_info": {
+          "package_name": "com.tnh.mollert"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "519295772156-ocu19v7f2bi0p8pc2tjgvp4qhuceea8a.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tnh.mollert",
+            "certificate_hash": "b7c5bc3346fd8a8d7941e278ff756693dbf9bb3d"
+          }
+        },
+        {
+          "client_id": "519295772156-nhc3sn5a70nb73kf1r4f6f4lj4i4rl44.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNBGwDNOVIYafh8yAemw-r05f9ccGpcls"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "519295772156-nhc3sn5a70nb73kf1r4f6f4lj4i4rl44.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
