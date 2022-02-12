@@ -6,6 +6,6 @@
 
     <fragment
         android:id="@+id/testFragment"
-        android:name="com.tnh.mollert.TestFragment"
+        android:name="com.tnh.mollert.test.TestFragment"
         android:label="TestFragment" />
 </navigation>
