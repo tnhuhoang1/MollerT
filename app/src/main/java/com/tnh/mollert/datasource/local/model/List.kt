@@ -1,0 +1,18 @@
+package com.tnh.mollert.datasource.local.model
+
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
+data class List(
+    @PrimaryKey
+    val listId: String,
+    val listName: String,
+    val boardId: String,
+    val status: String
+) {
+    companion object{
+        const val STATUS_ACTIVE = "active"
+        const val STATUS_ACHIEVED = "achieved"
+    }
+}
