@@ -14,7 +14,7 @@ class TestFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         return TextView(requireContext()).apply {
-            text = "nhu hoang morllert"
+            text = "linh morllert"
         }
     }
 }
