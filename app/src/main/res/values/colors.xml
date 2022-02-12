@@ -17,5 +17,6 @@
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
 
-
+    <color name="highlightYellow">#FCD660</color>
+    <color name="highlightStrokeColor">#B4C1CB</color>
 </resources>

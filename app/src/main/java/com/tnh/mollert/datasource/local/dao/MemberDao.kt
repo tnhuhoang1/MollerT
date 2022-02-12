@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MemberDao: BaseDao<Member> {
-
     @Query("select * from member")
     fun getAll(): Flow<List<Member>>
 }
