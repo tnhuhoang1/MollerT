@@ -4,8 +4,11 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/splashFragment">
 
-    <fragment
-        android:id="@+id/splashFragment"
-        android:name="com.tnh.mollert.splash.SplashFragment"
-        android:label="SplashFragment" />
+    <navigation android:id="@+id/navigation"
+        app:startDestination="@id/splashFragment">
+        <fragment
+            android:id="@+id/splashFragment"
+            android:name="com.tnh.mollert.splash.SplashFragment"
+            android:label="SplashFragment" />
+    </navigation>
 </navigation>
