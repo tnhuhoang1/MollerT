@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/homeFragment2">
 
 
     <fragment
@@ -46,4 +47,9 @@
         android:id="@+id/boardDetailFragment"
         android:name="com.tnh.mollert.boardDetail.BoardDetailFragment"
         android:label="BoardDetailFragment" />
+    <fragment
+        android:id="@+id/homeFragment2"
+        android:name="com.tnh.mollert.home.HomeFragment"
+        android:label="home_fragment"
+        tools:layout="@layout/home_fragment" />
 </navigation>
