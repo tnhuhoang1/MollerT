@@ -3,4 +3,18 @@
     <string name="login">Login</string>
     <string name="sign_in">Sign in</string>
     <string name="sign_up">Sign up</string>
+
+    <!-- Sign In Fragment   -->
+    <string name="sign_in_title">Sign In</string>
+    <string name="forgot_account">Forgot Account ?</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="edit_text_email_placeholder">user@gmail.com</string>
+    <string name="edit_text_pass_placeholder">*******</string>
+
+    <!-- Sign Up Fragment   -->
+    <string name="sign_up_title">Sign Up</string>
+    <string name="already_account">Already have account ?</string>
+    <string name="confirm_pass_label">Confirm Password</string>
+    <string name="create_account">Create Account</string>
 </resources>

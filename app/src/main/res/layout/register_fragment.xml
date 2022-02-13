@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -9,5 +10,140 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/register_fragment_toolbar"
+            style="@style/Theme.MollerT.CommonToolBar"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/register_fragment_back_button"
+                android:layout_width="@dimen/dimen_30"
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:src="@drawable/ic_baseline_chevron_left_24" />
+
+            <TextView
+                android:id="@+id/register_fragment_title"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/sign_up_title"
+                android:textAllCaps="false"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="@dimen/text_size_22"
+                android:textStyle="bold" />
+        </com.google.android.material.appbar.MaterialToolbar>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/register_fragment_app_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dimen_50"
+            android:clipChildren="false"
+            android:elevation="@dimen/dimen_20"
+            android:shadowColor="@color/primaryTextColor"
+            app:cardElevation="@dimen/dimen_50"
+            app:cardPreventCornerOverlap="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/register_fragment_toolbar">
+
+            <ImageView
+                android:layout_width="@dimen/dimen_130"
+                android:layout_height="@dimen/dimen_130"
+                android:src="@mipmap/ic_launcher_background" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/register_fragment_email_label"
+            style="@style/Theme.MollerT.CommonLabelText"
+            android:layout_marginTop="@dimen/dimen_55"
+            android:text="@string/email_label"
+            app:layout_constraintStart_toStartOf="@id/register_fragment_email"
+            app:layout_constraintTop_toBottomOf="@id/register_fragment_app_icon" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/register_fragment_email"
+            style="@style/Theme.MollerT.CommonEditText"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:hint="@string/edit_text_email_placeholder"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/register_fragment_email_label" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/register_fragment_password_label"
+            style="@style/Theme.MollerT.CommonLabelText"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:text="@string/password_label"
+            app:layout_constraintStart_toStartOf="@id/register_fragment_email"
+            app:layout_constraintTop_toBottomOf="@id/register_fragment_email" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/register_fragment_password"
+            style="@style/Theme.MollerT.CommonEditText"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:hint="@string/edit_text_pass_placeholder"
+            android:inputType="textPassword"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/register_fragment_password_label" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/register_fragment_confirm_password_label"
+            style="@style/Theme.MollerT.CommonLabelText"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:text="@string/confirm_pass_label"
+            app:layout_constraintStart_toStartOf="@id/register_fragment_email"
+            app:layout_constraintTop_toBottomOf="@id/register_fragment_password" />
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/register_fragment_confirm_password"
+            style="@style/Theme.MollerT.CommonEditText"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:hint="@string/edit_text_pass_placeholder"
+            android:inputType="textPassword"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/register_fragment_confirm_password_label" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/register_fragment_sign_up_button"
+            style="@style/Theme.MollerT.ExpandedYellowButton"
+            android:layout_marginBottom="@dimen/dimen_15"
+            android:text="@string/create_account"
+            app:layout_constraintBottom_toTopOf="@id/register_fragment_bottom_components"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/register_fragment_bottom_components"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/dimen_15"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/register_fragment_forgot_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/already_account"
+                android:textColor="@color/lightDarkBlue"
+                android:textStyle="bold" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/register_fragment_sign_in_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/dimen_12"
+                android:text="@string/sign_in"
+                android:textColor="@color/lightDarkBlue"
+                android:textStyle="bold" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

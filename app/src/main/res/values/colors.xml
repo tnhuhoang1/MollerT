@@ -14,10 +14,14 @@
     <color name="secondaryColor">#1976d2</color>
     <color name="secondaryLightColor">#63a4ff</color>
     <color name="secondaryDarkColor">#004ba0</color>
-    <color name="primaryTextColor">#000000</color>
+    <color name="primaryTextColor">#313A46</color>
     <color name="secondaryTextColor">#ffffff</color>
 
     <color name="highlightYellow">#FCD660</color>
     <color name="highlightStrokeColor">#B4C1CB</color>
     <color name="welcomeDotDefault">#C4C4C4</color>
+
+    <color name="lightDarkBlue">#4957F2</color>
+    <color name="lightGrayHintText">#B4C1CB</color>
+    <color name="lightGrayLabelText">#516375</color>
 </resources>
