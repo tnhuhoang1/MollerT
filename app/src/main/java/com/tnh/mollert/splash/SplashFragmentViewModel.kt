@@ -2,6 +2,7 @@ package com.tnh.mollert.splash
 
 import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.tnhlibrary.logVar
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -12,6 +13,7 @@ class SplashFragmentViewModel @Inject constructor(
 ): BaseViewModel() {
 
     fun isUserLoggedIn(): Boolean{
+        FirebaseAuth.getInstance().logVar("Firebase")
         return (FirebaseAuth.getInstance().currentUser != null)
     }
 

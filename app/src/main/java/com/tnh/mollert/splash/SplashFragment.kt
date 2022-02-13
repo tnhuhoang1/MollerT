@@ -21,11 +21,9 @@ class SplashFragment : DataBindingFragment<SplashFragmentBinding>(R.layout.splas
     @Inject
     lateinit var pref: PrefManager
     override fun doOnCreateView() {
-//        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToCardDetailFragment())
-        if(pref.getString("isFirstTimeLogin").isNotEmpty()){
-            if(viewModel.isUserLoggedIn()){
-                navigateToHome()
-            }
+//        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToTestFragment())
+        if(viewModel.isUserLoggedIn()){
+            navigateToHome()
         }
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
