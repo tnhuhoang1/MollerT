@@ -2,11 +2,12 @@ package com.tnh.mollert.home
 
 import androidx.lifecycle.ViewModel
 import com.tnh.mollert.datasource.local.model.Board
+import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(): ViewModel() {
+class HomeViewModel @Inject constructor(): BaseViewModel() {
     fun getBoardTest() : ArrayList<Board> {
         var a = arrayListOf<Board>()
         for (i in 1..20) {

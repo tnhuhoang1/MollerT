@@ -30,8 +30,8 @@
             app:layout_constraintTop_toBottomOf="@id/board_detail_fragment_app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:paddingHorizontal="10dp"
+            android:layout_marginTop="@dimen/dimen_8"
+            android:paddingHorizontal="@dimen/dimen_8"
             app:boxCornerRadiusBottomEnd="8dp"
             app:boxCornerRadiusTopEnd="8dp"
             app:boxCornerRadiusBottomStart="8dp"
@@ -46,7 +46,7 @@
                 android:id="@+id/board_detail_fragment_search_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Board"
+                android:hint="Search card"
                 android:textColorHint="@color/highlightStrokeColor"
                 />
         </com.google.android.material.textfield.TextInputLayout>

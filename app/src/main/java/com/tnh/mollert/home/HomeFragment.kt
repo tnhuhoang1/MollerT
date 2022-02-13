@@ -6,24 +6,46 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.tnh.mollert.R
 import com.tnh.mollert.databinding.HomeFragmentBinding
+import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
+import com.tnh.tnhlibrary.liveData.utils.eventObserve
+import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.toast.showToast
+import dagger.hilt.android.AndroidEntryPoint
 
-
-class HomeFragment : Fragment() {
-
-    private lateinit var binding: HomeFragmentBinding
+@AndroidEntryPoint
+class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_fragment){
     private val viewModel by viewModels<HomeViewModel>()
     private lateinit var homeAdapter: HomeWorkSpaceAdapter
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = HomeFragmentBinding.inflate(inflater, container, false)
+    override fun doOnCreateView() {
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupPreset()
         initControl()
-        return binding.root
+    }
+
+    private fun setupPreset(){
+        binding.homeFragmentToolbar.apply {
+            twoActionToolbarTitle.text = "MollerT"
+            twoActionToolbarEndIcon.setImageResource(R.drawable.ic_baseline_add_24)
+            twoActionToolbarEndIcon.visibility = View.VISIBLE
+            twoActionToolbarEndIcon.setOnClickListener {
+                navigateToBoardDetail("lol")
+            }
+        }
+    }
+
+    private fun navigateToBoardDetail(boardId: String) {
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBoardDetailFragment())
     }
 
     private fun initControl() {

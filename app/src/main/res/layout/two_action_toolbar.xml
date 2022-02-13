@@ -22,6 +22,8 @@
         android:layout_gravity="start"
         android:layout_marginStart="@dimen/dimen_16"
         android:layout_marginTop="@dimen/dimen_16"
+        android:focusable="true"
+        android:clickable="true"
         android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/vd_close_circle"
         android:visibility="gone" />
@@ -33,6 +35,8 @@
         android:layout_gravity="end"
         android:layout_marginTop="@dimen/dimen_16"
         android:layout_marginEnd="@dimen/dimen_16"
+        android:focusable="true"
+        android:clickable="true"
         android:background="?selectableItemBackgroundBorderless"
         android:visibility="gone" />
 </FrameLayout>
