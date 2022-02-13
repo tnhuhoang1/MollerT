@@ -7,4 +7,5 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class SplashFragment: DataBindingFragment<SplashFragmentBinding>(R.layout.splash_fragment) {
+
 }
