@@ -10,7 +10,9 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot_active.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot_default.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/activity_main.xml" value="0.25" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/add_attachment.xml" value="0.25" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/add_attachment.xml" value="0.264" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/attachment_item.xml" value="0.4" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/card_detail_fragment.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/login_button.xml" value="0.9" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/login_fragment.xml" value="0.33195020746887965" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/register_fragment.xml" value="0.2" />

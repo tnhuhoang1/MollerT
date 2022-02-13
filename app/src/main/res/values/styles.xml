@@ -3,7 +3,7 @@
     <style name="Theme.MollerT.DialogTitle" parent="Widget.MaterialComponents.TextView">
         <item name="android:fontFamily">@font/poppins</item>
         <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Subtitle1</item>
-        <item name="android:padding">@dimen/dimen_8</item>
+        <item name="android:padding">@dimen/dimen_16</item>
     </style>
 
     <!-- don't set layout margin width and height   -->

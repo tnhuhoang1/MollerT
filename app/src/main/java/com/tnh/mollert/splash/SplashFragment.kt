@@ -1,18 +1,14 @@
 package com.tnh.mollert.splash
 
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.SplashFragmentBinding
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
-import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.logVar
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.toast.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,7 +21,7 @@ class SplashFragment : DataBindingFragment<SplashFragmentBinding>(R.layout.splas
     @Inject
     lateinit var pref: PrefManager
     override fun doOnCreateView() {
-
+        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToCardDetailFragment())
         if(pref.getString("isFirstTimeLogin").isNotEmpty()){
             if(viewModel.isUserLoggedIn()){
                 navigateToHome()
