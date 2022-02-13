@@ -19,4 +19,5 @@
 
     <color name="highlightYellow">#FCD660</color>
     <color name="highlightStrokeColor">#B4C1CB</color>
+    <color name="welcomeDotDefault">#C4C4C4</color>
 </resources>

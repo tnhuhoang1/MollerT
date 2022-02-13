@@ -11,12 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/splash_fragment_view_pager"
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="@dimen/dimen_24"
+            android:layout_marginTop="@dimen/dimen_16"
             app:layout_constraintBottom_toTopOf="@id/splash_fragment_tab"
             android:layout_marginHorizontal="@dimen/dimen_16"
             />
@@ -26,8 +28,11 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:tabBackground="@drawable/splash_state_dot"
+            app:tabGravity="center"
+            app:tabIndicatorHeight="0dp"
+            app:tabIndicatorFullWidth="false"
             app:layout_constraintBottom_toTopOf="@id/splash_fragment_sign_in"
-            android:layout_marginBottom="@dimen/dimen_8"
             android:layout_marginHorizontal="@dimen/dimen_16"
             />
         <com.google.android.material.button.MaterialButton
