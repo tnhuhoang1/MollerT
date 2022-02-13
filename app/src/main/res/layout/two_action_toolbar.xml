@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/two_action_toolbar_title"
+        android:layout_width="match_parent"
+        android:layout_height="?actionBarSize"
+        android:layout_marginHorizontal="@dimen/dimen_56"
+        android:fontFamily="@font/poppins"
+        android:paddingVertical="@dimen/dimen_16"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+        android:textStyle="bold" />
+
+    <ImageButton
+        android:id="@+id/two_action_toolbar_start_icon"
+        android:layout_width="@dimen/dimen_24"
+        android:layout_height="@dimen/dimen_24"
+        android:layout_gravity="start"
+        android:layout_marginStart="@dimen/dimen_16"
+        android:layout_marginTop="@dimen/dimen_16"
+        android:background="?selectableItemBackgroundBorderless"
+        android:src="@drawable/vd_close_circle"
+        android:visibility="gone" />
+
+    <ImageButton
+        android:id="@+id/two_action_toolbar_end_icon"
+        android:layout_width="@dimen/dimen_24"
+        android:layout_height="@dimen/dimen_24"
+        android:layout_gravity="end"
+        android:layout_marginTop="@dimen/dimen_16"
+        android:layout_marginEnd="@dimen/dimen_16"
+        android:background="?selectableItemBackgroundBorderless"
+        android:visibility="gone" />
+</FrameLayout>
