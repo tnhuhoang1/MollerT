@@ -2,13 +2,15 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/splashFragment">
+    app:startDestination="@id/boardDetailFragment">
 
-    <navigation android:id="@+id/navigation"
-        app:startDestination="@id/splashFragment">
-        <fragment
-            android:id="@+id/splashFragment"
-            android:name="com.tnh.mollert.splash.SplashFragment"
-            android:label="SplashFragment" />
-    </navigation>
+
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="com.tnh.mollert.splash.SplashFragment"
+        android:label="SplashFragment" />
+    <fragment
+        android:id="@+id/boardDetailFragment"
+        android:name="com.tnh.mollert.boardDetail.BoardDetailFragment"
+        android:label="BoardDetailFragment" />
 </navigation>

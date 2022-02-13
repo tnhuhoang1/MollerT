@@ -50,7 +50,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/Theme.MollerT.ExpandedOutlineButton"
-
             android:layout_marginTop="10dp"
             android:text="Add New List"
             android:textSize="18sp"

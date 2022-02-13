@@ -7,6 +7,6 @@ import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.layout.login_fragment) {
+class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.layout.board_detail_fragment) {
     val viewModel by viewModels<BoardDetailFragmentViewModel>()
 }
