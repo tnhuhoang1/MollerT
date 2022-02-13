@@ -3,7 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="viewModel"
+            type="com.tnh.mollert.splash.SplashFragmentViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -41,6 +43,7 @@
             style="@style/Theme.MollerT.ExpandedYellowButton"
             app:layout_constraintBottom_toTopOf="@id/splash_fragment_sign_up"
             android:layout_marginBottom="@dimen/dimen_8"
+            android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_SIGN_IN_CLICKED)}"
             android:id="@+id/splash_fragment_sign_in"
             />
         <com.google.android.material.button.MaterialButton
@@ -50,6 +53,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             style="@style/Theme.MollerT.ExpandedOutlineButton"
             app:layout_constraintBottom_toBottomOf="parent"
+            android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_SIGN_UP_CLICKED)}"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.95"
             />
