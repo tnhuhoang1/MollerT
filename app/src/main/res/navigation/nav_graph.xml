@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/homeFragment2">
+    app:startDestination="@id/splashFragment">
 
 
     <fragment
@@ -19,6 +19,11 @@
         <action
             android:id="@+id/action_splashFragment_to_cardDetailFragment"
             app:destination="@id/cardDetailFragment" />
+        <action
+            android:id="@+id/action_splashFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -29,6 +34,11 @@
             app:destination="@id/registerFragment"
             app:popUpTo="@id/splashFragment"
             />
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/splashFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
@@ -48,7 +58,7 @@
         android:name="com.tnh.mollert.boardDetail.BoardDetailFragment"
         android:label="BoardDetailFragment" />
     <fragment
-        android:id="@+id/homeFragment2"
+        android:id="@+id/homeFragment"
         android:name="com.tnh.mollert.home.HomeFragment"
         android:label="home_fragment"
         tools:layout="@layout/home_fragment" />

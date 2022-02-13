@@ -3,7 +3,6 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Android apps/MollerT/app/src/main/res/layout/workspace_item.xml" value="0.10182370820668693" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/hello.xml" value="0.18" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.175" />
@@ -20,6 +19,7 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/board_detail_fragment.xml" value="0.33" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/card_detail_fragment.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/color_item.xml" value="0.4" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/home_fragment.xml" value="0.264" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/label_item.xml" value="0.4" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/label_picker.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/login_button.xml" value="0.9" />
