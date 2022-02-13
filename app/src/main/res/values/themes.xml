@@ -11,38 +11,10 @@
         <item name="colorOnSecondary">@color/secondaryTextColor</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:colorBackground">@color/defaultBackgroundApp</item>
         <!-- Customize your theme here. -->
 
     </style>
 
-    <!-- don't set layout margin width and height   -->
-    <style name="Theme.MollerT.ExpandedYellowButton" parent="Widget.MaterialComponents.Button">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:backgroundTint">@color/highlightYellow</item>
-        <item name="android:paddingStart">@dimen/dimen_16</item>
-        <item name="android:paddingEnd">@dimen/dimen_16</item>
-        <item name="android:paddingTop">@dimen/dimen_20</item>
-        <item name="android:paddingBottom">@dimen/dimen_20</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_marginStart">@dimen/dimen_16</item>
-        <item name="android:layout_marginEnd">@dimen/dimen_16</item>
-        <item name="cornerRadius">@dimen/dimen_16</item>
-        <item name="android:textColor">@color/primaryTextColor</item>
-    </style>
 
-    <style name="Theme.MollerT.ExpandedOutlineButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textAllCaps">false</item>
-        <item name="android:paddingStart">@dimen/dimen_16</item>
-        <item name="android:paddingEnd">@dimen/dimen_16</item>
-        <item name="android:paddingTop">@dimen/dimen_20</item>
-        <item name="android:paddingBottom">@dimen/dimen_20</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:strokeColor">@color/highlightStrokeColor</item>
-        <item name="android:textColor">@color/primaryTextColor</item>
-        <item name="android:layout_marginStart">@dimen/dimen_16</item>
-        <item name="android:layout_marginEnd">@dimen/dimen_16</item>
-        <item name="cornerRadius">@dimen/dimen_16</item>
-    </style>
 </resources>

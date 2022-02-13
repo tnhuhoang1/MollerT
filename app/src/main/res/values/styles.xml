@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.MollerT.DialogTitle" parent="Widget.MaterialComponents.TextView">
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="android:textAppearance">@style/TextAppearance.MaterialComponents.Subtitle1</item>
+        <item name="android:padding">@dimen/dimen_16</item>
+    </style>
+
+    <!-- don't set layout margin width and height   -->
+    <style name="Theme.MollerT.ExpandedYellowButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:backgroundTint">@color/highlightYellow</item>
+        <item name="android:paddingStart">@dimen/dimen_16</item>
+        <item name="android:paddingEnd">@dimen/dimen_16</item>
+        <item name="android:paddingTop">@dimen/dimen_20</item>
+        <item name="android:paddingBottom">@dimen/dimen_20</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginStart">@dimen/dimen_16</item>
+        <item name="android:layout_marginEnd">@dimen/dimen_16</item>
+        <item name="cornerRadius">@dimen/dimen_16</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+    </style>
+
+    <style name="Theme.MollerT.ExpandedOutlineButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingStart">@dimen/dimen_16</item>
+        <item name="android:paddingEnd">@dimen/dimen_16</item>
+        <item name="android:paddingTop">@dimen/dimen_20</item>
+        <item name="android:paddingBottom">@dimen/dimen_20</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:strokeColor">@color/highlightStrokeColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:layout_marginStart">@dimen/dimen_16</item>
+        <item name="android:layout_marginEnd">@dimen/dimen_16</item>
+        <item name="cornerRadius">@dimen/dimen_16</item>
+    </style>
+
+    <style name="Theme.MollerT.CommonToolBar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dimen_60</item>
+        <item name="android:background">@color/defaultBackgroundApp</item>
+    </style>
+
+    <style name="Theme.MollerT.CommonEditText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:background">@drawable/edittext_background</item>
+        <item name="android:paddingStart">@dimen/dimen_18</item>
+        <item name="android:paddingEnd">@dimen/dimen_16</item>
+        <item name="android:paddingTop">@dimen/dimen_17</item>
+        <item name="android:maxLength">50</item>
+        <item name="android:paddingBottom">@dimen/dimen_17</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:textColorHint">@color/lightGrayHintText</item>
+        <item name="android:layout_marginStart">@dimen/dimen_16</item>
+        <item name="android:layout_marginEnd">@dimen/dimen_16</item>
+    </style>
+
+    <style name="Theme.MollerT.CommonLabelText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:textColor">@color/lightGrayLabelText</item>
+    </style>
+</resources>
