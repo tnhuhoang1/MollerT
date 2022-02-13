@@ -4,6 +4,7 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.175" />
+        <entry key="../../../../layout/custom_preview.xml" value="0.23125" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/hello.xml" value="0.18" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/ic_launcher_background.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot.xml" value="0.175" />
@@ -19,6 +20,14 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/splash_fragment.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/welcome_fragment.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.121" />
+        <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.23229166666666667" />
+        <entry key="app/src/main/res/drawable/edittext_background.xml" value="0.23229166666666667" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.23229166666666667" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.24375" />
+        <entry key="app/src/main/res/layout/login_fragment.xml" value="0.24375" />
+        <entry key="app/src/main/res/layout/register_fragment.xml" value="0.14010416666666667" />
+        <entry key="app/src/main/res/layout/splash_fragment.xml" value="0.1403985507246377" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.2598958333333333" />
       </map>
     </option>
   </component>

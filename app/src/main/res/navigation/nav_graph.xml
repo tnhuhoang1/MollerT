@@ -8,4 +8,12 @@
         android:id="@+id/splashFragment"
         android:name="com.tnh.mollert.splash.SplashFragment"
         android:label="SplashFragment" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.tnh.mollert.login.LoginFragment"
+        android:label="LoginFragment" />
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.tnh.mollert.register.RegisterFragment"
+        android:label="RegisterFragment" />
 </navigation>
