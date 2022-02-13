@@ -17,4 +17,5 @@
     <string name="already_account">Already have account ?</string>
     <string name="confirm_pass_label">Confirm Password</string>
     <string name="create_account">Create Account</string>
+    <string name="workspace">Workspace</string>
 </resources>
