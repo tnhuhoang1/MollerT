@@ -2,10 +2,10 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/testFragment">
+    app:startDestination="@id/splashFragment">
 
     <fragment
-        android:id="@+id/testFragment"
-        android:name="com.tnh.mollert.TestFragment"
-        android:label="TestFragment" />
+        android:id="@+id/splashFragment"
+        android:name="com.tnh.mollert.splash.SplashFragment"
+        android:label="SplashFragment" />
 </navigation>
