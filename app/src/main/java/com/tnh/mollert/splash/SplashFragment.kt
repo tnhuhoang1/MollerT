@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tnh.mollert.R
@@ -72,11 +73,11 @@ class SplashFragment : DataBindingFragment<SplashFragmentBinding>(R.layout.splas
     }
 
     fun navigateToLogin(){
-
+        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLoginFragment())
     }
 
     fun navigateToRegister(){
-
+        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToRegisterFragment())
     }
 
     fun navigateToHome(){
