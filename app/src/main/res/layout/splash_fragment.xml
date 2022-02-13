@@ -31,6 +31,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:tabBackground="@drawable/splash_state_dot"
+            android:background="@color/defaultBackgroundApp"
             app:tabGravity="center"
             app:tabIndicatorHeight="0dp"
             app:tabIndicatorFullWidth="false"

@@ -1,5 +1,6 @@
 package com.tnh.mollert.splash
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
@@ -23,6 +24,12 @@ class SplashFragment : DataBindingFragment<SplashFragmentBinding>(R.layout.splas
     @Inject
     lateinit var pref: PrefManager
     override fun doOnCreateView() {
+
+        if(pref.getString("isFirstTimeLogin").isNotEmpty()){
+            if(viewModel.isUserLoggedIn()){
+                navigateToHome()
+            }
+        }
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
     }
@@ -71,6 +78,11 @@ class SplashFragment : DataBindingFragment<SplashFragmentBinding>(R.layout.splas
     fun navigateToRegister(){
 
     }
+
+    fun navigateToHome(){
+        
+    }
+
 
 
 }
