@@ -4,12 +4,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Member(
+data class Work(
     @PrimaryKey
-    val email: String,
-    var name: String,
-    var avatar: String? = null,
-    var biology: String? = null
+    val workId: String,
+    var workName: String,
+    val cardId: String
 ) {
-
 }

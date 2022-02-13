@@ -7,11 +7,11 @@ import androidx.room.PrimaryKey
 data class Board(
     @PrimaryKey
     val boardId: String,
-    val boardName: String,
+    var boardName: String,
     val workspaceId: String,
-    val boardDesc: String? = null,
-    val background: String? = null,
-    val status: String = STATUS_OPEN,
+    var boardDesc: String? = null,
+    var background: String? = null,
+    var status: String = STATUS_OPEN,
 ) {
     companion object{
         const val STATUS_OPEN = "open"

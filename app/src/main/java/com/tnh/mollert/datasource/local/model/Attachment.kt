@@ -4,12 +4,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class Member(
+data class Attachment(
     @PrimaryKey
-    val email: String,
+    val attachment: String,
     var name: String,
-    var avatar: String? = null,
-    var biology: String? = null
+    var type: String,
+    var linkRemote: String,
+    val cardId: String
 ) {
-
 }

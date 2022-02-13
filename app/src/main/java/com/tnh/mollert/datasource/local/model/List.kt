@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 data class List(
     @PrimaryKey
     val listId: String,
-    val listName: String,
+    var listName: String,
     val boardId: String,
-    val status: String
+    var status: String
 ) {
     companion object{
         const val STATUS_ACTIVE = "active"

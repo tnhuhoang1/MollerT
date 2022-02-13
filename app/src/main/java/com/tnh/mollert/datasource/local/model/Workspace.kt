@@ -11,7 +11,7 @@ class Workspace(
     @PrimaryKey
     val workspaceId: String,
     val workspaceName: String,
-    val workspaceDesc: String? = null,
+    var workspaceDesc: String? = null,
     val workspaceType: String = TYPE_OTHER
 ) {
     companion object{
