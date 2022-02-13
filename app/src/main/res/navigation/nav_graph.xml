@@ -42,4 +42,8 @@
         android:id="@+id/cardDetailFragment"
         android:name="com.tnh.mollert.cardDetail.CardDetailFragment"
         android:label="CardDetailFragment" />
+    <fragment
+        android:id="@+id/boardDetailFragment"
+        android:name="com.tnh.mollert.boardDetail.BoardDetailFragment"
+        android:label="BoardDetailFragment" />
 </navigation>
