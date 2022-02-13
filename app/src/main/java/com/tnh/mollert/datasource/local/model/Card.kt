@@ -8,11 +8,12 @@ class Card(
     @PrimaryKey
     val cardId: Int,
     var cardName: String,
+    var position: Int,
     var createdAt: Long = System.currentTimeMillis(),
     var status: String = STATUS_ACTIVE,
     var cardDesc: String? = null,
-    var startDate: String? = null,
-    var dueDate: String? = null,
+    var startDate: Long = 0L,
+    var dueDate: Long = 0L,
     var checked: Boolean = false
 ) {
     companion object{

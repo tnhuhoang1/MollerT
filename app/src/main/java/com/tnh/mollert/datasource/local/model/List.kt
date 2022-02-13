@@ -9,7 +9,8 @@ data class List(
     val listId: String,
     var listName: String,
     val boardId: String,
-    var status: String
+    var status: String,
+    var position: Int
 ) {
     companion object{
         const val STATUS_ACTIVE = "active"

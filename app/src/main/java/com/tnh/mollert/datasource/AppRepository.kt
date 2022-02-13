@@ -12,12 +12,13 @@ import com.tnh.mollert.datasource.local.model.List
 @Database(
     entities = [
         Attachment::class, Automation::class, Board::class,
-        Card::class, Label::class, List::class,
+        Card::class, Label::class, List::class, Activity::class,
         Member::class, Task::class, Work::class, Workspace::class
     ], version = 1
 )
 abstract class AppRepository : RoomDatabase() {
     abstract val appDao: AppDao
+    abstract val activityDao: ActivityDao
     abstract val attachmentDao: AttachmentDao
     abstract val automationDao: AutomationDao
     abstract val boardDao: BoardDao

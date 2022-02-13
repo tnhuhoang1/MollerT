@@ -10,7 +10,7 @@ data class Task(
     var taskName: String,
     val workId: String,
     var email: String? = null,
-    var dueDate: Long? = null,
+    var dueDate: Long = 0L,
     var checked: Boolean = false
 ) {
 }
