@@ -9,7 +9,7 @@ import com.tnh.tnhlibrary.trace
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-class FirestoreHelper {
+class FirestoreHelper private constructor(){
     private val store = FirebaseFirestore.getInstance()
 
 

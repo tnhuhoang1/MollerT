@@ -87,5 +87,12 @@ class UserWrapper private constructor(
             return instance
         }
 
+        fun getInstance(): UserWrapper?{
+            if(::instance.isInitialized.not()){
+                return null
+            }
+            return instance
+        }
+
     }
 }

@@ -14,7 +14,7 @@ import java.io.InputStream
 import kotlin.coroutines.resume
 
 @Suppress("BlockingMethodInNonBlockingContext")
-class StorageHelper {
+class StorageHelper private constructor(){
     fun getAttachmentRoot(email: String, workspaceId: String,  boardId: String): StorageReference{
         return storage.getReference("$ATTACHMENT_ROOT/${email}_${workspaceId}_${boardId}")
     }

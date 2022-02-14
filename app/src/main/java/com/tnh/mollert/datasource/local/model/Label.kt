@@ -6,7 +6,8 @@ import androidx.room.PrimaryKey
 @Entity
 data class Label(
     @PrimaryKey
-    val cardId: String,
-    var cardName: String
+    val labelId: String,
+    var labelColor: String,
+    var labelName: String? = null,
 ) {
 }
