@@ -39,6 +39,10 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment"
+            app:popUpTo="@id/splashFragment" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
@@ -73,4 +77,17 @@
         android:id="@+id/testFragment"
         android:name="com.tnh.mollert.test.TestFragment"
         android:label="TestFragment" />
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.tnh.mollert.forgotpassword.ForgotPasswordFragment"
+        android:label="ForgotPasswordFragment" >
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_registerFragment"
+            app:destination="@id/registerFragment"
+            app:popUpTo="@id/splashFragment" />
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/splashFragment" />
+    </fragment>
 </navigation>

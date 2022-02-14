@@ -13,11 +13,6 @@ class RegisterFragmentViewModel @Inject constructor(
     private val reposiory: AppRepository
 ): BaseViewModel() {
 
-    suspend fun storeCurrentUserToLocal(email: String, password: String) {
-        val member = Member(email, "Anonymous")
-        this.reposiory.memberDao.insertOne(member)
-    }
-
     fun storeCurrentUserToFirestore(email: String, password: String) {
         val member = RemoteMember(email)
         val doc = FirestoreHelper.getInstance().getMemberDoc(email)

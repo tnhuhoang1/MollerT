@@ -46,12 +46,13 @@
     <style name="Theme.MollerT.CommonEditText">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textAllCaps">false</item>
+        <item name="android:singleLine">true</item>
         <item name="android:background">@drawable/edittext_background</item>
         <item name="android:paddingStart">@dimen/dimen_18</item>
         <item name="android:paddingEnd">@dimen/dimen_16</item>
-        <item name="android:paddingTop">@dimen/dimen_17</item>
+        <item name="android:paddingTop">@dimen/dimen_14</item>
         <item name="android:maxLength">50</item>
-        <item name="android:paddingBottom">@dimen/dimen_17</item>
+        <item name="android:paddingBottom">@dimen/dimen_14</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:textColorHint">@color/lightGrayHintText</item>
