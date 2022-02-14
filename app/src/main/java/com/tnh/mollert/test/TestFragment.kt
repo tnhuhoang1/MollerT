@@ -22,17 +22,7 @@ class TestFragment: DataBindingFragment<TestFragmentBinding>(R.layout.test_fragm
     private val viewModel by viewModels<TestFragmentViewModel>()
     private val fileChooserLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()){
         FirestoreHelper.getInstance().run {
-            addMember(RemoteMember(
-                "nhu",
-                "hoang",
-                "hello",
-                listOf(
-                    RemoteWorkspaceRef(
-                        "hello",
-                        "ref"
-                    )
-                )
-            ))
+
         }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

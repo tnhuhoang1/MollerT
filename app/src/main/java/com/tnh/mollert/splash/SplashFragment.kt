@@ -5,10 +5,12 @@ import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.SplashFragmentBinding
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.toast.showToast
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,10 +23,17 @@ class SplashFragment : DataBindingFragment<SplashFragmentBinding>(R.layout.splas
     @Inject
     lateinit var pref: PrefManager
     override fun doOnCreateView() {
-        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToTestFragment())
+//        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToTestFragment())
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(
+            "hoang@gmail.com",
+            "1234567"
+        )
+//        FirebaseAuth.getInstance().signOut()
         if(viewModel.isUserLoggedIn()){
             navigateToHome()
         }
+
+
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
     }
@@ -66,16 +75,16 @@ class SplashFragment : DataBindingFragment<SplashFragmentBinding>(R.layout.splas
         }.attach()
     }
 
-    fun navigateToLogin(){
+    private fun navigateToLogin(){
         findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToLoginFragment())
     }
 
-    fun navigateToRegister(){
+    private fun navigateToRegister(){
         findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToRegisterFragment())
     }
 
-    fun navigateToHome(){
-        
+    private fun navigateToHome(){
+        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToHomeFragment())
     }
 
 

@@ -3,16 +3,16 @@ package com.tnh.mollert.datasource.remote.model
 import com.tnh.mollert.datasource.local.model.Card
 
 data class RemoteCard(
-    val cardId: String,
-    val name: String,
-    val desc: String,
-    val cover: String,
+    val cardId: String? = null,
+    val name: String? = null,
+    val desc: String? = null,
+    val cover: String? = null,
     val autoCover: Boolean = true,
-    val startDate: Long,
-    val dueDate: Long,
-    val status: String,
-    val labels: List<RemoteLabel>,
-    val activities: List<RemoteActivityRef>
+    val startDate: Long? = null,
+    val dueDate: Long? = null,
+    val status: String? = null,
+    val labels: List<RemoteLabelRef>? = null,
+    val activities: List<RemoteActivityRef>? = null
 ): RemoteModel {
     companion object{
         const val STATUS_ACTIVE = Card.STATUS_ACTIVE

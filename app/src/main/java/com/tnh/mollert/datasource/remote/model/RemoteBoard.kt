@@ -1,10 +1,10 @@
 package com.tnh.mollert.datasource.remote.model
 
 data class RemoteBoard(
-    val boardId: String,
-    val boardName: String,
-    val boardDesc: String?,
-    val members: List<RemoteMemberRef>,
-    val positions: List<RemoteListPositionRef>
+    val boardId: String? = null,
+    val boardName: String? = null,
+    val boardDesc: String? = null,
+    val members: List<RemoteMemberRef>? = null,
+    val positions: List<RemoteListPositionRef>? = null
 ): RemoteModel {
 }

@@ -10,4 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface MemberDao: BaseDao<Member> {
     @Query("select * from member")
     fun getAll(): Flow<List<Member>>
+
+    @Query("select * from member where email = :email")
+    suspend fun getByEmail(email: String): Member?
 }

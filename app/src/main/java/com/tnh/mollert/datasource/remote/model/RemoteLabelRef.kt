@@ -1,6 +1,6 @@
 package com.tnh.mollert.datasource.remote.model
 
-data class RemoteActivityRef(
+data class RemoteLabelRef(
     val ref: String? = null
 ): RemoteModel {
 }

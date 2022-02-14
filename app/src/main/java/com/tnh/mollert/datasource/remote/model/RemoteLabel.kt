@@ -1,8 +1,8 @@
 package com.tnh.mollert.datasource.remote.model
 
 data class RemoteLabel(
-    val labelId: String,
-    val labelName: String,
-    val labelColor: String,
+    val labelId: String? = null,
+    val labelName: String? = null,
+    val labelColor: String? = null,
 ): RemoteModel {
 }

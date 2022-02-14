@@ -1,10 +1,10 @@
 package com.tnh.mollert.datasource.remote.model
 
 class RemoteAutomation(
-    val automationId: String,
-    val command: String,
-    val type: String,
-    val assocBoard: String,
-    val assocCard: String
+    val automationId: String? = null,
+    val command: String? = null,
+    val type: String? = null,
+    val assocBoard: String? = null,
+    val assocCard: String? = null
 ): RemoteModel {
 }
