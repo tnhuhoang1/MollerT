@@ -85,17 +85,18 @@ class RegisterFragment: DataBindingFragment<RegisterFragmentBinding>(R.layout.re
         activity?.let {
             val password = binding.registerFragmentPassword.text.toString()
             val email = binding.registerFragmentEmail.text.toString()
-
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+            val auth = FirebaseAuth.getInstance()
+            auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(it) {
-                    // Store current user into local database
+                    // Store current user into Firestore
                     lifecycleScope.launchWhenCreated {
-                        viewModel.storeCurrentUserToLocal(email, password)
                         viewModel.storeCurrentUserToFirestore(email, password)
                     }
 
                     // Navigate to Home
-                    this.navigateToHome()
+                    if (auth.currentUser != null) {
+                        this.navigateToHome()
+                    }
                 }
         }
     }
