@@ -1,7 +1,9 @@
 package com.tnh.mollert.register
 
-import androidx.lifecycle.ViewModel
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.local.model.Member
+import com.tnh.mollert.datasource.remote.model.RemoteMember
+import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -11,7 +13,22 @@ class RegisterFragmentViewModel @Inject constructor(
     private val reposiory: AppRepository
 ): BaseViewModel() {
 
-    companion object{
+    suspend fun storeCurrentUserToLocal(email: String, password: String) {
+        val member = Member(email, "Anonymous")
+        this.reposiory.memberDao.insertOne(member)
+    }
+
+    fun storeCurrentUserToFirestore(email: String, password: String) {
+        val member = RemoteMember(email)
+        val doc = FirestoreHelper.getInstance().getMemberDoc(email)
+        FirestoreHelper.getInstance().addDocument(doc, member, {
+            // Success
+        }) {
+            // Failure
+        }
+    }
+
+    companion object {
 
         const val EVENT_LOGIN_CLICKED = "login_clicked"
         const val EVENT_BACK_CLICKED = "back_clicked"
