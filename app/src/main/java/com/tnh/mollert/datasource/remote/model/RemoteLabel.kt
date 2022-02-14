@@ -4,5 +4,5 @@ data class RemoteLabel(
     val labelId: String,
     val labelName: String,
     val labelColor: String,
-) {
+): RemoteModel {
 }

@@ -6,5 +6,5 @@ class RemoteAutomation(
     val type: String,
     val assocBoard: String,
     val assocCard: String
-) {
+): RemoteModel {
 }

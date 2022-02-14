@@ -7,12 +7,13 @@ data class RemoteCard(
     val name: String,
     val desc: String,
     val cover: String,
+    val autoCover: Boolean = true,
     val startDate: Long,
     val dueDate: Long,
     val status: String,
     val labels: List<RemoteLabel>,
     val activities: List<RemoteActivityRef>
-) {
+): RemoteModel {
     companion object{
         const val STATUS_ACTIVE = Card.STATUS_ACTIVE
         const val STATUS_ACHIEVED = Card.STATUS_ACHIEVED

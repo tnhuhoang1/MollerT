@@ -4,5 +4,5 @@ data class RemoteWork(
     val workId: String,
     val name: String,
     val ref: String
-) {
+): RemoteModel {
 }

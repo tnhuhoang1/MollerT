@@ -7,5 +7,5 @@ data class RemoteTask(
     val checked: Boolean,
     val member: RemoteMemberRef,
     val ref: String
-) {
+): RemoteModel {
 }

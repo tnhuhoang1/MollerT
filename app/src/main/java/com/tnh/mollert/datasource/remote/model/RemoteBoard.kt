@@ -6,5 +6,5 @@ data class RemoteBoard(
     val boardDesc: String?,
     val members: List<RemoteMemberRef>,
     val positions: List<RemoteListPositionRef>
-) {
+): RemoteModel {
 }

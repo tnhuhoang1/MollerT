@@ -4,5 +4,5 @@ data class RemoteList(
     val listId: String,
     val name: String,
     val ref: String
-) {
+): RemoteModel {
 }

@@ -14,7 +14,9 @@ class Card(
     var cardDesc: String? = null,
     var startDate: Long = 0L,
     var dueDate: Long = 0L,
-    var checked: Boolean = false
+    var checked: Boolean = false,
+    var cover: String? = null,
+    var autoCover: Boolean = true
 ) {
     companion object{
         const val STATUS_ACTIVE = "active"

@@ -99,4 +99,5 @@ dependencies {
 
     // firebase analytics
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.6.10"
 }
