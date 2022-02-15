@@ -85,6 +85,7 @@ class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fr
                 .addOnCompleteListener(it) { task ->
                     if (task.isSuccessful) {
                         // Login Success
+                        loadingModal.dismiss()
                         this.navigateToHome()
                     } else {
                         this.clearInputText()

@@ -68,9 +68,16 @@
         <action
             android:id="@+id/action_homeFragment_to_boardDetailFragment"
             app:destination="@id/boardDetailFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_addWorkspaceFragment"
+            app:destination="@id/addWorkspaceFragment" />
     </fragment>
     <fragment
         android:id="@+id/testFragment"
         android:name="com.tnh.mollert.test.TestFragment"
         android:label="TestFragment" />
+    <fragment
+        android:id="@+id/addWorkspaceFragment"
+        android:name="com.tnh.mollert.home.addWorkspace.AddWorkspaceFragment"
+        android:label="AddWorkspaceFragment" />
 </navigation>
