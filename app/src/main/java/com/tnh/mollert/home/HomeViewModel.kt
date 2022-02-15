@@ -2,6 +2,7 @@ package com.tnh.mollert.home
 
 import androidx.lifecycle.ViewModel
 import com.tnh.mollert.datasource.local.model.Board
+import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,4 +16,18 @@ class HomeViewModel @Inject constructor(): BaseViewModel() {
         }
         return a
     }
+
+    fun getWorkSpaceTest() : ArrayList<Workspace> {
+        var a = arrayListOf<Workspace>()
+        for (i in 1..20) {
+            a.add(Workspace(
+                "id $i",
+                "w name $i",
+                "haha $i",
+            ))
+        }
+        return a
+    }
+
+
 }
