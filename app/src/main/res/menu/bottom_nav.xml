@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@id/homeFragment"
+        android:icon="@drawable/vd_elements"
+        android:title="@string/boards"
+        />
+    <item android:id="@id/timelineFragment"
+        android:icon="@drawable/vd_calendar"
+        android:title="@string/timeline"/>
+    <item android:id="@id/notificationFragment"
+        android:icon="@drawable/vd_notification"
+        android:title="@string/notifications"
+        />
+    <item android:id="@id/profileFragment"
+        android:icon="@drawable/vd_user"
+        android:title="@string/account"/>
+</menu>

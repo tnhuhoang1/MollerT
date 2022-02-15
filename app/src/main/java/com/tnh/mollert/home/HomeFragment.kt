@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.tnh.mollert.MainActivity
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.HomeFragmentBinding
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
@@ -23,6 +24,7 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     private lateinit var homeAdapter: HomeWorkSpaceAdapter
 
     override fun doOnCreateView() {
+        (activity as MainActivity?)?.showBottomNav()
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
     }

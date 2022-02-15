@@ -22,4 +22,8 @@
     <!-- Forgot password Fragment   -->
     <string name="forgot_password_title">Forgot Password</string>
     <string name="send_password_to_email">Send Password To Email</string>
+    <string name="boards">Boards</string>
+    <string name="timeline">Timeline</string>
+    <string name="notifications">Notifications</string>
+    <string name="account">Account</string>
 </resources>

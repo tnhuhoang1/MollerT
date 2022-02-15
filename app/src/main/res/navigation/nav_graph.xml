@@ -100,4 +100,16 @@
             app:destination="@id/loginFragment"
             app:popUpTo="@id/splashFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.tnh.mollert.notification.NotificationFragment"
+        android:label="NotificationFragment" />
+    <fragment
+        android:id="@+id/timelineFragment"
+        android:name="com.tnh.mollert.timeline.TimelineFragment"
+        android:label="TimelineFragment" />
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.tnh.mollert.profile.ProfileFragment"
+        android:label="ProfileFragment" />
 </navigation>
