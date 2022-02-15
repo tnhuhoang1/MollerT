@@ -39,6 +39,9 @@ class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fr
                 LoginFragmentViewModel.EVENT_LOGIN_CLICKED->{
                     this.onLoginBtnClicked()
                 }
+                LoginFragmentViewModel.EVENT_FORGOT_CLICKED->{
+                    this.navigateToForgotPassword()
+                }
             }
         }
     }
@@ -49,6 +52,10 @@ class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fr
 
     private fun navigateToHome() {
         findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+    }
+
+    private fun navigateToForgotPassword() {
+        findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
     }
 
     private fun clearInputText() {
