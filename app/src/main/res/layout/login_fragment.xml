@@ -68,7 +68,7 @@
             <ImageView
                 android:layout_width="@dimen/dimen_130"
                 android:layout_height="@dimen/dimen_130"
-                android:src="@mipmap/ic_launcher_background" />
+                android:src="@drawable/app_icon" />
         </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.textview.MaterialTextView

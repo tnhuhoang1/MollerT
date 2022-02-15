@@ -34,6 +34,13 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/two_action_toolbar.xml" value="0.33" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/welcome_fragment.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.121" />
+        <entry key="app/src/main/res/drawable/ic_outline.xml" value="0.2828125" />
+        <entry key="app/src/main/res/layout/board_detail_fragment.xml" value="0.2604166666666667" />
+        <entry key="app/src/main/res/layout/card_detail_fragment.xml" value="0.19114583333333332" />
+        <entry key="app/src/main/res/layout/forgot_password_fragment.xml" value="0.1084" />
+        <entry key="app/src/main/res/layout/login_fragment.xml" value="0.12708333333333333" />
+        <entry key="app/src/main/res/layout/register_fragment.xml" value="0.21770833333333334" />
+        <entry key="app/src/main/res/layout/splash_fragment.xml" value="0.12708333333333333" />
       </map>
     </option>
   </component>

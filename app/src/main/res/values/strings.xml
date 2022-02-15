@@ -18,4 +18,8 @@
     <string name="confirm_pass_label">Confirm Password</string>
     <string name="create_account">Create Account</string>
     <string name="workspace">Workspace</string>
+
+    <!-- Forgot password Fragment   -->
+    <string name="forgot_password_title">Forgot Password</string>
+    <string name="send_password_to_email">Send Password To Email</string>
 </resources>
