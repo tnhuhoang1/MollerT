@@ -1,20 +1,15 @@
 package com.tnh.mollert.home
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.HomeFragmentBinding
+import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
-import com.tnh.tnhlibrary.liveData.utils.eventObserve
-import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.toast.showToast
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -53,15 +48,23 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     }
 
     private fun initControl() {
-        homeAdapter = HomeWorkSpaceAdapter()
-        homeAdapter.submitList(viewModel.getBoardTest())
+
+        homeAdapter = HomeWorkSpaceAdapter(onClick,getBoardList)
+        homeAdapter.submitList(viewModel.getWorkSpaceTest())
 
         binding.homeFragmentRecycleView.apply {
-            layoutManager = GridLayoutManager(requireContext(),2)
+            layoutManager = LinearLayoutManager(requireContext())
             adapter = homeAdapter
         }
 
     }
 
+    private val onClick: (String) -> Unit = {
+        navigateToBoardDetail(it)
+    }
+
+    private val getBoardList: (String) -> List<Board> = {
+        viewModel.getBoardTest()
+    }
 
 }
