@@ -23,5 +23,6 @@
     <color name="defaultBackgroundApp">#F6F8F9</color>
     <color name="lightDarkBlue">#4957F2</color>
     <color name="lightGrayHintText">#B4C1CB</color>
+    <color name="neutrals9">#EFEFF7</color>
     <color name="lightGrayLabelText">#516375</color>
 </resources>

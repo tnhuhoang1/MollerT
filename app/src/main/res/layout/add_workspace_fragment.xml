@@ -1,13 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
+        <variable
+            name="viewModel"
+            type="com.tnh.mollert.home.addWorkspace.AddWorkspaceViewModel" />
     </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_marginBottom="@dimen/dimen_16"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <include layout="@layout/two_action_toolbar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/add_workspace_fragment_toolbar"
+                />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/vd_new_workspace"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/add_workspace_fragment_toolbar"
+                android:layout_marginTop="@dimen/dimen_8"
+                android:id="@+id/add_workspace_fragment_image"
+                />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/add_workspace_fragment_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:drawableStart="@drawable/vd_note_text"
+                android:maxLines="1"
+                android:paddingHorizontal="@dimen/dimen_12"
+                android:paddingVertical="@dimen/dimen_12"
+                android:drawablePadding="@dimen/dimen_8"
+                android:hint="Name of the workspace"
+                android:singleLine="true"
+                android:fontFamily="@font/poppins"
+                android:background="@color/neutrals9"
+                app:layout_constraintTop_toBottomOf="@id/add_workspace_fragment_image"
+                android:layout_marginTop="@dimen/dimen_16"
+                />
+            <LinearLayout
+                android:layout_marginTop="@dimen/dimen_4"
+                android:id="@+id/add_workspace_fragment_type_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/neutrals9"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/add_workspace_fragment_name"
+                android:orientation="vertical"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/add_workspace_fragment_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:drawableStart="@drawable/vd_tag"
+                    android:maxLines="1"
+                    android:drawableEnd="@drawable/vd_arrow_down"
+                    android:focusable="false"
+                    android:paddingHorizontal="@dimen/dimen_12"
+                    android:paddingVertical="@dimen/dimen_12"
+                    android:drawablePadding="@dimen/dimen_8"
+                    android:inputType="none"
+                    android:hint="Type of the workspace"
+                    android:fontFamily="@font/poppins"
+                    app:layout_constraintTop_toBottomOf="@id/add_workspace_fragment_image"
+                    />
+            </LinearLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/add_workspace_fragment_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:drawableStart="@drawable/vd_first_line"
+                android:paddingHorizontal="@dimen/dimen_12"
+                android:paddingVertical="@dimen/dimen_12"
+                android:drawablePadding="@dimen/dimen_8"
+                android:hint="Description (optional)"
+                android:fontFamily="@font/poppins"
+                android:background="@color/neutrals9"
+                app:layout_constraintTop_toBottomOf="@id/add_workspace_fragment_type_container"
+                android:layout_marginTop="@dimen/dimen_4"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>

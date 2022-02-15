@@ -34,13 +34,17 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
             twoActionToolbarEndIcon.setImageResource(R.drawable.ic_baseline_add_24)
             twoActionToolbarEndIcon.visibility = View.VISIBLE
             twoActionToolbarEndIcon.setOnClickListener {
-                navigateToBoardDetail("lol")
+                navigateToAddFragment()
             }
         }
     }
 
     private fun navigateToBoardDetail(boardId: String) {
         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBoardDetailFragment())
+    }
+
+    private fun navigateToAddFragment(){
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAddWorkspaceFragment())
     }
 
     private fun initControl() {

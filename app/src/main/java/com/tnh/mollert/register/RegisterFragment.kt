@@ -7,17 +7,20 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.R
-import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.mollert.databinding.RegisterFragmentBinding
+import com.tnh.mollert.utils.LoadingModal
 import com.tnh.mollert.utils.ValidationHelper
+import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
-import com.tnh.tnhlibrary.toast.showToast
+import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class RegisterFragment: DataBindingFragment<RegisterFragmentBinding>(R.layout.register_fragment) {
     val viewModel by viewModels<RegisterFragmentViewModel>()
-
+    private val loadingModal by lazy{
+        LoadingModal(requireContext())
+    }
     override fun doOnCreateView() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
@@ -55,22 +58,22 @@ class RegisterFragment: DataBindingFragment<RegisterFragmentBinding>(R.layout.re
     }
 
     private fun isValidInput(): Boolean {
-        val email = binding.registerFragmentEmail.text.toString()
-        val password = binding.registerFragmentPassword.text.toString()
-        val confirmPass = binding.registerFragmentConfirmPassword.text.toString()
+        val email = binding.registerFragmentEmail.text.toString().trim()
+        val password = binding.registerFragmentPassword.text.toString().trim()
+        val confirmPass = binding.registerFragmentConfirmPassword.text.toString().trim()
 
         if (password != confirmPass) {
-            showToast("Password and confirm password need to be equal")
+            binding.root.showSnackBar("Password and confirm password need to be equal")
             return false
         }
 
         if (!ValidationHelper.getInstance().isValidEmail(email)) {
-            showToast("Email invalid, please try again")
+            binding.root.showSnackBar("Email invalid, please try again")
             return false
         }
 
         if (!ValidationHelper.getInstance().isValidPassword(password)) {
-            showToast("Password invalid, please try again")
+            binding.root.showSnackBar("Password invalid, please try again")
             return false
         }
         return true
@@ -81,7 +84,7 @@ class RegisterFragment: DataBindingFragment<RegisterFragmentBinding>(R.layout.re
             this.clearInputText()
             return
         }
-
+        loadingModal.show()
         activity?.let {
             val password = binding.registerFragmentPassword.text.toString()
             val email = binding.registerFragmentEmail.text.toString()
@@ -92,12 +95,17 @@ class RegisterFragment: DataBindingFragment<RegisterFragmentBinding>(R.layout.re
                     lifecycleScope.launchWhenCreated {
                         viewModel.storeCurrentUserToFirestore(email, password)
                     }
-
                     // Navigate to Home
                     if (auth.currentUser != null) {
+                        binding.root.showSnackBar("Welcome!")
                         this.navigateToHome()
                     }
+                    loadingModal.dismiss()
                 }
-        }
+                .addOnFailureListener {
+                    binding.root.showSnackBar("Something went wrong, please try again")
+                    loadingModal.dismiss()
+                }
+        } ?: loadingModal.dismiss()
     }
 }
