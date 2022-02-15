@@ -32,9 +32,6 @@ class AddWorkspaceFragment: DataBindingFragment<AddWorkspaceFragmentBinding>(R.l
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.addWorkspaceFragmentType.setOnClickListener {
-            binding.viewView.isVisible = true
-        }
     }
 
 }

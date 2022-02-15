@@ -3,20 +3,22 @@ package com.tnh.mollert.forgotpassword
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.ForgotPasswordFragmentBinding
+import com.tnh.mollert.utils.LoadingModal
 import com.tnh.mollert.utils.ValidationHelper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
-import com.tnh.tnhlibrary.toast.showToast
+import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 
 class ForgotPasswordFragment :
     DataBindingFragment<ForgotPasswordFragmentBinding>(R.layout.forgot_password_fragment) {
     val viewModel by viewModels<ForgotPasswordViewModel>()
-
+    private val loading by lazy {
+        LoadingModal(requireContext())
+    }
     override fun doOnCreateView() {
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
@@ -48,24 +50,30 @@ class ForgotPasswordFragment :
     }
 
     private fun onSendEmailClicked() {
-        val email = binding.forgotPasswordFragmentEmail.text.toString()
+        val email = binding.forgotPasswordFragmentEmail.text.toString().trim()
         if (!ValidationHelper.getInstance().isValidEmail(email)) {
             binding.forgotPasswordFragmentEmail.setText("")
-            showToast("Email invalid, please try again")
+            binding.root.showSnackBar("Email invalid, please try again")
             return
         }
+        loading.show()
 
         activity?.let {
             FirebaseAuth.getInstance().sendPasswordResetEmail(email)
                 .addOnCompleteListener(it) { task ->
                     if (task.isSuccessful) {
                         // Success
-                        showToast("Reset password successfully, please check your email")
+                        loading.dismiss()
+                        binding.root.showSnackBar("Reset password successfully, please check your email")
                         this.navigateToSignIn()
                     } else {
-                        showToast("Something went wrong, please try again or check your internet connection")
+                        loading.dismiss()
+                        binding.root.showSnackBar("Something went wrong, please try again or check your internet connection")
                     }
+                }.addOnFailureListener {
+                    loading.dismiss()
+                    binding.root.showSnackBar("Something went wrong, please try again")
                 }
-        }
+        }?: loading.show()
     }
 }

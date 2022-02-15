@@ -14,6 +14,7 @@ import com.tnh.mollert.utils.ValidationHelper
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.toast.showToast
+import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 
 @AndroidEntryPoint
 class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fragment) {
@@ -70,7 +71,7 @@ class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fr
             || !ValidationHelper.getInstance().isValidEmail(email)
         ) {
             this.clearInputText()
-            showToast("Email or password invalid, please try again")
+            binding.root.showSnackBar("Email or password invalid, please try again")
             return false
         }
         return true
@@ -96,7 +97,7 @@ class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fr
                         this.navigateToHome()
                     } else {
                         this.clearInputText()
-                        showToast("Email or password invalid, please try again")
+                        binding.root.showSnackBar("Email or password invalid, please try again")
                         loadingModal.dismiss()
                         // Login failure
                     }
