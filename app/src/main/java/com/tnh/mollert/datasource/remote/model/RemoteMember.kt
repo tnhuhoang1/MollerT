@@ -6,7 +6,7 @@ data class RemoteMember(
     val email: String? = null,
     val name: String? = null,
     val avatar: String? = null,
-    val biology: String? = null,
+    val biography: String? = null,
     val workspaces: List<RemoteWorkspaceRef>? = null
 ): RemoteModel {
 }
@@ -14,6 +14,6 @@ data class RemoteMember(
 
 fun RemoteMember.toMember(): Member?{
     return convertTo {
-        Member(email!!, name!!, avatar, biology)
+        Member(email!!, name!!, avatar, biography)
     }
 }

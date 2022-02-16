@@ -13,8 +13,8 @@ class RegisterFragmentViewModel @Inject constructor(
     private val reposiory: AppRepository
 ): BaseViewModel() {
 
-    fun storeCurrentUserToFirestore(email: String, password: String) {
-        val member = RemoteMember(email)
+    fun storeCurrentUserToFirestore(email: String) {
+        val member = RemoteMember(email, email, "", "", listOf())
         val doc = FirestoreHelper.getInstance().getMemberDoc(email)
         FirestoreHelper.getInstance().addDocument(doc, member, {
             // Success
