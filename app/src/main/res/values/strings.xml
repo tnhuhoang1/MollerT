@@ -26,4 +26,9 @@
     <string name="timeline">Timeline</string>
     <string name="notifications">Notifications</string>
     <string name="account">Account</string>
+
+    <!-- Profile   -->
+    <string name="bio_label">Biography</string>
+    <string name="bio_placeholder">Im a bad guy</string>
+    <string name="log_out">Log Out</string>
 </resources>
