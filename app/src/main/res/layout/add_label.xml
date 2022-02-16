@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="viewModel"
+            type="com.tnh.mollert.cardDetail.label.AddEditLabelViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -17,6 +19,24 @@
             app:layout_constraintTop_toTopOf="parent"
             android:id="@+id/add_label_toolbar"
             />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/add_label_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_label_toolbar"
+            android:drawableStart="@drawable/vd_tag"
+            android:maxLines="1"
+            android:paddingHorizontal="@dimen/dimen_12"
+            android:paddingVertical="@dimen/dimen_12"
+            android:drawablePadding="@dimen/dimen_8"
+            android:hint="Name (optional)"
+            android:singleLine="true"
+            android:fontFamily="@font/poppins"
+            android:background="@color/neutrals9"
+            android:layout_marginTop="@dimen/dimen_16"
+            />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/label_item_recycler"
             android:layout_width="match_parent"
@@ -25,7 +45,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:itemCount="12"
-            app:layout_constraintTop_toBottomOf="@id/add_label_toolbar"
+            app:layout_constraintTop_toBottomOf="@id/add_label_name"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/color_item"
             app:layout_constraintBottom_toTopOf="@id/label_item_delete_container"

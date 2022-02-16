@@ -32,17 +32,22 @@ object LabelPreset {
         )
     )
 
-    val colorDataSet = listOf<String>(
-        "#18BA80",
-        "#3EB8ED",
-        "#FCD660",
-        "#EB8942",
-        "#DF414",
-        "#4957F2",
-        "#000000",
-        "#7457DE",
-        "#F25F92",
-        "#2DCCC7",
-        "#B4C1CB",
+    val colorDataSet = listOf<ColorPreset>(
+        ColorPreset("Green","#18BA80"),
+        ColorPreset("Sky","#3EB8ED"),
+        ColorPreset("Yellow","#FCD660"),
+        ColorPreset("Orange","#EB8942"),
+        ColorPreset("Red","#DF4146"),
+        ColorPreset("Blue","#4957F2"),
+        ColorPreset("Black","#000000"),
+        ColorPreset("Purple","#7457DE"),
+        ColorPreset("Pink","#F25F92"),
+        ColorPreset("Pink","#2DCCC7"),
+        ColorPreset("Tea","#B4C1CB"),
+    )
+
+    data class ColorPreset(
+        val name: String,
+        val color: String
     )
 }
