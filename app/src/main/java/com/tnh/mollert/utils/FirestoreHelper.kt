@@ -163,8 +163,8 @@ class FirestoreHelper private constructor(){
 
     fun mergeDocument(
         document: DocumentReference,
-        data: RemoteModel,
-        onFailure: (Exception?) -> Unit,
+        data: Any,
+        onFailure: (Exception?) -> Unit = {},
         onSuccess: () -> Unit,
     ){
         document.set(data, SetOptions.merge())
@@ -178,7 +178,7 @@ class FirestoreHelper private constructor(){
 
     suspend fun mergeDocument(
         document: DocumentReference,
-        data: RemoteModel,
+        data: Any,
     ) = suspendCancellableCoroutine<Boolean> { cont->
         mergeDocument(
             document,
@@ -202,6 +202,10 @@ class FirestoreHelper private constructor(){
 
     fun getMemberDoc(email: String): DocumentReference{
         return getDocRef("$MEMBER_ROOT_COL/$email")
+    }
+
+    fun getTrackingDoc(email: String): DocumentReference{
+        return getDocRef("$TRACKING_ROOT_COL/$email")
     }
 
     fun getWorkspaceDoc(email: String, workspaceName: String): DocumentReference{
@@ -256,6 +260,20 @@ class FirestoreHelper private constructor(){
         )
     }
 
+    fun listenDocument(
+        document: DocumentReference,
+        onFailure: (Exception?) -> Unit,
+        onSuccess: (DocumentSnapshot?) -> Unit
+    ): ListenerRegistration{
+        return document.addSnapshotListener { value, error ->
+            if(error != null){
+                onFailure(error)
+                return@addSnapshotListener
+            }
+            onSuccess(value)
+        }
+    }
+
 
     companion object{
         @Volatile
@@ -269,5 +287,6 @@ class FirestoreHelper private constructor(){
         }
         const val MEMBER_ROOT_COL = "members"
         const val WORKSPACE_ROOT_COL = "workspaces"
+        const val TRACKING_ROOT_COL = "tracking"
     }
 }
