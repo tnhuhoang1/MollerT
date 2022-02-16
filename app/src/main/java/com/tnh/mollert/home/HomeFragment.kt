@@ -13,6 +13,7 @@ import com.tnh.mollert.databinding.HomeFragmentBinding
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
+import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.logVar
@@ -34,6 +35,13 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         super.onViewCreated(view, savedInstanceState)
         setupPreset()
         initControl()
+        observeData()
+    }
+
+    private fun observeData() {
+        safeObserve(viewModel.memberWithWorkspaces){
+            homeAdapter.submitList(it.workspaces)
+        }
     }
 
     private fun setupPreset(){
@@ -60,7 +68,6 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     private fun initControl() {
 
         homeAdapter = HomeWorkSpaceAdapter(onClick,getBoardList)
-        homeAdapter.submitList(viewModel.getWorkSpaceTest())
 
         binding.homeFragmentRecycleView.apply {
             layoutManager = LinearLayoutManager(requireContext())

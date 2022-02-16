@@ -124,7 +124,7 @@ class FirestoreHelper private constructor(){
         }
     }
 
-    fun updateArrayField(
+    fun insertToArrayField(
         document: DocumentReference,
         field: String,
         data: Any,
@@ -138,12 +138,48 @@ class FirestoreHelper private constructor(){
             }
     }
 
-    suspend fun updateArrayField(
+    suspend fun insertToArrayField(
         document: DocumentReference,
         field: String,
         data: Any,
     ) = suspendCancellableCoroutine<Boolean>{ cont->
-        updateArrayField(
+        insertToArrayField(
+            document,
+            field,
+            data,
+            {
+                trace(it)
+                if(cont.isActive){
+                    cont.resume(false)
+                }
+            }
+        ){
+            if(cont.isActive){
+                cont.resume(true)
+            }
+        }
+    }
+
+    fun removeFromArrayField(
+        document: DocumentReference,
+        field: String,
+        data: Any,
+        onFailure: (Exception?) -> Unit,
+        onSuccess: () -> Unit
+    ){
+        document.update(field, FieldValue.arrayRemove(data))
+            .addOnFailureListener(onFailure)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+    }
+
+    suspend fun removeFromArrayField(
+        document: DocumentReference,
+        field: String,
+        data: Any,
+    ) = suspendCancellableCoroutine<Boolean>{ cont->
+        removeFromArrayField(
             document,
             field,
             data,
