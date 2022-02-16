@@ -68,7 +68,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     android:drawableStart="@drawable/vd_tag"
                     android:maxLines="1"
-                    android:drawableEnd="@drawable/vd_arrow_down"
                     android:focusable="false"
                     android:paddingHorizontal="@dimen/dimen_12"
                     android:paddingVertical="@dimen/dimen_12"
@@ -79,6 +78,19 @@
                     app:layout_constraintTop_toBottomOf="@id/add_workspace_fragment_image"
                     />
             </LinearLayout>
+            <ImageView
+                android:id="@+id/add_workspace_fragment_array_down"
+                android:focusable="false"
+                android:clickable="false"
+                android:layout_marginTop="@dimen/dimen_12"
+                android:layout_marginEnd="@dimen/dimen_12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/add_workspace_fragment_type_container"
+                android:src="@drawable/vd_arrow_down"
+
+                />
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/add_workspace_fragment_desc"
                 android:layout_width="match_parent"

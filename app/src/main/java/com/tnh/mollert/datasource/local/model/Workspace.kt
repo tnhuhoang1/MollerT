@@ -15,12 +15,12 @@ class Workspace(
     val workspaceType: String = TYPE_OTHER
 ) {
     companion object{
-        const val TYPE_EDUCATION = "education"
-        const val TYPE_MARKETING = "marketing"
-        const val TYPE_HUMAN_RESOURCES = "human_resources"
-        const val TYPE_SALES_CRM = "sales_crm"
-        const val TYPE_ENGINEERING_IT = "engineering_it"
-        const val TYPE_SMALL_BUSINESS = "small_business"
-        const val TYPE_OTHER = "other"
+        const val TYPE_EDUCATION = "Education"
+        const val TYPE_MARKETING = "Marketing"
+        const val TYPE_HUMAN_RESOURCES = "Human Resources"
+        const val TYPE_SALES_CRM = "Sales CRM"
+        const val TYPE_ENGINEERING_IT = "Engineering IT"
+        const val TYPE_SMALL_BUSINESS = "Small Business"
+        const val TYPE_OTHER = "Other"
     }
 }

@@ -7,13 +7,15 @@ import androidx.room.RoomDatabase
 import com.tnh.mollert.datasource.local.dao.*
 import com.tnh.mollert.datasource.local.model.*
 import com.tnh.mollert.datasource.local.model.List
+import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 
 
 @Database(
     entities = [
         Attachment::class, Automation::class, Board::class,
         Card::class, Label::class, List::class, Activity::class,
-        Member::class, Task::class, Work::class, Workspace::class
+        Member::class, Task::class, Work::class, Workspace::class,
+        MemberWorkspaceRel::class
     ], version = 1
 )
 abstract class AppRepository : RoomDatabase() {
@@ -30,6 +32,8 @@ abstract class AppRepository : RoomDatabase() {
     abstract val workDao: WorkDao
     abstract val workspaceDao: WorkspaceDao
 
+
+    abstract val memberWorkspaceDao: MemberWorkspaceDao
     companion object {
         @Volatile
         private lateinit var instance: AppRepository

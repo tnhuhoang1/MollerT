@@ -5,6 +5,8 @@ import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.datasource.remote.model.toMember
+import com.tnh.tnhlibrary.logAny
+import com.tnh.tnhlibrary.trace
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -32,7 +34,7 @@ class UserWrapper private constructor(
             firebaseAuth.currentUser?.email?.let { email->
                 val deferred = coroutineScope.async {
                     currentLocalUser = repository.memberDao.getByEmail(email)
-                    currentLocalUser?.let {
+                    if(currentLocalUser == null){
                         currentLocalUser = fetchMember(email)
                     }
                     currentLocalUser
@@ -52,7 +54,7 @@ class UserWrapper private constructor(
             state.currentUser?.let { firebaseUser->
                 coroutineScope.launch {
                     currentLocalUser = repository.memberDao.getByEmail(firebaseUser.email ?: "")
-                    currentLocalUser?.let {
+                    if(currentLocalUser == null){
                         currentLocalUser = fetchMember(firebaseUser.email ?: "")
                     }
                 }
@@ -63,7 +65,16 @@ class UserWrapper private constructor(
     }
 
     private suspend fun fetchMember(email: String): Member?{
+        "GO her".logAny()
         FirestoreHelper.getInstance().apply {
+            getDocumentModel<RemoteMember>(
+                getMemberDoc(email),
+                {
+                    trace(it)
+                }
+            ){
+                it.logAny()
+            }
             simpleGetDocumentModel<RemoteMember>(
                 getMemberDoc(email)
             )?.let { remoteMember->

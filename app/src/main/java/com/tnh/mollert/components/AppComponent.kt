@@ -2,6 +2,8 @@ package com.tnh.mollert.components
 
 import android.content.Context
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.utils.FirestoreHelper
+import com.tnh.mollert.utils.StorageHelper
 import com.tnh.tnhlibrary.preference.PrefManager
 import dagger.Module
 import dagger.Provides
@@ -20,6 +22,16 @@ class AppComponent {
     @Provides
     fun ppm(@ApplicationContext context: Context): PrefManager{
         return PrefManager.getInstance(context)
+    }
+
+    @Provides
+    fun pfh(): FirestoreHelper{
+        return FirestoreHelper.getInstance()
+    }
+
+    @Provides
+    fun psh(): StorageHelper{
+        return StorageHelper.getInstance()
     }
 
 }

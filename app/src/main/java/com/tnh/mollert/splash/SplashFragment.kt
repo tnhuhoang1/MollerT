@@ -26,11 +26,8 @@ class SplashFragment : DataBindingFragment<SplashFragmentBinding>(R.layout.splas
     lateinit var pref: PrefManager
     override fun doOnCreateView() {
 //        findNavController().navigate(SplashFragmentDirections.actionSplashFragmentToTestFragment())
-//        FirebaseAuth.getInstance().signInWithEmailAndPassword(
-//            "hoang@gmail.com",
-//            "1234567"
-//        )
-        FirebaseAuth.getInstance().signOut()
+
+//        FirebaseAuth.getInstance().signOut()
         if(viewModel.isUserLoggedIn()){
             navigateToHome()
         }
