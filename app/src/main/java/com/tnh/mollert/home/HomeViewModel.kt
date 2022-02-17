@@ -33,19 +33,28 @@ class HomeViewModel @Inject constructor(
     fun getBoardTest() : ArrayList<Board> {
         var a = arrayListOf<Board>()
         for (i in 1..20) {
-            a.add(Board("id $i","haha $i","hello $i", background = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"))
+            a.add(
+                Board(
+                    "id $i",
+                    "haha $i",
+                    "hello $i",
+                    background = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"
+                )
+            )
         }
         return a
     }
 
-    fun getWorkSpaceTest() : ArrayList<Workspace> {
+    fun getWorkSpaceTest(): ArrayList<Workspace> {
         var a = arrayListOf<Workspace>()
         for (i in 1..20) {
-            a.add(Workspace(
-                "id $i",
-                "w name $i",
-                "haha $i",
-            ))
+            a.add(
+                Workspace(
+                    "id $i",
+                    "w name $i",
+                    "haha $i",
+                )
+            )
         }
         return a
     }

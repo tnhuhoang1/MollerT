@@ -27,6 +27,12 @@
     <string name="notifications">Notifications</string>
     <string name="account">Account</string>
 
+    <string name="member_and_jobs">Member and Jobs</string>
+    <string name="add_new_card">Add New Card</string>
+    <string name="delete_list_card">Delete list card</string>
+    <string name="search_card">Search card</string>
+    <string name="add_new_list">Add new list</string>
+
     <!-- Profile   -->
     <string name="bio_label">Biography</string>
     <string name="bio_placeholder">Im a bad guy</string>

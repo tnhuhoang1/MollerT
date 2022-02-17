@@ -66,17 +66,16 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     }
 
     private fun initControl() {
-
         homeAdapter = HomeWorkSpaceAdapter(onClick,getBoardList)
 
         binding.homeFragmentRecycleView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = homeAdapter
         }
-
     }
 
     private val onClick: (String) -> Unit = {
+        it.logE("TAG")
         navigateToBoardDetail(it)
     }
 
