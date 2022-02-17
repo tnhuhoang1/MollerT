@@ -65,7 +65,6 @@ class UserWrapper private constructor(
     }
 
     private suspend fun fetchMember(email: String): Member?{
-        "GO her".logAny()
         FirestoreHelper.getInstance().apply {
             getDocumentModel<RemoteMember>(
                 getMemberDoc(email),
@@ -73,7 +72,6 @@ class UserWrapper private constructor(
                     trace(it)
                 }
             ){
-                it.logAny()
             }
             simpleGetDocumentModel<RemoteMember>(
                 getMemberDoc(email)

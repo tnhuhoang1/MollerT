@@ -25,4 +25,5 @@
     <color name="lightGrayHintText">#B4C1CB</color>
     <color name="neutrals9">#EFEFF7</color>
     <color name="lightGrayLabelText">#516375</color>
+    <color name="redBackgroundTintButton">#DF4146</color>
 </resources>

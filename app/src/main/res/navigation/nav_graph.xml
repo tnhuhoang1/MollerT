@@ -112,4 +112,8 @@
         android:id="@+id/profileFragment"
         android:name="com.tnh.mollert.profile.ProfileFragment"
         android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/addEditLabelFragment"
+        android:name="com.tnh.mollert.cardDetail.label.AddEditLabelFragment"
+        android:label="AddEditLabelFragment" />
 </navigation>

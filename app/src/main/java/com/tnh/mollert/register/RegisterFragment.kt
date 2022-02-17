@@ -93,7 +93,7 @@ class RegisterFragment: DataBindingFragment<RegisterFragmentBinding>(R.layout.re
                 .addOnCompleteListener(it) {
                     // Store current user into Firestore
                     lifecycleScope.launchWhenCreated {
-                        viewModel.storeCurrentUserToFirestore(email, password)
+                        viewModel.storeCurrentUserToFirestore(email)
                     }
                     // Navigate to Home
                     if (auth.currentUser != null) {
