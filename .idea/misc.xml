@@ -3,20 +3,29 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/drawable/ic_baseline_attach_file_24.xml" value="0.129" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/layout/board_detail_card_item.xml" value="0.21851851851851853" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/layout/board_detail_fragment.xml" value="0.18" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/layout/board_detail_list_end_item.xml" value="0.209375" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/layout/board_detail_list_item.xml" value="0.22" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/layout/home_fragment.xml" value="0.10182370820668693" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/layout/login_fragment.xml" value="0.10182370820668693" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/layout/workspace_board_item.xml" value="0.209375" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/layout/workspace_item.xml" value="0.22" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/menu/board_detail_item_menu.xml" value="0.209375" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/menu/bottom_nav.xml" value="0.209375" />
+        <entry key="..\:/Android apps/MollerT/app/src/main/res/menu/top_app_bar.xml" value="0.209375" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/hello.xml" value="0.18" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/ic_launcher_background.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot_active.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot_default.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_arrow_down.xml" value="0.175" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_checked.xml" value="0.1815" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_close_circle.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_firstline.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_invisible.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_new_workspace.xml" value="0.175" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_user.xml" value="0.1815" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/add_attachment.xml" value="0.264" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/add_label.xml" value="0.25" />
@@ -24,34 +33,14 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/attachment_item.xml" value="0.4" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/board_detail_fragment.xml" value="0.33" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/card_detail_fragment.xml" value="0.25" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/color_item.xml" value="0.4" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/home_fragment.xml" value="0.264" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/label_item.xml" value="0.4" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/label_picker.xml" value="0.25" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/loading_layout.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/login_button.xml" value="0.9" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/login_fragment.xml" value="0.33195020746887965" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/notification_fragment.xml" value="0.25" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/profile_fragment.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/register_fragment.xml" value="0.2" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/sign_in_fragments.xml" value="0.3625" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/sign_up_fragment.xml" value="0.3625" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/splash_fragment.xml" value="0.25" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/test_fragment.xml" value="0.25" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/timeline_fragment.xml" value="0.25" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/two_action_toolbar.xml" value="0.33" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/welcome_fragment.xml" value="0.25" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/workspace_item.xml" value="0.25" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/bottom_nav.xml" value="0.25" />
-        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/top_app_bar.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.121" />
-        <entry key="app/src/main/res/drawable/ic_outline.xml" value="0.2828125" />
-        <entry key="app/src/main/res/layout/board_detail_fragment.xml" value="0.2604166666666667" />
-        <entry key="app/src/main/res/layout/card_detail_fragment.xml" value="0.19114583333333332" />
-        <entry key="app/src/main/res/layout/forgot_password_fragment.xml" value="0.1084" />
-        <entry key="app/src/main/res/layout/login_fragment.xml" value="0.12708333333333333" />
-        <entry key="app/src/main/res/layout/register_fragment.xml" value="0.21770833333333334" />
-        <entry key="app/src/main/res/layout/splash_fragment.xml" value="0.12708333333333333" />
       </map>
     </option>
   </component>

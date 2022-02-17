@@ -11,6 +11,7 @@ import com.tnh.mollert.R
 import com.tnh.mollert.databinding.HomeFragmentBinding
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
+import com.tnh.tnhlibrary.logE
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -50,7 +51,6 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     }
 
     private fun initControl() {
-
         homeAdapter = HomeWorkSpaceAdapter(onClick,getBoardList)
         homeAdapter.submitList(viewModel.getWorkSpaceTest())
 
@@ -58,10 +58,10 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
             layoutManager = LinearLayoutManager(requireContext())
             adapter = homeAdapter
         }
-
     }
 
     private val onClick: (String) -> Unit = {
+        it.logE("TAG")
         navigateToBoardDetail(it)
     }
 
