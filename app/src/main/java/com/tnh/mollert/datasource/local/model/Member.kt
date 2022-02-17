@@ -9,7 +9,7 @@ data class Member(
     val email: String,
     var name: String,
     var avatar: String? = null,
-    var biology: String? = null
+    var biography: String? = null
 ) {
 
 }

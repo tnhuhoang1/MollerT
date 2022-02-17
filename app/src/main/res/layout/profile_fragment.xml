@@ -1,13 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Setting -->
+            <ImageView
+                android:id="@+id/profile_fragment_user_edit"
+                android:layout_width="@dimen/dimen_30"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:src="@drawable/vd_user_edit"
+                app:layout_constraintEnd_toEndOf="@id/profile_fragment_email"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Profile image -->
+            <ImageView
+                android:id="@+id/profile_fragment_profile_image"
+                android:layout_width="@dimen/dimen_0"
+                android:layout_height="@dimen/dimen_0"
+                android:layout_marginTop="@dimen/dimen_13"
+                android:src="@drawable/app_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_fragment_user_edit"
+                app:layout_constraintWidth_percent="0.28" />
+
+            <!-- Profile name -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/profile_fragment_profile_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:fontFamily="@font/poppins"
+                android:text="Tran Quang Duyet"
+                android:textAllCaps="false"
+                android:textColor="@color/primaryTextColor"
+                android:textSize="@dimen/text_size_18"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_fragment_profile_image" />
+
+            <!-- Email -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/profile_fragment_email_label"
+                style="@style/Theme.MollerT.CommonLabelText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/email_label"
+                app:layout_constraintStart_toStartOf="@id/profile_fragment_email"
+                app:layout_constraintTop_toBottomOf="@id/profile_fragment_profile_name" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/profile_fragment_email"
+                style="@style/Theme.MollerT.CommonEditText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:enabled="false"
+                android:text="@string/edit_text_email_placeholder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_fragment_email_label" />
+
+            <!-- Password -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/profile_fragment_password_label"
+                style="@style/Theme.MollerT.CommonLabelText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/password_label"
+                app:layout_constraintStart_toStartOf="@id/profile_fragment_email"
+                app:layout_constraintTop_toBottomOf="@id/profile_fragment_email" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/profile_fragment_password"
+                style="@style/Theme.MollerT.CommonEditText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:enabled="false"
+                android:inputType="textPassword"
+                android:text="@string/edit_text_pass_placeholder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_fragment_password_label" />
+
+            <!-- Biography -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/profile_fragment_bio_label"
+                style="@style/Theme.MollerT.CommonLabelText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/bio_label"
+                app:layout_constraintStart_toStartOf="@id/profile_fragment_email"
+                app:layout_constraintTop_toBottomOf="@id/profile_fragment_password" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/profile_fragment_bio"
+                style="@style/Theme.MollerT.CommonEditText"
+                android:layout_height="@dimen/dimen_0"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:enabled="false"
+                android:gravity="start|top"
+                android:singleLine="false"
+                android:text="@string/bio_placeholder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_fragment_bio_label" />
+
+            <!-- Logout button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/profile_fragment_log_out"
+                style="@style/Theme.MollerT.ExpandedYellowButton"
+                android:layout_marginTop="@dimen/dimen_20"
+                android:backgroundTint="@color/redBackgroundTintButton"
+                android:fontFamily="@font/poppins"
+                android:text="@string/log_out"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_fragment_bio" />
+
+            <!-- Placeholder view -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_20"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profile_fragment_log_out" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>

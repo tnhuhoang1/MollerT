@@ -7,6 +7,9 @@ import androidx.room.RoomDatabase
 import com.tnh.mollert.datasource.local.dao.*
 import com.tnh.mollert.datasource.local.model.*
 import com.tnh.mollert.datasource.local.model.List
+import com.tnh.mollert.datasource.local.relation.CardLabelRel
+import com.tnh.mollert.datasource.local.relation.MemberBoardRel
+import com.tnh.mollert.datasource.local.relation.MemberCardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 
 
@@ -15,7 +18,8 @@ import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
         Attachment::class, Automation::class, Board::class,
         Card::class, Label::class, List::class, Activity::class,
         Member::class, Task::class, Work::class, Workspace::class,
-        MemberWorkspaceRel::class
+        MemberWorkspaceRel::class, MemberBoardRel::class, MemberCardRel::class,
+        CardLabelRel::class
     ], version = 1
 )
 abstract class AppRepository : RoomDatabase() {
@@ -34,6 +38,10 @@ abstract class AppRepository : RoomDatabase() {
 
 
     abstract val memberWorkspaceDao: MemberWorkspaceDao
+    abstract val memberCarDao: MemberCardDao
+    abstract val memberBoardDao: MemberBoardDao
+    abstract val cardLabelDao: CardLabelDao
+
     companion object {
         @Volatile
         private lateinit var instance: AppRepository

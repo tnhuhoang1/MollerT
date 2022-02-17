@@ -13,8 +13,6 @@ import com.tnh.mollert.datasource.remote.model.RemoteWorkspaceRef
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
-import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -83,7 +81,7 @@ class AddWorkspaceViewModel @Inject constructor(
                     )
                 )
                 if(firestore.addDocument(loc,data)){
-                    if(firestore.updateArrayField(memLoc, "workspaces", RemoteWorkspaceRef(name, loc.path))){
+                    if(firestore.insertToArrayField(memLoc, "workspaces", RemoteWorkspaceRef(name, loc.path))){
                         data.toModel()?.let { ws->
                             repository.workspaceDao.insertOne(ws)
                             MemberWorkspaceRel(it.email, workspaceId).let { rel->
