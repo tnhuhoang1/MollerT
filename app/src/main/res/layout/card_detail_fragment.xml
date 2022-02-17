@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/card_detail_btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@null"
@@ -21,7 +21,7 @@
             tools:layout_editor_absoluteY="7dp" />
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/card_detail_imageView_main"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:src="@mipmap/ic_launcher_adaptive_fore" />
@@ -30,9 +30,10 @@
             android:id="@+id/relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView">
+            app:layout_constraintBottom_toBottomOf="@+id/card_detail_imageView_main">
 
             <TextView
+                android:id="@+id/card_detail_textview_nameCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
@@ -45,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/outline_photo_24"
+                android:src="@drawable/outline_photo_24" />
         </RelativeLayout>
 
         <ImageButton
@@ -66,10 +67,11 @@
             app:boxBackgroundColor="#F1EEFB"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
-            app:layout_constraintTop_toBottomOf="@+id/imageView"
+            app:layout_constraintTop_toBottomOf="@+id/card_detail_imageView_main"
             app:startIconDrawable="@drawable/outline_edit_note_24">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_detail_ediText_description"
                 android:layout_width="match_parent"
                 android:layout_height="97dp" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -91,13 +93,14 @@
                 app:startIconDrawable="@drawable/outline_schedule_24">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/card_detail_ediText_startDate"
                     android:layout_width="205dp"
                     android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="wrap_content"
-                android:layout_height="40"
+                android:layout_height="40dp"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="5dp"
                 android:hint="Due Date"
@@ -107,6 +110,7 @@
                 app:startIconDrawable="@drawable/outline_schedule_24">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/card_detail_ediText_duetDate"
                     android:layout_width="205dp"
                     android:layout_height="wrap_content" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -125,6 +129,7 @@
             app:startIconDrawable="@drawable/outline_sell_24">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_detail_ediText_Label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -132,17 +137,18 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="40dp"
+            android:layout_marginTop="5dp"
             android:hint="Attachment"
             app:boxBackgroundColor="#F1EEFB"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"
-            android:layout_marginTop="5dp"
-            app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
-            app:startIconDrawable="@drawable/outline_attach_file_24"
             app:endIconDrawable="@drawable/outline_add_24"
-            app:endIconMode="custom">
+            app:endIconMode="custom"
+            app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
+            app:startIconDrawable="@drawable/outline_attach_file_24">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/card_detail_ediText_Attachment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </com.google.android.material.textfield.TextInputLayout>
