@@ -16,7 +16,7 @@
 
             <TextView
                 android:id="@+id/workspace_item_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins"
                 android:text="@{workspaceName}"
@@ -24,8 +24,22 @@
                 android:textStyle="bold"
                 android:layout_margin="@dimen/dimen_8"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/workspace_item_invite"
                 app:layout_constraintTop_toTopOf="parent" />
+            <ImageButton
+                android:id="@+id/workspace_item_invite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_round_person_add_alt_1_24"
+                android:background="@android:color/transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/workspace_item_name"
+                app:layout_constraintBottom_toBottomOf="@id/workspace_item_name"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_marginEnd="@dimen/dimen_8"
 
+                />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/workspace_board_item_board_list"
                 android:layout_width="match_parent"

@@ -1,5 +1,7 @@
 package com.tnh.mollert.home
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -10,6 +12,7 @@ import com.tnh.mollert.databinding.WorkspaceBoardItemBinding
 import com.tnh.mollert.databinding.WorkspaceItemBinding
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.Workspace
+import com.tnh.tnhlibrary.logAny
 
 class HomeWorkSpaceAdapter(
     private val onClick: (String) -> Unit
@@ -21,13 +24,13 @@ class HomeWorkSpaceAdapter(
     inner class HomeWorkSpaceViewHolder(private var binding: WorkspaceItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        private val workspaceBoardAdapter = WorkspaceBoardAdapter()
+        val workspaceBoardAdapter = WorkspaceBoardAdapter()
 
         fun bind(workspace: Workspace, list: List<Board>?) {
             workspaceBoardAdapter.submitList(list)
+            workspaceBoardAdapter.onClick = onClick
             binding.workspaceName = workspace.workspaceName
             binding.workspaceBoardItemBoardList.adapter = workspaceBoardAdapter
-            binding.workspaceItemCard.setOnClickListener { onClick(workspace.workspaceId) }
             binding.workspaceItemNew.setOnClickListener {
                 onNewClicked?.invoke(workspace)
             }
@@ -48,6 +51,7 @@ class HomeWorkSpaceAdapter(
     fun submitBoardList(list: List<List<Board>>){
         boardList.clear()
         boardList.addAll(list)
+        this.notifyDataSetChanged()
     }
 
     class HomeWorkSpaceDiffUtil : DiffUtil.ItemCallback<Workspace>() {
@@ -61,14 +65,19 @@ class HomeWorkSpaceAdapter(
     }
 
 
-    class WorkspaceBoardAdapter :
+    class WorkspaceBoardAdapter() :
         ListAdapter<Board, WorkspaceBoardAdapter.WorkspaceBoardViewHolder>(HomeWorkSpaceDiffUtil()) {
+        var onClick: ((String) -> Unit)? = null
 
         inner class WorkspaceBoardViewHolder(private var binding: WorkspaceBoardItemBinding) :
             RecyclerView.ViewHolder(binding.root) {
             fun bind(board: Board) {
+                binding.root.setOnClickListener {
+                    onClick?.invoke(board.boardId)
+                }
                 binding.title = board.boardName
                 Glide.with(binding.root).load(board.background)
+                    .placeholder(ColorDrawable(Color.parseColor("#048ce4")))
                     .into(binding.workspaceBoardItemImage)
             }
         }

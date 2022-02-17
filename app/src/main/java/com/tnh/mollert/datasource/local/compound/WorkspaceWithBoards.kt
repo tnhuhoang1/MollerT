@@ -10,7 +10,7 @@ data class WorkspaceWithBoards(
     val workspace: Workspace,
     @Relation(
         parentColumn = "workspaceId",
-        entityColumn = "boardId"
+        entityColumn = "workspaceId"
     )
     val boards: List<Board>
 ) {

@@ -35,7 +35,11 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         userWrapper = UserWrapper.getInstance(repository)
         setupBottomNav()
-        userWrapper.listenForUser {
+        userWrapper.listenForUser(
+            {
+                
+            }
+        ) {
             viewModel.registerRemoteEvent()
         }
         setContentView(binding.root)

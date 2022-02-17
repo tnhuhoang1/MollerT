@@ -12,6 +12,7 @@ import com.tnh.mollert.datasource.remote.model.RemoteMemberRef
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
+import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,7 @@ class HomeViewModel @Inject constructor(
 ): BaseViewModel() {
 
     var memberWithWorkspaces = MutableLiveData<MemberWithWorkspaces>(null).toLiveData()
+    val boards = repository.boardDao.countOneFlow().asLiveData()
     private var _loading = MutableLiveData(false)
     val loading = _loading.toLiveData()
 
@@ -44,11 +46,17 @@ class HomeViewModel @Inject constructor(
     }
 
 
-
+    private var lock = 0
+    private var listBoard: List<List<Board>> = listOf()
     suspend fun getAllBoardOfUser(list: List<Workspace>): List<List<Board>>{
-        return list.map {
-            repository.appDao.getWorkspaceWithBoardsNoFlow(it.workspaceId).boards
+        if(lock <= 0){
+            lock++
+            listBoard = list.map {
+                repository.appDao.getWorkspaceWithBoardsNoFlow(it.workspaceId).boards
+            }
         }
+        lock = 0
+        return listBoard
     }
 
     fun createBoard(workspace: Workspace, boardName: String){
@@ -85,8 +93,4 @@ class HomeViewModel @Inject constructor(
 
     }
 
-
-    override fun onCleared() {
-        super.onCleared()
-    }
 }

@@ -16,6 +16,8 @@ import com.tnh.mollert.utils.LoadingModal
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.logAny
+import com.tnh.tnhlibrary.logVar
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -40,13 +42,25 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         observeData()
     }
 
+    private fun submitBoardList(workspaces: List<Workspace>){
+        lifecycleScope.launchWhenResumed {
+            // TODO: Need to improve performance
+            homeAdapter.submitBoardList(viewModel.getAllBoardOfUser(workspaces))
+        }
+    }
+
     private fun observeData() {
         safeObserve(viewModel.memberWithWorkspaces){
             homeAdapter.submitList(it.workspaces)
-            lifecycleScope.launchWhenResumed {
-                homeAdapter.submitBoardList(viewModel.getAllBoardOfUser(it.workspaces))
+            submitBoardList(it.workspaces)
+        }
+
+        safeObserve(viewModel.boards){
+            viewModel.memberWithWorkspaces.value?.workspaces?.let {
+                submitBoardList(it)
             }
         }
+
         eventObserve(viewModel.message){
             binding.root.showSnackBar(it)
         }
