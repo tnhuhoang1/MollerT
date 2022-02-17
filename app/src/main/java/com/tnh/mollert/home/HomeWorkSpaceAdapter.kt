@@ -12,20 +12,25 @@ import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.Workspace
 
 class HomeWorkSpaceAdapter(
-    private val onClick: (String) -> Unit,
-    private val getBoardList: (String) -> List<Board>
+    private val onClick: (String) -> Unit
 ) : ListAdapter<Workspace, HomeWorkSpaceAdapter.HomeWorkSpaceViewHolder>(HomeWorkSpaceDiffUtil()) {
+    var onNewClicked: ((workspace: Workspace)-> Unit)? = null
+    private val boardList: MutableList<List<Board>> = mutableListOf()
+
 
     inner class HomeWorkSpaceViewHolder(private var binding: WorkspaceItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         private val workspaceBoardAdapter = WorkspaceBoardAdapter()
 
-        fun bind(workspace: Workspace) {
-            workspaceBoardAdapter.submitList(getBoardList(workspace.workspaceId))
+        fun bind(workspace: Workspace, list: List<Board>?) {
+            workspaceBoardAdapter.submitList(list)
             binding.workspaceName = workspace.workspaceName
             binding.workspaceBoardItemBoardList.adapter = workspaceBoardAdapter
             binding.workspaceItemCard.setOnClickListener { onClick(workspace.workspaceId) }
+            binding.workspaceItemNew.setOnClickListener {
+                onNewClicked?.invoke(workspace)
+            }
         }
     }
 
@@ -37,7 +42,12 @@ class HomeWorkSpaceAdapter(
     }
 
     override fun onBindViewHolder(holder: HomeWorkSpaceViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        holder.bind(getItem(position), boardList.getOrNull(position))
+    }
+
+    fun submitBoardList(list: List<List<Board>>){
+        boardList.clear()
+        boardList.addAll(list)
     }
 
     class HomeWorkSpaceDiffUtil : DiffUtil.ItemCallback<Workspace>() {

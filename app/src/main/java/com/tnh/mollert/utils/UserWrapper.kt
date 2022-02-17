@@ -7,10 +7,7 @@ import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.datasource.remote.model.toMember
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.trace
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 class UserWrapper private constructor(
     private val repository: AppRepository
@@ -45,11 +42,10 @@ class UserWrapper private constructor(
         return null
     }
 
-    init {
-        listenForUser()
-    }
-
-    private fun listenForUser(){
+    fun listenForUser(
+        whenNoUser: () -> Unit = {},
+        whenHasUser: () -> Unit
+    ){
         firebaseAuth.addAuthStateListener { state->
             state.currentUser?.let { firebaseUser->
                 coroutineScope.launch {
@@ -57,9 +53,15 @@ class UserWrapper private constructor(
                     if(currentLocalUser == null){
                         currentLocalUser = fetchMember(firebaseUser.email ?: "")
                     }
+                    if(currentLocalUser != null){
+                        withContext(Dispatchers.Main){
+                            whenHasUser()
+                        }
+                    }
                 }
             } ?: kotlin.run {
                 currentLocalUser = null
+                whenNoUser()
             }
         }
     }

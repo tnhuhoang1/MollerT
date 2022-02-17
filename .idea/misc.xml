@@ -7,12 +7,14 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/hello.xml" value="0.18" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/ic_launcher_background.xml" value="0.175" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/outline_add_24.xml" value="0.1815" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot_active.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot_default.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_arrow_down.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_checked.xml" value="0.1815" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_close_circle.xml" value="0.175" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_edit_2.xml" value="0.1815" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_firstline.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_invisible.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_new_workspace.xml" value="0.175" />
@@ -26,6 +28,7 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/board_detail_fragment.xml" value="0.33" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/card_detail_fragment.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/color_item.xml" value="0.4" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/create_board_layout.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/home_fragment.xml" value="0.264" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/label_item.xml" value="0.4" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/label_picker.xml" value="0.25" />
@@ -42,6 +45,7 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/timeline_fragment.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/two_action_toolbar.xml" value="0.33" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/welcome_fragment.xml" value="0.25" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/workspace_board_item.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/workspace_item.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/bottom_nav.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/top_app_bar.xml" value="0.25" />

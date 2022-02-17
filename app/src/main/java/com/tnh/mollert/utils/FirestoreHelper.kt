@@ -2,6 +2,7 @@ package com.tnh.mollert.utils
 
 import com.google.firebase.firestore.*
 import com.tnh.mollert.datasource.remote.model.RemoteModel
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.trace
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -39,14 +40,10 @@ class FirestoreHelper private constructor(){
             data,
             {
                 trace(it)
-                if(cont.isActive){
-                    cont.resume(false)
-                }
+                cont.safeResume { false }
             },
             {
-                if(cont.isActive){
-                    cont.resume(true)
-                }
+                cont.safeResume { true }
             }
         )
     }
@@ -80,14 +77,10 @@ class FirestoreHelper private constructor(){
             data,
             {
                 trace(it)
-                if(cont.isActive){
-                    cont.resume(false)
-                }
+                cont.safeResume { false }
             }
         ){
-            if(cont.isActive){
-                cont.resume(true)
-            }
+            cont.safeResume { true }
         }
     }
 
@@ -113,14 +106,10 @@ class FirestoreHelper private constructor(){
             map,
             {
                 trace(it)
-                if(cont.isActive){
-                    cont.resume(false)
-                }
+                cont.safeResume { false }
             }
         ){
-            if(cont.isActive){
-                cont.resume(true)
-            }
+            cont.safeResume { true }
         }
     }
 
@@ -149,14 +138,10 @@ class FirestoreHelper private constructor(){
             data,
             {
                 trace(it)
-                if(cont.isActive){
-                    cont.resume(false)
-                }
+                cont.safeResume { false }
             }
         ){
-            if(cont.isActive){
-                cont.resume(true)
-            }
+            cont.safeResume { true }
         }
     }
 
@@ -185,17 +170,38 @@ class FirestoreHelper private constructor(){
             data,
             {
                 trace(it)
-                if(cont.isActive){
-                    cont.resume(false)
-                }
+                cont.safeResume { false }
             }
         ){
-            if(cont.isActive){
-                cont.resume(true)
-            }
+            cont.safeResume { true }
         }
     }
 
+    fun getCol(
+        collection: CollectionReference,
+        onFailure: (Exception?) -> Unit,
+        onSuccess: (QuerySnapshot) -> Unit
+    ){
+        collection.get()
+            .addOnFailureListener {
+                onFailure(it)
+            }
+            .addOnSuccessListener { query->
+                onSuccess(query)
+            }
+    }
+
+    suspend fun getCol(collection: CollectionReference) = suspendCancellableCoroutine<QuerySnapshot?>{ cont ->
+        getCol(
+            collection,
+            {
+                trace(it)
+                cont.safeResume { null }
+            }
+        ){
+            cont.safeResume { it }
+        }
+    }
 
     fun mergeDocument(
         document: DocumentReference,
@@ -221,19 +227,19 @@ class FirestoreHelper private constructor(){
             data,
             {
                 trace(it)
-                if(cont.isActive){
-                    cont.resume(false)
-                }
+                cont.safeResume { false }
             }
         ){
-            if(cont.isActive){
-                cont.resume(true)
-            }
+            cont.safeResume { true }
         }
     }
 
     fun getDocRef(refPath: String): DocumentReference{
         return store.document(refPath)
+    }
+
+    fun getColRef(refPath: String): CollectionReference{
+        return store.collection(refPath)
     }
 
     fun getMemberDoc(email: String): DocumentReference{
@@ -242,6 +248,14 @@ class FirestoreHelper private constructor(){
 
     fun getTrackingDoc(email: String): DocumentReference{
         return getDocRef("$TRACKING_ROOT_COL/$email")
+    }
+
+    fun getBoardDoc(workspaceId: String, boardId: String): DocumentReference{
+        return getDocRef("$WORKSPACE_ROOT_COL/${workspaceId}/boards/${boardId}")
+    }
+
+    fun getBoardCol(workspaceId: String): CollectionReference{
+        return getColRef("$WORKSPACE_ROOT_COL/$workspaceId/boards")
     }
 
     fun getWorkspaceDoc(email: String, workspaceName: String): DocumentReference{
@@ -284,14 +298,10 @@ class FirestoreHelper private constructor(){
             document,
             {
                 trace(it)
-                if(cont.isActive){
-                    cont.resume(null)
-                }
+                cont.safeResume { null }
             },
             {
-                if(cont.isActive){
-                    cont.resume(it)
-                }
+                cont.safeResume { it }
             }
         )
     }

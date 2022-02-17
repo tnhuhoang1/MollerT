@@ -29,7 +29,7 @@
         android:id="@+id/label_item_edit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_edit_24"
+        android:src="@drawable/vd_edit_2"
         android:background="?selectableItemBackgroundBorderless"
         app:layout_constraintTop_toTopOf="@id/label_item_name"
         app:layout_constraintBottom_toBottomOf="@id/label_item_name"

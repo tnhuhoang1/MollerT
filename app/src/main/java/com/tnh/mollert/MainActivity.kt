@@ -1,6 +1,7 @@
 package com.tnh.mollert
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+    private val viewModel by viewModels<ActivityViewModel>()
     val navController by lazy {
         (supportFragmentManager.findFragmentById(R.id.activity_main_fragment_container) as NavHostFragment).navController
     }
@@ -33,6 +35,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         userWrapper = UserWrapper.getInstance(repository)
         setupBottomNav()
+        userWrapper.listenForUser {
+            viewModel.registerRemoteEvent()
+        }
         setContentView(binding.root)
     }
 

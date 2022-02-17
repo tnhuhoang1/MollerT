@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    >
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:hint="Board name"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:paddingHorizontal="@dimen/dimen_12"
+        android:paddingVertical="@dimen/dimen_12"
+        android:drawablePadding="@dimen/dimen_8"
+        android:singleLine="true"
+        android:id="@+id/create_board_layout_name"
+        android:fontFamily="@font/poppins"
+        android:background="@color/neutrals9"
+        android:layout_marginTop="@dimen/dimen_16"
+        >
+
+    </com.google.android.material.textfield.TextInputEditText>
+</androidx.appcompat.widget.LinearLayoutCompat>
