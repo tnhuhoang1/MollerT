@@ -63,21 +63,9 @@ class HomeWorkSpaceAdapter(
 
     class WorkspaceBoardAdapter :
         ListAdapter<Board, WorkspaceBoardAdapter.WorkspaceBoardViewHolder>(HomeWorkSpaceDiffUtil()) {
-        class WorkspaceBoardViewHolder(private var binding: WorkspaceBoardItemBinding) :
+
+        inner class WorkspaceBoardViewHolder(private var binding: WorkspaceBoardItemBinding) :
             RecyclerView.ViewHolder(binding.root) {
-
-            companion object {
-                fun from(parent: ViewGroup): WorkspaceBoardViewHolder {
-                    return WorkspaceBoardViewHolder(
-                        WorkspaceBoardItemBinding.inflate(
-                            LayoutInflater.from(parent.context),
-                            parent,
-                            false
-                        )
-                    )
-                }
-            }
-
             fun bind(board: Board) {
                 binding.title = board.boardName
                 Glide.with(binding.root).load(board.background)
@@ -89,7 +77,13 @@ class HomeWorkSpaceAdapter(
             parent: ViewGroup,
             viewType: Int
         ): WorkspaceBoardViewHolder {
-            return WorkspaceBoardViewHolder.from(parent)
+            return WorkspaceBoardViewHolder(
+                WorkspaceBoardItemBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+            )
         }
 
         override fun onBindViewHolder(holder: WorkspaceBoardViewHolder, position: Int) {

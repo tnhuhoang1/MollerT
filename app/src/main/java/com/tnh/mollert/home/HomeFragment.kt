@@ -82,11 +82,11 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     }
 
     private fun initControl() {
-
         homeAdapter = HomeWorkSpaceAdapter(onClick)
         homeAdapter.onNewClicked = { ws->
             showCreateDialog(ws)
         }
+
 
         binding.homeFragmentRecycleView.apply {
             layoutManager = LinearLayoutManager(requireContext())
