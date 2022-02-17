@@ -6,7 +6,9 @@ import androidx.room.Entity
 class MemberBoardRel(
     val email: String,
     val boardId: String,
-    var role: String
+    var role: String = ROLE_MEMBER
 ) {
-
+    companion object{
+        const val ROLE_MEMBER = "member"
+    }
 }

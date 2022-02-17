@@ -275,22 +275,24 @@ class FirestoreHelper private constructor(){
     inline fun <reified T: RemoteModel>getDocumentModel(
         document: DocumentReference,
         noinline onFailure: (Exception?) -> Unit = {},
-        noinline onSuccess: (T) -> Unit = {}
+        noinline onSuccess: (T?) -> Unit = {}
     ){
         getDocument(
             document,
             onFailure
         ) {
             try {
-                it.toObject(T::class.java)?.let { obj->
-                    onSuccess(obj)
-                }
+                onSuccess(it.toObject(T::class.java))
             } catch (e: Exception) {
+                trace(e)
                 onFailure(e)
             }
         }
     }
 
+    /**
+     * this function may always return an object with all fields are set to null, be careful
+     */
     suspend inline fun <reified T: RemoteModel>simpleGetDocumentModel(
         document: DocumentReference
     ) = suspendCancellableCoroutine<T?> { cont->

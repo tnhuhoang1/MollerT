@@ -18,6 +18,8 @@ class HomeWorkSpaceAdapter(
     private val onClick: (String) -> Unit
 ) : ListAdapter<Workspace, HomeWorkSpaceAdapter.HomeWorkSpaceViewHolder>(HomeWorkSpaceDiffUtil()) {
     var onNewClicked: ((workspace: Workspace)-> Unit)? = null
+    var onNewMemberClicked: ((workspace: Workspace)-> Unit)? = null
+
     private val boardList: MutableList<List<Board>> = mutableListOf()
 
 
@@ -33,6 +35,9 @@ class HomeWorkSpaceAdapter(
             binding.workspaceBoardItemBoardList.adapter = workspaceBoardAdapter
             binding.workspaceItemNew.setOnClickListener {
                 onNewClicked?.invoke(workspace)
+            }
+            binding.workspaceItemInvite.setOnClickListener {
+                onNewMemberClicked?.invoke(workspace)
             }
         }
     }

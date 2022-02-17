@@ -1,5 +1,6 @@
 package com.tnh.mollert.home
 
+import android.util.Patterns
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,7 @@ import com.tnh.mollert.datasource.local.compound.MemberWithWorkspaces
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.mollert.datasource.remote.model.RemoteBoard
+import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.datasource.remote.model.RemoteMemberRef
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
@@ -17,6 +19,7 @@ import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,6 +45,25 @@ class HomeViewModel @Inject constructor(
     fun loadMemberWithWorkspaces(){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
             memberWithWorkspaces = repository.appDao.getMemberWithWorkspaces(email).asLiveData()
+        }
+    }
+
+    fun inviteMember(workspace: Workspace, otherEmail: String){
+        UserWrapper.getInstance()?.currentUserEmail?.let { email->
+            if(email == otherEmail){
+                postMessage("You cant not invite yourself")
+                return
+            }
+            if(!Patterns.EMAIL_ADDRESS.matcher(otherEmail).matches()){
+                postMessage("Invalid email address")
+                return
+            }
+            viewModelScope.launch {
+                firestore.simpleGetDocumentModel<RemoteMember>(firestore.getMemberDoc(otherEmail))?.let { m->
+                    // TODO: Send invitation to other
+                    postMessage("Sent invitation successfully (NOT IMPLEMENT YET)")
+                } ?: postMessage("No such member exist")
+            }
         }
     }
 

@@ -3,13 +3,14 @@ package com.tnh.mollert
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.RemoteBoard
 import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.datasource.remote.model.RemoteWorkspace
+import com.tnh.mollert.datasource.remote.model.toMember
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
-import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
@@ -92,6 +93,24 @@ class ActivityViewModel @Inject constructor(
         )?.let {
             it.toModel(workspaceId)?.let { model->
                 repository.boardDao.insertOne(model)
+                it.members?.let { listMember->
+                    listMember.forEach { rmr->
+                        rmr.ref?.let {
+                            saveMemberAndRelationFromRemote(rmr.ref, model.boardId)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun saveMemberAndRelationFromRemote(ref: String, boardId: String){
+        firestore.simpleGetDocumentModel<RemoteMember>(
+            firestore.getDocRef(ref)
+        )?.let { rm->
+            rm.toMember()?.let {
+                repository.memberDao.insertOne(it)
+                repository.memberBoardDao.insertOne(MemberBoardRel(it.email, boardId))
             }
         }
     }
@@ -118,8 +137,16 @@ class ActivityViewModel @Inject constructor(
 
     private suspend fun saveAllBoardFromRemote(workspaceId: String){
         firestore.getCol(firestore.getBoardCol(workspaceId))?.documentChanges?.forEach { docChange->
-            docChange.document.toObject(RemoteBoard::class.java).toModel(workspaceId)?.let { board->
+            val rb = docChange.document.toObject(RemoteBoard::class.java)
+            rb.toModel(workspaceId)?.let { board->
                 repository.boardDao.insertOne(board)
+                rb.members?.let { listMember->
+                    listMember.forEach { rmr->
+                        rmr.ref?.let {
+                            saveMemberAndRelationFromRemote(rmr.ref, board.boardId)
+                        }
+                    }
+                }
             }
         }
     }

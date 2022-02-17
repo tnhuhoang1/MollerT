@@ -101,6 +101,10 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
             showCreateDialog(ws)
         }
 
+        homeAdapter.onNewMemberClicked = {ws->
+            showInviteDialog(ws)
+        }
+
 
         binding.homeFragmentRecycleView.apply {
             layoutManager = LinearLayoutManager(requireContext())
@@ -109,18 +113,38 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     }
 
     private fun showCreateDialog(ws: Workspace){
-        AlertDialog.Builder(requireContext()).apply {
-            val binding = CreateBoardLayoutBinding.inflate(layoutInflater)
-            setTitle("Add new board")
-            setView(binding.root)
-            setPositiveButton("Create") { _, _ ->
-                if(binding.createBoardLayoutName.text.isNullOrEmpty()){
+        showAlertDialog("Add new board"){ builder, createBoardLayoutBinding ->
+            builder.setPositiveButton("Create") { _, _ ->
+                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrEmpty()){
                     viewModel.setMessage("Board name cannot be empty")
                 }else{
-                    viewModel.createBoard(ws, binding.createBoardLayoutName.text.toString())
+                    viewModel.createBoard(ws, createBoardLayoutBinding.createBoardLayoutName.text.toString())
                 }
             }
+        }
+    }
+
+    private fun showInviteDialog(ws: Workspace){
+        showAlertDialog("Invite to workspace"){ builder, createBoardLayoutBinding ->
+            createBoardLayoutBinding.createBoardLayoutName.hint = "Email"
+            builder.setPositiveButton("Invite") { _, _ ->
+                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                    viewModel.setMessage("Email address cannot be empty")
+                }else{
+                    viewModel.inviteMember(ws, createBoardLayoutBinding.createBoardLayoutName.text.toString())
+                }
+            }
+        }
+    }
+
+    private fun showAlertDialog(title: String, builder: (AlertDialog.Builder, CreateBoardLayoutBinding)-> Unit){
+        AlertDialog.Builder(requireContext()).apply {
+            val binding = CreateBoardLayoutBinding.inflate(layoutInflater)
+            setTitle(title)
+            setView(binding.root)
+
             setNegativeButton("Cancel"){_, _ -> }
+            builder(this, binding)
         }.show()
     }
 
