@@ -290,9 +290,6 @@ class FirestoreHelper private constructor(){
         }
     }
 
-    /**
-     * this function may always return an object with all fields are set to null, be careful
-     */
     suspend inline fun <reified T: RemoteModel>simpleGetDocumentModel(
         document: DocumentReference
     ) = suspendCancellableCoroutine<T?> { cont->

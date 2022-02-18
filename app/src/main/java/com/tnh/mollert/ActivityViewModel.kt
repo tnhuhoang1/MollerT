@@ -1,14 +1,13 @@
 package com.tnh.mollert
 
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
-import com.tnh.mollert.datasource.remote.model.RemoteBoard
-import com.tnh.mollert.datasource.remote.model.RemoteMember
-import com.tnh.mollert.datasource.remote.model.RemoteWorkspace
-import com.tnh.mollert.datasource.remote.model.toMember
+import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.logAny
@@ -37,6 +36,7 @@ class ActivityViewModel @Inject constructor(
                 snap?.data?.let { map->
                     registerWorkspace(email, map)
                     registerBoard(email, map)
+                    registerInvitation(email, map)
                 }
             }
         }
@@ -81,6 +81,37 @@ class ActivityViewModel @Inject constructor(
                             "Reloading all boards from remote".logAny()
                             reloadBoardFromRemote(email)
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun registerInvitation(email: String, map: Map<String, Any>){
+        (map["invitations"] as List<Map<String, Any>>?)?.let { listActivity->
+            if(listActivity.isNotEmpty()){
+                listActivity.forEach { ra ->
+                    try {
+                        val remoteActivity = RemoteActivity(
+                            ra["activityId"] as String,
+                            ra["actor"] as String,
+                            ra["boardId"] as String?,
+                            ra["cardId"] as String?,
+                            ra["message"] as String,
+                            ra["seen"] as Boolean,
+                            ra["activityType"] as String,
+                            ra["timestamp"] as Long,
+
+                        )
+                        viewModelScope.launch {
+                            remoteActivity.toModel()?.let {
+                                repository.activityDao.insertOne(it)
+                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "invitations", remoteActivity)
+                            }
+                        }
+                        remoteActivity.logAny()
+                    }catch (e: Exception){
+                        trace(e)
                     }
                 }
             }

@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:backgroundTint="#DBD6EF"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="4dp"
-        >
+        app:cardCornerRadius="8dp"
+        app:cardElevation="12dp">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/notification_item_imgView"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_centerVertical="true"
-                android:padding="5dp"
-
-                app:shapeAppearance="@drawable/corner_img_shape"
-                android:background="@android:drawable/sym_def_app_icon"/>
+                android:src="@drawable/app_icon"
+                />
 
             <TextView
                 android:id="@+id/notification_item_textView"
@@ -32,20 +32,10 @@
                 android:layout_height="wrap_content"
                 android:layout_toEndOf="@+id/notification_item_imgView"
                 android:text="Vu Quyen Linh metion you on the card UI sprint 1 on MollerT"
-                android:textSize="13sp"
-                android:padding="5dp"
-                />
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="-24dp"
-                android:layout_toEndOf="@+id/notification_item_textView"
-                android:src="@drawable/outline_arrow_forward_ios_24"
-                android:background="@null"
-                android:layout_centerVertical="true"/>
-
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                android:paddingVertical="@dimen/dimen_8"
+                android:paddingHorizontal="@dimen/dimen_8" />
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
+</layout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>

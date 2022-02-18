@@ -74,12 +74,12 @@ class StorageHelper private constructor(){
             dataStream,
             {
                 failureBlock(it)
-                continuation.resume(null)
+                continuation.safeResume { null }
             },
             {
                 if(continuation.isActive){
                     successBlock(it)
-                    continuation.resume(it)
+                    continuation.safeResume { it }
                 }
             }
         )
@@ -89,7 +89,7 @@ class StorageHelper private constructor(){
     /**
      * don't add file extension to image name, the function automatic do it for you
      *
-     * @return null if upload failed
+     * @return null if upload failed, url of the image if succeeded
      */
     suspend fun uploadImage(
         parentRef: StorageReference,

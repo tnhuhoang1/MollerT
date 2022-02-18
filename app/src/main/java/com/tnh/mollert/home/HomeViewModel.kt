@@ -6,11 +6,11 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.compound.MemberWithWorkspaces
+import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.model.Board
+import com.tnh.mollert.datasource.local.model.MessageMaker
 import com.tnh.mollert.datasource.local.model.Workspace
-import com.tnh.mollert.datasource.remote.model.RemoteBoard
-import com.tnh.mollert.datasource.remote.model.RemoteMember
-import com.tnh.mollert.datasource.remote.model.RemoteMemberRef
+import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
@@ -18,6 +18,7 @@ import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import java.util.regex.Pattern
 import javax.inject.Inject
@@ -49,24 +50,56 @@ class HomeViewModel @Inject constructor(
     }
 
     fun inviteMember(workspace: Workspace, otherEmail: String){
-        UserWrapper.getInstance()?.currentUserEmail?.let { email->
-            if(email == otherEmail){
-                postMessage("You cant not invite yourself")
-                return
-            }
-            if(!Patterns.EMAIL_ADDRESS.matcher(otherEmail).matches()){
-                postMessage("Invalid email address")
-                return
-            }
-            viewModelScope.launch {
-                firestore.simpleGetDocumentModel<RemoteMember>(firestore.getMemberDoc(otherEmail))?.let { m->
-                    // TODO: Send invitation to other
-                    postMessage("Sent invitation successfully (NOT IMPLEMENT YET)")
+        viewModelScope.launch {
+            UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                val email = member.email
+                if (email == otherEmail) {
+                    postMessage("You cant not invite yourself")
+                    cancel()
+                }
+                if (!Patterns.EMAIL_ADDRESS.matcher(otherEmail).matches()) {
+                    postMessage("Invalid email address")
+                    cancel()
+                }
+                firestore.simpleGetDocumentModel<RemoteMember>(firestore.getMemberDoc(otherEmail))?.toMember()?.let { m ->
+                    val id = "invitation_${workspace.workspaceId}"
+                    val remoteActivity = RemoteActivity(
+                        id,
+                        email,
+                        null,
+                        null,
+                        "",
+                        false,
+                        Activity.TYPE_INVITATION,
+                        System.currentTimeMillis()
+                    )
+                    remoteActivity.message = MessageMaker.getWorkspaceInvitationSenderMessage(
+                        workspace.workspaceId,
+                        workspace.workspaceName,
+                        member.email,
+                        member.name
+                    )
+                    sendNotification(email, remoteActivity)
+                    remoteActivity.message = MessageMaker.getWorkspaceInvitationReceiverMessage(
+                        workspace.workspaceId,
+                        workspace.workspaceName,
+                        m.email,
+                        m.name
+                    )
+                    sendNotification(otherEmail, remoteActivity)
+                    postMessage("Sent invitation successfully")
                 } ?: postMessage("No such member exist")
             }
         }
     }
 
+    private suspend fun sendNotification(email: String, remoteActivity: RemoteActivity){
+        firestore.insertToArrayField(
+            firestore.getTrackingDoc(email),
+            "invitations",
+            remoteActivity
+        )
+    }
 
     private var lock = 0
     private var listBoard: List<List<Board>> = listOf()
