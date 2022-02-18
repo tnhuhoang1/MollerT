@@ -37,4 +37,10 @@
     <string name="bio_label">Biography</string>
     <string name="bio_placeholder">Im a bad guy</string>
     <string name="log_out">Log Out</string>
+
+    <!-- Edit profile   -->
+    <string name="name_label">Name</string>
+    <string name="name_place_holder">Tran Quang Duyet</string>
+    <string name="old_pass_label">Old Password</string>
+    <string name="new_pass_label">New Password</string>
 </resources>

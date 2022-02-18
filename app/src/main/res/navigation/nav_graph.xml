@@ -111,9 +111,20 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.tnh.mollert.profile.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:label="ProfileFragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_editProfileFragment"
+            app:destination="@id/editProfileFragment" />
+    </fragment>
     <fragment
         android:id="@+id/addEditLabelFragment"
         android:name="com.tnh.mollert.cardDetail.label.AddEditLabelFragment"
         android:label="AddEditLabelFragment" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.tnh.mollert.profile.edit.EditProfileFragment"
+        android:label="EditProfileFragment" />
 </navigation>
