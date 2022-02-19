@@ -105,11 +105,11 @@ class ActivityViewModel @Inject constructor(
                         )
                         viewModelScope.launch {
                             remoteActivity.toModel()?.let {
+                                it.logAny()
                                 repository.activityDao.insertOne(it)
                                 firestore.removeFromArrayField(firestore.getTrackingDoc(email), "invitations", remoteActivity)
                             }
                         }
-                        remoteActivity.logAny()
                     }catch (e: Exception){
                         trace(e)
                     }

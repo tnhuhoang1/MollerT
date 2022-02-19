@@ -6,6 +6,7 @@ import com.tnh.mollert.datasource.local.compound.MemberAndActivity
 import com.tnh.mollert.datasource.local.model.MessageMaker
 import com.tnh.tnhlibrary.dataBinding.recycler.DataBindingViewHolder
 import com.tnh.tnhlibrary.dataBinding.recycler.SimpleDataBindingListAdapter
+import com.tnh.tnhlibrary.logAny
 
 class NotificationAdapter: SimpleDataBindingListAdapter<MemberAndActivity, NotificationItemBinding>(R.layout.notification_item) {
 

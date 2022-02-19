@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
             UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
                 val email = member.email
                 if (email == otherEmail) {
-                    postMessage("You cant not invite yourself")
+                    postMessage("You can not invite yourself")
                     cancel()
                 }
                 if (!Patterns.EMAIL_ADDRESS.matcher(otherEmail).matches()) {
@@ -70,21 +70,23 @@ class HomeViewModel @Inject constructor(
                         null,
                         "",
                         false,
-                        Activity.TYPE_INVITATION,
+                        Activity.TYPE_INFO,
                         System.currentTimeMillis()
                     )
                     remoteActivity.message = MessageMaker.getWorkspaceInvitationSenderMessage(
                         workspace.workspaceId,
                         workspace.workspaceName,
-                        member.email,
-                        member.name
+                        m.email,
+                        m.name
                     )
                     sendNotification(email, remoteActivity)
+                    remoteActivity.actor = otherEmail
+                    remoteActivity.activityType = Activity.TYPE_INVITATION
                     remoteActivity.message = MessageMaker.getWorkspaceInvitationReceiverMessage(
                         workspace.workspaceId,
                         workspace.workspaceName,
-                        m.email,
-                        m.name
+                        member.email,
+                        member.name
                     )
                     sendNotification(otherEmail, remoteActivity)
                     postMessage("Sent invitation successfully")

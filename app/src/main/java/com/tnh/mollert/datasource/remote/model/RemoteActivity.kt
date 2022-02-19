@@ -4,7 +4,7 @@ import com.tnh.mollert.datasource.local.model.Activity
 
 data class RemoteActivity(
     val activityId: String? = null,
-    val actor: String? = null,
+    var actor: String? = null,
     val boardId: String? = null,
     val cardId: String? = null,
     var message: String? = "",

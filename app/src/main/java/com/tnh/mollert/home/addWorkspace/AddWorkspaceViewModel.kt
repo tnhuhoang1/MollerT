@@ -81,7 +81,7 @@ class AddWorkspaceViewModel @Inject constructor(
                     )
                 )
                 if(firestore.addDocument(loc,data)){
-                    if(firestore.insertToArrayField(memLoc, "workspaces", RemoteWorkspaceRef(name, loc.path))){
+                    if(firestore.insertToArrayField(memLoc, "workspaces", RemoteWorkspaceRef(workspaceId, loc.path))){
                         data.toModel()?.let { ws->
                             repository.workspaceDao.insertOne(ws)
                             MemberWorkspaceRel(it.email, workspaceId).let { rel->

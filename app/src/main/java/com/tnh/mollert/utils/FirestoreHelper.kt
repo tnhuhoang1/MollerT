@@ -262,6 +262,10 @@ class FirestoreHelper private constructor(){
         return getDocRef("$WORKSPACE_ROOT_COL/${email}_${workspaceName}")
     }
 
+    fun getWorkspaceDoc(workspaceId: String): DocumentReference{
+        return getDocRef("$WORKSPACE_ROOT_COL/$workspaceId")
+    }
+
     fun getDocument(
         document: DocumentReference,
         onFailure: (Exception)-> Unit = {},

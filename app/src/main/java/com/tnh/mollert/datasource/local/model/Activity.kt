@@ -63,10 +63,21 @@ object MessageMaker{
      *
      *
      */
-//    fun getInvitationParams(eMessage: String): Pair<String, String>{
-//        eMessage.split("***")
-//
-//    }
+    fun getInvitationParams(eMessage: String): Pair<String, String>{
+        var first: String = ""
+        var second: String = ""
+        eMessage.split("***").forEach { s->
+            if(s.startsWith("[*") && s.endsWith("*]")){
+                val l = s.removePrefix("[*").removeSuffix("*]").split("/*")
+                if(l.getOrNull(0) == HEADER_MEMBER){
+                    first = l.getOrElse(1){""}
+                }else if(l.getOrNull(0) == HEADER_WORKSPACE){
+                    second = l.getOrElse(1){""}
+                }
+            }
+        }
+        return Pair(first, second)
+    }
 
     fun getCreateBoardMessage(){
     }

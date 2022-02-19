@@ -29,7 +29,7 @@ class RegisterFragmentViewModel @Inject constructor(
     private fun registerTracking(email: String){
         firestore.mergeDocument(
             firestore.getTrackingDoc(email),
-            mapOf<String, List<String>>("workspaces" to listOf("hello world")),
+            mapOf<String, List<String>>("workspaces" to listOf()),
             {}
         ){
 

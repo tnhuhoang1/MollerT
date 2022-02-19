@@ -90,7 +90,13 @@ class RegisterFragment: DataBindingFragment<RegisterFragmentBinding>(R.layout.re
             val email = binding.registerFragmentEmail.text.toString()
             val auth = FirebaseAuth.getInstance()
             auth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+
+                }
                 .addOnCompleteListener(it) {
+
+                    // TODO: For testing purpose, the present for Thao
+
                     // Store current user into Firestore
                     lifecycleScope.launchWhenCreated {
                         viewModel.storeCurrentUserToFirestore(email)
