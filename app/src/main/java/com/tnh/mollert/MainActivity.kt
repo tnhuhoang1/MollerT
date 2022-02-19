@@ -15,6 +15,7 @@ import com.tnh.mollert.datasource.remote.model.toMember
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.logAny
+import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -37,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         setupBottomNav()
         userWrapper.listenForUser(
             {
-                
+                hidBottomNav()
             }
         ) {
             viewModel.registerRemoteEvent()
@@ -52,6 +53,10 @@ class MainActivity : AppCompatActivity() {
 
     fun showBottomNav(){
         binding.activityMainBottomNav.show()
+    }
+
+    fun hidBottomNav(){
+        binding.activityMainBottomNav.gone()
     }
 
 }

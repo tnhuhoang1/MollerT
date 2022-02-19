@@ -46,11 +46,9 @@ class SplashFragment : DataBindingFragment<SplashFragmentBinding>(R.layout.splas
             when(it){
                 SplashFragmentViewModel.EVENT_SIGN_IN_CLICKED->{
                     navigateToLogin()
-                    viewModel.setMessage("Login")
                 }
                 SplashFragmentViewModel.EVENT_SIGN_UP_CLICKED->{
                     navigateToRegister()
-                    viewModel.setMessage("Register")
                 }
             }
         }
