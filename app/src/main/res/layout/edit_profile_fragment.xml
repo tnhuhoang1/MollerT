@@ -1,23 +1,161 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    >
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
+        <variable
+            name="viewModel"
+            type="com.tnh.mollert.profile.edit.EditProfileViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <!-- Toolbar is set programmatically -->
-        <include layout="@layout/two_action_toolbar"
-            android:id="@+id/edit_profile_fragment_toolbar"
-            android:layout_height="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="wrap_content">
+
+            <!-- Toolbar is set programmatically -->
+            <include
+                android:id="@+id/edit_profile_fragment_toolbar"
+                layout="@layout/two_action_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <!-- Profile image -->
+            <ImageView
+                android:scaleType="centerInside"
+                android:adjustViewBounds="true"
+                android:id="@+id/edit_profile_fragment_profile_image"
+                android:layout_width="@dimen/dimen_115"
+                android:layout_height="@dimen/dimen_115"
+                android:layout_marginTop="@dimen/dimen_13"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_toolbar"
+                app:layout_constraintWidth_percent="0.28" />
+
+            <!-- Profile image layer -->
+            <ImageView
+                android:id="@+id/edit_profile_fragment_profile_image_layer"
+                android:layout_width="@dimen/dimen_115"
+                android:layout_height="@dimen/dimen_115"
+                android:layout_marginTop="@dimen/dimen_13"
+                android:src="@drawable/ic_profile_image_layer"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_PROFILE_IMAGE_CLICKED)}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_toolbar"
+                app:layout_constraintWidth_percent="0.28" />
+
+            <!-- Profile name -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/edit_profile_fragment_name_label"
+                style="@style/Theme.MollerT.CommonLabelText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/name_label"
+                app:layout_constraintStart_toStartOf="@id/edit_profile_fragment_email"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_profile_image" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_profile_fragment_name"
+                style="@style/Theme.MollerT.CommonEditText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/name_place_holder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_name_label" />
+
+            <!-- Email -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/edit_profile_fragment_email_label"
+                style="@style/Theme.MollerT.CommonLabelText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/email_label"
+                app:layout_constraintStart_toStartOf="@id/edit_profile_fragment_email"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_name" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_profile_fragment_email"
+                style="@style/Theme.MollerT.CommonEditText"
+                android:enabled="false"
+                android:textColor="@color/lightGrayLabelText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/edit_text_email_placeholder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_email_label" />
+
+            <!-- Old password -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/edit_profile_fragment_old_password_label"
+                style="@style/Theme.MollerT.CommonLabelText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/old_pass_label"
+                app:layout_constraintStart_toStartOf="@id/edit_profile_fragment_email"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_email" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_profile_fragment_old_password"
+                style="@style/Theme.MollerT.CommonEditText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:inputType="textPassword"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_old_password_label" />
+
+            <!-- New Password -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/edit_profile_fragment_password_label"
+                style="@style/Theme.MollerT.CommonLabelText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/new_pass_label"
+                app:layout_constraintStart_toStartOf="@id/edit_profile_fragment_email"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_old_password" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_profile_fragment_password"
+                style="@style/Theme.MollerT.CommonEditText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:inputType="textPassword"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_password_label" />
+
+            <!-- Biography -->
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/edit_profile_fragment_bio_label"
+                style="@style/Theme.MollerT.CommonLabelText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/bio_label"
+                app:layout_constraintStart_toStartOf="@id/edit_profile_fragment_email"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_password" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_profile_fragment_bio"
+                style="@style/Theme.MollerT.CommonEditText"
+                android:layout_height="@dimen/dimen_0"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:gravity="start|top"
+                android:singleLine="false"
+                android:text="@string/bio_placeholder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHeight_percent="0.2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_bio_label" />
+
+            <!-- Placeholder view -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_20"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/edit_profile_fragment_bio" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>
