@@ -148,8 +148,20 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         }.show()
     }
 
-    private val onClick: (String) -> Unit = {
-        navigateToBoardDetail(it)
+    private val onClick: (workspaceId: String, boardId: String) -> Unit = { workspaceId, boardId->
+        lifecycleScope.launchWhenResumed {
+            if(viewModel.isJoinedThisBoard(boardId)){
+                navigateToBoardDetail(boardId)
+            }else{
+                AlertDialog.Builder(requireContext()).apply {
+                    setTitle("Join this board?")
+                    setPositiveButton("Join"){_,_->
+                        viewModel.joinBoard(workspaceId, boardId)
+                    }
+                }.show()
+            }
+        }
+
     }
 
 }

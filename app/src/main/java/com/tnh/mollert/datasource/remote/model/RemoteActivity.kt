@@ -3,7 +3,7 @@ package com.tnh.mollert.datasource.remote.model
 import com.tnh.mollert.datasource.local.model.Activity
 
 data class RemoteActivity(
-    val activityId: String? = null,
+    var activityId: String? = null,
     var actor: String? = null,
     val boardId: String? = null,
     val cardId: String? = null,

@@ -3,10 +3,7 @@ package com.tnh.mollert.datasource.local.dao
 import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
-import com.tnh.mollert.datasource.local.compound.MemberAndActivity
-import com.tnh.mollert.datasource.local.compound.MemberWithWorkspaces
-import com.tnh.mollert.datasource.local.compound.WorkspaceWithBoards
-import com.tnh.mollert.datasource.local.compound.WorkspaceWithMembers
+import com.tnh.mollert.datasource.local.compound.*
 import kotlinx.coroutines.flow.Flow
 import java.lang.StringBuilder
 
@@ -34,4 +31,8 @@ interface AppDao {
 
     @Query("select * from member, activity where member.email = activity.actor and member.email = :email")
     fun getActivityAssocWithEmail(email: String): Flow<List<MemberAndActivity>>
+
+    @Transaction
+    @Query("select * from board where boardId = :id")
+    suspend fun getBoardWithMembers(id: String): BoardWithMembers?
 }

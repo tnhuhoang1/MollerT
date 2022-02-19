@@ -14,6 +14,7 @@ import com.tnh.mollert.utils.ValidationHelper
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.toast.showToast
+import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 
 @AndroidEntryPoint
@@ -101,6 +102,8 @@ class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fr
                         loadingModal.dismiss()
                         // Login failure
                     }
+                }.addOnFailureListener { e->
+                    trace(e)
                 }
         }
     }

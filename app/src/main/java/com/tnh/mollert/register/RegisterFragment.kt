@@ -12,6 +12,7 @@ import com.tnh.mollert.utils.LoadingModal
 import com.tnh.mollert.utils.ValidationHelper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
+import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -108,7 +109,8 @@ class RegisterFragment: DataBindingFragment<RegisterFragmentBinding>(R.layout.re
                     }
                     loadingModal.dismiss()
                 }
-                .addOnFailureListener {
+                .addOnFailureListener { e->
+                    trace(e)
                     binding.root.showSnackBar("Something went wrong, please try again")
                     loadingModal.dismiss()
                 }

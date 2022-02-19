@@ -142,7 +142,7 @@ class ActivityViewModel @Inject constructor(
                 it.members?.let { listMember->
                     listMember.forEach { rmr->
                         rmr.ref?.let {
-                            saveMemberAndRelationFromRemote(rmr.ref, model.boardId)
+                            saveMemberAndRelationFromRemote(rmr.ref, model.boardId, rmr.role)
                         }
                     }
                 }
@@ -150,13 +150,13 @@ class ActivityViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveMemberAndRelationFromRemote(ref: String, boardId: String){
+    private suspend fun saveMemberAndRelationFromRemote(ref: String, boardId: String, role: String){
         firestore.simpleGetDocumentModel<RemoteMember>(
             firestore.getDocRef(ref)
         )?.let { rm->
             rm.toMember()?.let {
                 repository.memberDao.insertOne(it)
-                repository.memberBoardDao.insertOne(MemberBoardRel(it.email, boardId))
+                repository.memberBoardDao.insertOne(MemberBoardRel(it.email, boardId, role))
             }
         }
     }
@@ -189,7 +189,7 @@ class ActivityViewModel @Inject constructor(
                 rb.members?.let { listMember->
                     listMember.forEach { rmr->
                         rmr.ref?.let {
-                            saveMemberAndRelationFromRemote(rmr.ref, board.boardId)
+                            saveMemberAndRelationFromRemote(rmr.ref, board.boardId, rmr.role)
                         }
                     }
                 }
@@ -203,8 +203,17 @@ class ActivityViewModel @Inject constructor(
         )?.let {
             it.toModel()?.let { model->
                 repository.workspaceDao.insertOne(model)
+                saveMemberWorkspaceRelation(it.members, model.workspaceId)
                 repository.memberWorkspaceDao.insertOne(MemberWorkspaceRel(email, model.workspaceId))
                 saveAllBoardFromRemote(model.workspaceId)
+            }
+        }
+    }
+
+    private suspend fun saveMemberWorkspaceRelation(list: List<RemoteMemberRef>, workspaceId: String){
+        list.forEach { rmr->
+            rmr.email?.let { email->
+                repository.memberWorkspaceDao.insertOne(MemberWorkspaceRel(email, workspaceId, rmr.role))
             }
         }
     }
