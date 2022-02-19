@@ -13,4 +13,7 @@ interface MemberDao: BaseDao<Member> {
 
     @Query("select * from member where email = :email")
     suspend fun getByEmail(email: String): Member?
+
+    @Query("select * from member where email = :email")
+    fun getByEmailFlow(email: String): Flow<Member?>
 }

@@ -1,5 +1,6 @@
 package com.tnh.mollert.profile
 
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -11,11 +12,13 @@ import com.tnh.mollert.databinding.ProfileFragmentBinding
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.logAny
+import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class ProfileFragment: DataBindingFragment<ProfileFragmentBinding>(R.layout.profile_fragment) {
-    private val  viewModel by viewModels<ProfileFragmentViewModel>()
+    private val  viewModel by activityViewModels<ProfileViewModel>()
     override fun doOnCreateView() {
         binding.profileFragmentToolbar.apply {
             twoActionToolbarEndIcon.setImageResource(R.drawable.vd_user_edit)
@@ -27,13 +30,12 @@ class ProfileFragment: DataBindingFragment<ProfileFragmentBinding>(R.layout.prof
         }
 
         binding.viewModel = viewModel
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
         this.addObserver()
-        viewModel.getMemberInfoByEmail()
     }
 
-    private fun navigateToLogin() {
-        findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToLoginFragment())
+    private fun navigateToSplash() {
+        findNavController().navigate(ProfileFragmentDirections.actionProfileFragmentToSplashFragment())
     }
 
     private fun navigateToEdit() {
@@ -43,27 +45,20 @@ class ProfileFragment: DataBindingFragment<ProfileFragmentBinding>(R.layout.prof
     private fun addObserver() {
         eventObserve(viewModel.clickEvent) { event ->
             when (event) {
-                ProfileFragmentViewModel.EVENT_LOGOUT_CLICKED -> {
+                ProfileViewModel.EVENT_LOGOUT_CLICKED -> {
                     this.onLogoutButtonClicked()
                 }
             }
         }
-
-        safeObserve(viewModel.member){
-            binding.profileFragmentProfileName.text = it?.name
-            binding.profileFragmentEmail.setText(it?.email)
-            binding.profileFragmentBio.setText(it?.biography)
-            Glide.with(binding.root)
-                .load(it?.avatar)
-                .placeholder(R.drawable.app_icon)
-                .into(binding.profileFragmentProfileImage)
+        eventObserve(viewModel.message){
+            binding.root.showSnackBar(it)
         }
     }
 
     private fun onLogoutButtonClicked() {
         lifecycleScope.launchWhenCreated {
             FirebaseAuth.getInstance().signOut()
-            navigateToLogin()
+            navigateToSplash()
         }
     }
 }

@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.tnh.mollert.profile.ProfileFragmentViewModel" />
+            type="com.tnh.mollert.profile.ProfileViewModel" />
     </data>
 
     <ScrollView
@@ -32,6 +32,7 @@
                 android:layout_marginTop="@dimen/dimen_13"
                 android:src="@drawable/app_icon"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:bindImageUri="@{viewModel.memberAvatar}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/profile_fragment_toolbar"
                 app:layout_constraintWidth_percent="0.28" />
@@ -43,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_10"
                 android:fontFamily="@font/poppins"
-                android:text="Tran Quang Duyet"
+                android:text="@{viewModel.memberName}"
                 android:textAllCaps="false"
                 android:textColor="@color/primaryTextColor"
                 android:textSize="@dimen/text_size_18"
@@ -66,7 +67,7 @@
                 style="@style/Theme.MollerT.CommonEditText"
                 android:layout_marginTop="@dimen/dimen_10"
                 android:enabled="false"
-                android:text="@string/edit_text_email_placeholder"
+                android:text="@{viewModel.memberEmail}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/profile_fragment_email_label" />
@@ -108,7 +109,7 @@
                 android:enabled="false"
                 android:gravity="start|top"
                 android:singleLine="false"
-                android:text="@string/bio_placeholder"
+                android:text="@{viewModel.bio}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.2"
                 app:layout_constraintStart_toStartOf="parent"

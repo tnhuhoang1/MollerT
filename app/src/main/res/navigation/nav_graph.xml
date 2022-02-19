@@ -113,11 +113,13 @@
         android:name="com.tnh.mollert.profile.ProfileFragment"
         android:label="ProfileFragment" >
         <action
-            android:id="@+id/action_profileFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <action
             android:id="@+id/action_profileFragment_to_editProfileFragment"
             app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_splashFragment"
+            app:destination="@id/splashFragment"
+            app:popUpTo="@id/homeFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/addEditLabelFragment"

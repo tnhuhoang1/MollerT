@@ -37,6 +37,21 @@ class ActivityViewModel @Inject constructor(
                     registerWorkspace(email, map)
                     registerBoard(email, map)
                     registerInvitation(email, map)
+                    registerInfoChanged(email, map)
+                }
+            }
+        }
+    }
+
+    private fun registerInfoChanged(email: String, map: Map<String, Any>) {
+        (map["info"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach {
+                    viewModelScope.launch {
+                        UserWrapper.getInstance()?.fetchMember(email)?.let { _->
+                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "info", it)
+                        }
+                    }
                 }
             }
         }

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,10 +14,12 @@ import com.tnh.mollert.R
 import com.tnh.mollert.databinding.EditProfileFragmentBinding
 import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.remote.model.RemoteMember
+import com.tnh.mollert.profile.ProfileViewModel
 import com.tnh.mollert.utils.ValidationHelper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -25,16 +28,17 @@ import kotlinx.coroutines.channels.ActorScope
 @AndroidEntryPoint
 class EditProfileFragment :
     DataBindingFragment<EditProfileFragmentBinding>(R.layout.edit_profile_fragment) {
-    private val viewModel by viewModels<EditProfileViewModel>()
+    private val viewModel by activityViewModels<ProfileViewModel>()
     private var isChangeImageProfile : Boolean = false
 
     override fun doOnCreateView() {
         binding.editProfileFragmentToolbar.apply {
             twoActionToolbarEndIcon.setImageResource(R.drawable.vd_tick)
             twoActionToolbarEndIcon.show()
-            twoActionToolbarEndIcon.setOnClickListener {
-                onSaveButtonClicked()
-            }
+            twoActionToolbarEndIcon.setOnClickListener { onSaveButtonClicked() }
+            twoActionToolbarStartIcon.setImageResource(R.drawable.vd_close_circle)
+            twoActionToolbarStartIcon.show()
+            twoActionToolbarStartIcon.setOnClickListener { navigateToProfile() }
         }
 
         binding.viewModel = viewModel
@@ -42,27 +46,30 @@ class EditProfileFragment :
         this.isChangeImageProfile = false
 
         this.addObserver()
-        viewModel.getMemberInfoByEmail()
     }
 
     private fun addObserver() {
         eventObserve(viewModel.clickEvent) { event ->
             when (event) {
-                EditProfileViewModel.EVENT_PROFILE_IMAGE_CLICKED -> {
+                ProfileViewModel.EVENT_PROFILE_IMAGE_CLICKED -> {
                     this.onChangeImageClicked()
                 }
+
+                ProfileViewModel.EVENT_SUCCESS->{
+                    navigateToProfile()
+                }
+
             }
         }
 
-        safeObserve(viewModel.member) {
-            binding.editProfileFragmentName.setText(it?.name)
-            binding.editProfileFragmentEmail.setText(it?.email)
-            binding.editProfileFragmentBio.setText(it?.biography)
-            Glide.with(binding.root)
-                .load(it?.avatar)
-                .placeholder(R.drawable.app_icon)
-                .into(binding.editProfileFragmentProfileImage)
+        eventObserve(viewModel.message){
+            binding.root.showSnackBar(it)
         }
+
+        safeObserve(viewModel.member) {
+            viewModel.setImageUri(it?.avatar ?: "")
+        }
+
     }
 
     private fun onSaveButtonClicked() {
@@ -70,12 +77,10 @@ class EditProfileFragment :
             return
         }
 
-        val email = binding.editProfileFragmentEmail.text.toString()
         val bio = binding.editProfileFragmentBio.text.toString()
         val name = binding.editProfileFragmentName.text.toString()
-        val member = RemoteMember(email, name, null, bio)
 
-        viewModel.saveMemberInfoToFirestore(member)
+        viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
         this.navigateToProfile()
     }
 
@@ -89,11 +94,7 @@ class EditProfileFragment :
             if (it.resultCode == Activity.RESULT_OK) {
                 val imageUri: Uri? = it.data?.data
                 imageUri?.let { _imageUri ->
-                    activity?.runOnUiThread {
-                        this.isChangeImageProfile = true
-                        binding.editProfileFragmentProfileImage.setImageURI(_imageUri)
-                        binding.editProfileFragmentProfileImage.invalidate()
-                    }
+                    viewModel.setImageUri(_imageUri.toString())
                 }
             }
         }
@@ -104,7 +105,7 @@ class EditProfileFragment :
 
     private fun isValidInput(): Boolean {
         if (binding.editProfileFragmentName.text.toString().isEmpty()) {
-            binding.root.showSnackBar("Profile name invalid, please try again")
+            viewModel.setMessage("Profile name invalid, please try again")
             return false
         }
 
@@ -114,14 +115,14 @@ class EditProfileFragment :
         // If user change password
         if (password.isNotEmpty()) {
             if (!ValidationHelper.getInstance().isValidPassword(password)) {
-                binding.root.showSnackBar("Password invalid, please try again")
+                viewModel.setMessage("Password invalid, please try again")
                 return false
             }
         }
 
         if (oldPassword.isNotEmpty()) {
             if (!ValidationHelper.getInstance().isValidPassword(oldPassword)) {
-                binding.root.showSnackBar("Old Password invalid, please try again")
+                viewModel.setMessage("Old Password invalid, please try again")
                 return false
             }
         }

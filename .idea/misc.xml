@@ -7,6 +7,7 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/hello.xml" value="0.18" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/ic_launcher_background.xml" value="0.175" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/ic_profile_image_layer.xml" value="0.1775" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot_active.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot_default.xml" value="0.175" />
@@ -25,6 +26,7 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/board_detail_fragment.xml" value="0.33" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/card_detail_fragment.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/color_item.xml" value="0.4" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/edit_profile_fragment.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/home_fragment.xml" value="0.264" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/label_item.xml" value="0.4" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/label_picker.xml" value="0.25" />

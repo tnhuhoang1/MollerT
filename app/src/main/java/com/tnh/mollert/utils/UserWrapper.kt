@@ -66,7 +66,7 @@ class UserWrapper private constructor(
         }
     }
 
-    private suspend fun fetchMember(email: String): Member?{
+    suspend fun fetchMember(email: String): Member?{
         FirestoreHelper.getInstance().apply {
             getDocumentModel<RemoteMember>(
                 getMemberDoc(email),

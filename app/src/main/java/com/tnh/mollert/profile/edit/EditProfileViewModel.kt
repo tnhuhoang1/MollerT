@@ -2,6 +2,7 @@ package com.tnh.mollert.profile.edit
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.remote.model.RemoteMember
@@ -41,18 +42,7 @@ class EditProfileViewModel @Inject constructor(
                 trace(it)
             }) {
                 // success
-                registerTracking(member.email!!)
             }
-        }
-    }
-
-    private fun registerTracking(email: String) {
-        firestore.mergeDocument(
-            firestore.getTrackingDoc(email),
-            mapOf<String, List<String>>("workspaces" to listOf("hello world")),
-            {}
-        ) {
-
         }
     }
 

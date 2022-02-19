@@ -7,8 +7,17 @@ data class RemoteMember(
     val name: String? = null,
     val avatar: String? = null,
     val biography: String? = null,
-    val workspaces: List<RemoteWorkspaceRef>? = null
+    val workspaces: List<RemoteWorkspaceRef>? = listOf()
 ): RemoteModel {
+
+    fun info(): Map<String, String?>{
+        return mapOf(
+            "email" to email,
+            "name" to name,
+            "avatar" to avatar,
+            "biography" to biography
+        )
+    }
 }
 
 
