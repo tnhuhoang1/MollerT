@@ -27,6 +27,10 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     private val args: BoardDetailFragmentArgs by navArgs()
     @Inject lateinit var prefManager: PrefManager
 
+    private val popupMenu by lazy {
+        BoardPopupMenu(requireContext(), binding.boardDetailFragmentToolbar.twoActionToolbarEndIcon)
+    }
+
     override fun doOnCreateView() {
         setupToolbar()
         binding.lifecycleOwner = this
@@ -51,8 +55,8 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
 
 
-    fun showOptionMenu(){
-
+    private fun showOptionMenu(){
+        popupMenu.show()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,7 +81,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     private fun showCreateDialog(){
         showAlertDialog("Create new list"){ builder, dialogBinding ->
             builder.setPositiveButton("OK") { _, _ ->
-                binding.boardDetailFragmentSearchInput.hint = "List name"
+                dialogBinding.createBoardLayoutName.hint = "List name"
                 if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
                     viewModel.setMessage("List name cannot be empty")
                 }else{
