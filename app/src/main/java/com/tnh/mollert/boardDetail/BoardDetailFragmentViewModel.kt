@@ -6,7 +6,10 @@ import com.tnh.mollert.datasource.local.compound.BoardWithLists
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.datasource.local.model.Member
+import com.tnh.mollert.datasource.remote.model.RemoteBoard
+import com.tnh.mollert.datasource.remote.model.RemoteCard
 import com.tnh.mollert.datasource.remote.model.RemoteList
+import com.tnh.mollert.datasource.remote.model.RemoteMemberRef
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.logAny
@@ -37,7 +40,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
     }
 
     fun createNewList(workspaceId: String, boardId: String, listName: String){
-        val listId = "${listName}_${System.currentTimeMillis()}"
+        val listId = "${boardId}_${listName}_${System.currentTimeMillis()}"
         val listDoc = firestore.getListDoc(workspaceId, boardId, listId)
         boardWithLists.value?.lists?.size?.let { position->
             val remoteList = RemoteList(
@@ -54,6 +57,35 @@ class BoardDetailFragmentViewModel @Inject constructor(
                         listMember.forEach { mem->
                             val tracking = firestore.getTrackingDoc(mem.email)
                             firestore.insertToArrayField(tracking, "lists", listDoc.path)
+                        }
+                    }
+                }else{
+                    //failed
+                    postMessage("Failed")
+                }
+            }
+        }
+    }
+
+    fun createNewCard(workspaceId: String, boardId: String, listId: String, cardName: String){
+        val cardId = "${listId}_${cardName}_${System.currentTimeMillis()}"
+        val cardLoc = firestore.getCardDoc(workspaceId, boardId, listId, cardId)
+        UserWrapper.getInstance()?.currentUserEmail?.let { email->
+            val remoteCard = RemoteCard(
+                cardId,
+                listId,
+                cardName,
+                "",
+                "",
+                members = listOf(RemoteMemberRef(email, firestore.getMemberDoc(email).path, RemoteMemberRef.ROLE_CARD_CREATOR))
+            )
+            viewModelScope.launch {
+                if(firestore.mergeDocument(cardLoc, remoteCard)){
+                    // notify other members
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            val tracking = firestore.getTrackingDoc(mem.email)
+                            firestore.insertToArrayField(tracking, "cards", cardLoc.path)
                         }
                     }
                 }else{
@@ -102,9 +134,11 @@ class BoardDetailFragmentViewModel @Inject constructor(
         for (i in 1..10) {
             a.add(
                 Card(
-                    i,
+                    "hoang",
                     "card name $i",
                     i,
+                    "",
+                    dueDate = 1645343440321L,
                     cover = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"
                 )
             )

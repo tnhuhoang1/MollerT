@@ -255,6 +255,10 @@ class FirestoreHelper private constructor(){
         return getBoardDoc(workspaceId, boardId).collection("lists").document(listId)
     }
 
+    fun getCardDoc(workspaceId: String, boardId: String, listId: String, cardId: String): DocumentReference{
+        return getListDoc(workspaceId, boardId, listId).collection("cards").document(cardId)
+    }
+
     fun getBoardDoc(workspaceId: String, boardId: String): DocumentReference{
         return getDocRef("$WORKSPACE_ROOT_COL/${workspaceId}/boards/${boardId}")
     }

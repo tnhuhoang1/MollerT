@@ -62,7 +62,19 @@
     <fragment
         android:id="@+id/cardDetailFragment"
         android:name="com.tnh.mollert.cardDetail.CardDetailFragment"
-        android:label="CardDetailFragment" />
+        android:label="CardDetailFragment" >
+        <argument
+            android:name="workspaceId"
+            app:argType="string" />
+        <argument
+            android:name="boardId"
+            app:argType="string" />
+        <argument android:name="listId"
+            app:argType="string" />
+        <argument
+            android:name="cardId"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/boardDetailFragment"
         android:name="com.tnh.mollert.boardDetail.BoardDetailFragment"
@@ -76,6 +88,9 @@
         <argument android:name="boardName"
             app:argType="string"
             />
+        <action
+            android:id="@+id/action_boardDetailFragment_to_cardDetailFragment"
+            app:destination="@id/cardDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"

@@ -10,11 +10,9 @@ import com.tnh.mollert.R
 import com.tnh.mollert.databinding.BoardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.datasource.local.model.Card
-import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
-import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.logE
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.view.show
 import dagger.hilt.android.AndroidEntryPoint
@@ -61,11 +59,16 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        boardDetailAdapter = BoardDetailAdapter (getCardList){
-            showCreateDialog()
+        boardDetailAdapter = BoardDetailAdapter (){
+            showCreateListDialog()
+        }
+        boardDetailAdapter.onNewCardClicked = { listId ->
+            showCreateCardDialog(listId)
+        }
+        boardDetailAdapter.onCardClicked = {listId, cardId ->
+            listId.logAny()
         }
         binding.boardDetailFragmentRecyclerview.adapter = boardDetailAdapter
-
         setupObserver()
     }
 
@@ -78,10 +81,10 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         }.show()
     }
 
-    private fun showCreateDialog(){
+    private fun showCreateListDialog(){
         showAlertDialog("Create new list"){ builder, dialogBinding ->
+            dialogBinding.createBoardLayoutName.hint = "List name"
             builder.setPositiveButton("OK") { _, _ ->
-                dialogBinding.createBoardLayoutName.hint = "List name"
                 if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
                     viewModel.setMessage("List name cannot be empty")
                 }else{
@@ -90,6 +93,21 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             }
         }
     }
+
+    private fun showCreateCardDialog(listId: String){
+        showAlertDialog("Create new card"){ builder, dialogBinding ->
+            dialogBinding.createBoardLayoutName.hint = "Card name"
+            builder.setPositiveButton("OK") { _, _ ->
+                if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                    viewModel.setMessage("Card name cannot be empty")
+                }else{
+                    viewModel.createNewCard(args.workspaceId, args.boardId, listId, dialogBinding.createBoardLayoutName.text.toString())
+                }
+            }
+        }
+    }
+
+
 
     private fun setupObserver() {
         viewModel.boardWithLists.observe(viewLifecycleOwner){boardWithLists->
@@ -106,9 +124,4 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         }
     }
 
-
-
-    private val getCardList: (String) -> ArrayList<Card> = {
-        viewModel.getCardTest()
-    }
 }

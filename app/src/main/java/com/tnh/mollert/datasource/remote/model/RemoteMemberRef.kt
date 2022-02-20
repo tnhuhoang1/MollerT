@@ -9,5 +9,7 @@ data class RemoteMemberRef(
         const val ROLE_OWNER = "owner"
         const val ROLE_MEMBER = "member"
         const val ROLE_LEADER = "leader"
+        const val ROLE_CARD_CREATOR = "creator"
+        const val ROLE_CARD_WORKER = "worker"
     }
 }

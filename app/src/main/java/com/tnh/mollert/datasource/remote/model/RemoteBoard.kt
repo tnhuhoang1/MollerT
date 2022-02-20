@@ -8,8 +8,8 @@ data class RemoteBoard(
     val boardDesc: String? = null,
     val boardBackground: String? = null,
     val boardStatus: String? = Board.STATUS_OPEN,
-    val members: List<RemoteMemberRef>? = null,
-    val positions: List<RemoteListPositionRef>? = null
+    val members: List<RemoteMemberRef>? = listOf(),
+    val positions: List<RemoteListPositionRef>? = listOf()
 ): RemoteModel {
     fun toModel(workspaceId: String): Board?{
         return convertTo {

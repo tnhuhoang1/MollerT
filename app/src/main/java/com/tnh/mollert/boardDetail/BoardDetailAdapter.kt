@@ -6,30 +6,58 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.tnh.mollert.R
 import com.tnh.mollert.databinding.BoardDetailCardItemBinding
-import com.tnh.mollert.databinding.BoardDetailListEndItemBinding
 import com.tnh.mollert.databinding.BoardDetailListItemBinding
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
-import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.logE
+import com.tnh.mollert.utils.getDate
+import com.tnh.tnhlibrary.view.gone
+import com.tnh.tnhlibrary.view.show
 
 class BoardDetailAdapter(
-    private val getCardList: (String) -> ArrayList<Card>,
     private val addNewList:() -> Unit
 ) : ListAdapter<List, BoardDetailAdapter.BoardDetailViewHolder>(ListDiffUtil()) {
+    var listCards: kotlin.collections.List<kotlin.collections.List<Card>> = listOf()
+    var onNewCardClicked: ((listId: String) -> Unit)? = null
+    var onDeleteListClicked: ((listId: String) -> Unit)? = null
+    var onCardClicked: ((l: String, c: String) -> Unit)? = null
+
+    fun resubmitCardList(viewHolder: BoardDetailViewHolder, position: Int){
+        listCards.getOrNull(position)?.let {
+            viewHolder.boardCardAdapter.submitList(it)
+        }
+    }
+
     inner class BoardDetailViewHolder(
         private val binding: BoardDetailListItemBinding,
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
-        private val boardCardAdapter = BoardDetailCardAdapter()
-        fun bind(list: List) {
-            boardCardAdapter.submitList(getCardList(list.listId))
+    ): RecyclerView.ViewHolder(binding.root) {
+        val boardCardAdapter = BoardDetailCardAdapter()
+
+
+        fun bind(list: List, position: Int) {
             binding.boardDetailListItemRecyclerview.adapter = boardCardAdapter
+            listCards.getOrNull(position)?.let {
+                boardCardAdapter.submitList(it)
+            }
+            boardCardAdapter.onCardClicked = onCardClicked
             binding.boardDetailListItemToolbar.title = list.listName
+            binding.boardDetailFragmentNewListButton.setOnClickListener {
+                onNewCardClicked?.invoke(list.listId)
+            }
+            binding.boardDetailListItemToolbar.setOnMenuItemClickListener { menuItem->
+                when(menuItem.itemId){
+                    R.id.board_detail_item_menu_add->{
+                        onNewCardClicked?.invoke(list.listId)
+                    }
+                    R.id.board_detail_item_menu_delete->{
+                        onDeleteListClicked?.invoke(list.listId)
+                    }
+                }
+                true
+            }
         }
-        fun bind(boardId: String) {
+        fun bind() {
             (binding.boardDetailCardItem.layoutParams as RecyclerView.LayoutParams).height = RecyclerView.LayoutParams.WRAP_CONTENT
             binding.boardDetailListItemRecyclerview.visibility = View.GONE
             binding.boardDetailListItemToolbar.visibility = View.GONE
@@ -47,8 +75,8 @@ class BoardDetailAdapter(
     }
 
     override fun onBindViewHolder(holder: BoardDetailViewHolder, position: Int) {
-        if (getItemViewType(position) == 1) holder.bind(getItem(position))
-        else holder.bind(getItem(position).boardId)
+        if (getItemViewType(position) == 1) holder.bind(getItem(position), position)
+        else holder.bind()
     }
 
     override fun getItemViewType(position: Int): Int {
@@ -63,14 +91,29 @@ class BoardDetailAdapter(
             (oldItem.listId == newItem.listId)
     }
 
-    class BoardDetailCardAdapter(
+    class BoardDetailCardAdapter() : ListAdapter<Card, BoardDetailCardAdapter.BoardDetailCardViewHolder>(ListDiffUtil()) {
+        var onCardClicked: ((l: String, c: String) -> Unit)? = null
 
-    ) : ListAdapter<Card, BoardDetailCardAdapter.BoardDetailCardViewHolder>(ListDiffUtil()) {
-        inner class BoardDetailCardViewHolder(private val binding: BoardDetailCardItemBinding) :
-            RecyclerView.ViewHolder(binding.root) {
+        inner class BoardDetailCardViewHolder(
+            private val binding: BoardDetailCardItemBinding
+        ): RecyclerView.ViewHolder(binding.root) {
+
             fun bind(card: Card) {
-                Glide.with(binding.root).load(card.cover).into(binding.boardDetailCardItemImage)
                 binding.card = card
+                if(card.startDate != 0L && card.dueDate != 0L){
+                    binding.boardDetailCardItemDueData.text = "${card.startDate.getDate()} - ${card.dueDate.getDate()}"
+                    binding.boardDetailCardItemDueData.show()
+                }else if(card.dueDate != 0L){
+                    binding.boardDetailCardItemDueData.text = card.dueDate.getDate()
+                    binding.boardDetailCardItemDueData.show()
+                }else{
+                    binding.boardDetailCardItemDueData.gone()
+                }
+                binding.root.setOnClickListener {
+                    onCardClicked?.invoke(card.listId, card.cardId)
+                }
+                binding.boardDetailCardItemAttachmentCount.gone()
+                binding.executePendingBindings()
             }
         }
 

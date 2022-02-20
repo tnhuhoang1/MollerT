@@ -6,9 +6,10 @@ import androidx.room.PrimaryKey
 @Entity
 class Card(
     @PrimaryKey
-    val cardId: Int,
+    val cardId: String,
     var cardName: String,
     var position: Int,
+    val listId: String,
     var createdAt: Long = System.currentTimeMillis(),
     var status: String = STATUS_ACTIVE,
     var cardDesc: String? = null,
