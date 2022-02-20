@@ -66,7 +66,17 @@
     <fragment
         android:id="@+id/boardDetailFragment"
         android:name="com.tnh.mollert.boardDetail.BoardDetailFragment"
-        android:label="BoardDetailFragment" />
+        android:label="BoardDetailFragment" >
+        <argument
+            android:name="workspaceId"
+            app:argType="string" />
+        <argument
+            android:name="boardId"
+            app:argType="string" />
+        <argument android:name="boardName"
+            app:argType="string"
+            />
+    </fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.tnh.mollert.home.HomeFragment"

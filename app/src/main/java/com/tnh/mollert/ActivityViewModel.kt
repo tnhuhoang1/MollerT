@@ -38,7 +38,28 @@ class ActivityViewModel @Inject constructor(
                     registerBoard(email, map)
                     registerInvitation(email, map)
                     registerInfoChanged(email, map)
+                    registerList(email, map)
                 }
+            }
+        }
+    }
+
+    private fun registerList(email: String, map: Map<String, Any>) {
+        (map["lists"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        firestore.simpleGetDocumentModel<RemoteList>(doc)?.let { remoteList ->
+                            remoteList.toModel()?.let { l->
+                                repository.listDao.insertOne(l)
+                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "lists", ref)
+                            }
+                        }
+                    }
+                }
+            }else{
+                // we don't need to fetch all lists at this time
             }
         }
     }

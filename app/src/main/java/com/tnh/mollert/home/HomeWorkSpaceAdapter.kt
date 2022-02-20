@@ -15,7 +15,7 @@ import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.tnhlibrary.logAny
 
 class HomeWorkSpaceAdapter(
-    private val onClick: (workspaceId: String, boardId: String) -> Unit
+    private val onClick: (workspaceId: String, boardId: String, boardName: String) -> Unit
 ) : ListAdapter<Workspace, HomeWorkSpaceAdapter.HomeWorkSpaceViewHolder>(HomeWorkSpaceDiffUtil()) {
     var onNewClicked: ((workspace: Workspace)-> Unit)? = null
     var onNewMemberClicked: ((workspace: Workspace)-> Unit)? = null
@@ -74,13 +74,13 @@ class HomeWorkSpaceAdapter(
     class WorkspaceBoardAdapter() :
         ListAdapter<Board, WorkspaceBoardAdapter.WorkspaceBoardViewHolder>(HomeWorkSpaceDiffUtil()) {
         var workspaceId: String = ""
-        var onClick: ((String, String) -> Unit)? = null
+        var onClick: ((String, String, boardName: String) -> Unit)? = null
 
         inner class WorkspaceBoardViewHolder(private var binding: WorkspaceBoardItemBinding) :
             RecyclerView.ViewHolder(binding.root) {
             fun bind(board: Board) {
                 binding.root.setOnClickListener {
-                    onClick?.invoke(workspaceId, board.boardId)
+                    onClick?.invoke(workspaceId, board.boardId, board.boardName)
                 }
                 binding.title = board.boardName
                 Glide.with(binding.root).load(board.background)

@@ -12,6 +12,7 @@ import com.tnh.mollert.databinding.BoardDetailListEndItemBinding
 import com.tnh.mollert.databinding.BoardDetailListItemBinding
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.logE
 
 class BoardDetailAdapter(
@@ -28,11 +29,14 @@ class BoardDetailAdapter(
             binding.boardDetailListItemRecyclerview.adapter = boardCardAdapter
             binding.boardDetailListItemToolbar.title = list.listName
         }
-        fun bind() {
+        fun bind(boardId: String) {
+            (binding.boardDetailCardItem.layoutParams as RecyclerView.LayoutParams).height = RecyclerView.LayoutParams.WRAP_CONTENT
             binding.boardDetailListItemRecyclerview.visibility = View.GONE
             binding.boardDetailListItemToolbar.visibility = View.GONE
             binding.boardDetailFragmentNewListButton.text = "Add New List"
-            binding.boardDetailFragmentNewListButton.setOnClickListener { addNewList }
+            binding.boardDetailFragmentNewListButton.setOnClickListener {
+                addNewList()
+            }
         }
     }
 
@@ -44,7 +48,7 @@ class BoardDetailAdapter(
 
     override fun onBindViewHolder(holder: BoardDetailViewHolder, position: Int) {
         if (getItemViewType(position) == 1) holder.bind(getItem(position))
-        else holder.bind()
+        else holder.bind(getItem(position).boardId)
     }
 
     override fun getItemViewType(position: Int): Int {

@@ -1,58 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/board_detail_card_item"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_margin="@dimen/dimen_8"
+    android:layout_height="match_parent"
+    android:layout_marginHorizontal="@dimen/dimen_8"
+    android:layout_marginVertical="@dimen/dimen_8"
+    app:cardElevation="@dimen/dimen_8"
     app:cardCornerRadius="@dimen/dimen_8">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/board_detail_list_item_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:menu="@menu/board_detail_item_menu"
+            app:title="@string/app_name" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/board_detail_list_item_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_marginStart="@dimen/dimen_8"
             android:layout_marginTop="@dimen/dimen_8"
             android:layout_marginEnd="@dimen/dimen_8"
             android:layout_marginBottom="@dimen/dimen_8"
-            app:menu="@menu/board_detail_item_menu"
-            app:title="@string/app_name" />
+            app:layout_constraintTop_toBottomOf="@id/board_detail_list_item_toolbar"
+            app:layout_constraintBottom_toTopOf="@id/board_detail_fragment_new_list_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <ScrollView
+        <com.google.android.material.textview.MaterialTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/board_detail_list_item_toolbar">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/board_detail_list_item_recyclerview"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginStart="@dimen/dimen_8"
-                    android:layout_marginTop="@dimen/dimen_8"
-                    android:layout_marginEnd="@dimen/dimen_8"
-                    android:layout_marginBottom="@dimen/dimen_8"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/board_detail_fragment_new_list_button"
-                    style="@style/Theme.MollerT.ExpandedOutlineButton"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/board_detail_list_item_recyclerview"
-                    android:text="@string/add_new_card"
-                    android:textSize="18sp" />
-            </RelativeLayout>
-        </ScrollView>
-    </RelativeLayout>
-
+            android:paddingHorizontal="@dimen/dimen_16"
+            android:paddingVertical="@dimen/dimen_12"
+            android:drawableStart="@drawable/vd_add_square"
+            android:drawablePadding="@dimen/dimen_8"
+            android:text="Add New Card"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:elevation="@dimen/dimen_16"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:fontFamily="@font/poppins"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:id="@+id/board_detail_fragment_new_list_button"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
