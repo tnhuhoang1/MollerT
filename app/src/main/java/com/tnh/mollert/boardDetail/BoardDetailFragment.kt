@@ -2,6 +2,7 @@ package com.tnh.mollert.boardDetail
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -10,11 +11,15 @@ import com.tnh.mollert.R
 import com.tnh.mollert.databinding.BoardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.datasource.local.model.Card
+import com.tnh.mollert.utils.bindImageUriOrHide
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
+import com.tnh.tnhlibrary.liveData.utils.eventObserve
+import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.view.show
+import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -29,9 +34,16 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         BoardPopupMenu(requireContext(), binding.boardDetailFragmentToolbar.twoActionToolbarEndIcon)
     }
 
+    private val imageLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
+        uri?.let {
+            viewModel.changeBoardBackground(args.workspaceId, args.boardId, requireContext().contentResolver, it)
+        }
+    }
+
     override fun doOnCreateView() {
         setupToolbar()
-        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = viewLifecycleOwner
         viewModel.getAllList(args.boardId)
     }
 
@@ -48,6 +60,17 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             twoActionToolbarEndIcon.setOnClickListener {
                 showOptionMenu()
             }
+        }
+        popupMenu.setOnMenuItemClickListener { menuItem->
+            when(menuItem.itemId){
+                R.id.board_detail_menu_desc->{
+
+                }
+                R.id.board_detail_menu_background->{
+                    imageLauncher.launch(arrayOf("image/*"))
+                }
+            }
+            true
         }
     }
 
@@ -121,6 +144,12 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                     boardDetailAdapter.submitList(viewModel.getConcatList(boardWithLists.lists))
                 }
             }
+        }
+        safeObserve(viewModel.boardWithLists){
+            binding.boardDetailFragmentBackground.bindImageUriOrHide(it.board.background)
+        }
+        eventObserve(viewModel.message){
+            binding.root.showSnackBar(it)
         }
     }
 

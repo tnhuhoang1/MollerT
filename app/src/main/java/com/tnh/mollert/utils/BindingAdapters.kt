@@ -1,9 +1,11 @@
 package com.tnh.mollert.utils
 
+import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.tnh.mollert.R
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 
@@ -26,3 +28,5 @@ fun ImageView.bindImageUriOrHide(uri: String?){
         gone()
     }
 }
+
+

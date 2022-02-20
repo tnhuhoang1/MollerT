@@ -1,8 +1,11 @@
 package com.tnh.mollert.boardDetail
 
+import android.content.ContentResolver
+import android.net.Uri
 import androidx.lifecycle.*
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.compound.BoardWithLists
+import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.datasource.local.model.Member
@@ -11,6 +14,7 @@ import com.tnh.mollert.datasource.remote.model.RemoteCard
 import com.tnh.mollert.datasource.remote.model.RemoteList
 import com.tnh.mollert.datasource.remote.model.RemoteMemberRef
 import com.tnh.mollert.utils.FirestoreHelper
+import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
@@ -22,7 +26,8 @@ import javax.inject.Inject
 @HiltViewModel
 class BoardDetailFragmentViewModel @Inject constructor(
     private val firestore: FirestoreHelper,
-    private val repository: AppRepository
+    private val repository: AppRepository,
+    private val storage: StorageHelper
 ): BaseViewModel() {
 
     var boardWithLists: LiveData<BoardWithLists> = MutableLiveData(null)
@@ -37,6 +42,33 @@ class BoardDetailFragmentViewModel @Inject constructor(
             "",
             "",
             list.size)
+    }
+
+    val boardBackground = Transformations.map(boardWithLists){
+        it?.board?.background ?: ""
+    }
+
+    fun changeBoardBackground(workspaceId: String, boardId: String, contentResolver: ContentResolver, uri: Uri){
+        val boardDoc = firestore.getBoardDoc(workspaceId, boardId)
+        viewModelScope.launch {
+            storage.uploadBackgroundImage(workspaceId, boardId, contentResolver, uri)?.let { url->
+                if(firestore.mergeDocument(
+                    boardDoc,
+                    mapOf(
+                        "boardBackground" to url.toString()
+                    )
+                )){
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            val tracking = firestore.getTrackingDoc(mem.email)
+                            firestore.insertToArrayField(tracking, "boards", boardDoc.path)
+                            postMessage("Change background successfully")
+                        }
+                    }
+                }
+            }
+        }
+
     }
 
     fun createNewList(workspaceId: String, boardId: String, listName: String){
