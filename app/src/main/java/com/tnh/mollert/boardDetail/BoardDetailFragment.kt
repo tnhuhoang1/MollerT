@@ -1,7 +1,9 @@
 package com.tnh.mollert.boardDetail
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
@@ -28,6 +30,10 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     val viewModel by viewModels<BoardDetailFragmentViewModel>()
     private lateinit var boardDetailAdapter: BoardDetailAdapter
     private val args: BoardDetailFragmentArgs by navArgs()
+    private var viewGroup: ViewGroup? = null
+    private val descriptionDialog by lazy {
+        DescriptionDialog(requireContext(), viewGroup)
+    }
     @Inject lateinit var prefManager: PrefManager
 
     private val popupMenu by lazy {
@@ -38,6 +44,15 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         uri?.let {
             viewModel.changeBoardBackground(args.workspaceId, args.boardId, requireContext().contentResolver, it)
         }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        viewGroup = container
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun doOnCreateView() {
@@ -64,7 +79,12 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         popupMenu.setOnMenuItemClickListener { menuItem->
             when(menuItem.itemId){
                 R.id.board_detail_menu_desc->{
-
+                    viewModel.boardWithLists.value?.let { boardWithLists ->
+                        descriptionDialog.onCreateClick = { content->
+                            viewModel.changeDescription(args.workspaceId, args.boardId, content)
+                        }
+                        descriptionDialog.showFullscreen(boardWithLists.board.boardDesc)
+                    }
                 }
                 R.id.board_detail_menu_background->{
                     imageLauncher.launch(arrayOf("image/*"))
@@ -152,5 +172,4 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             binding.root.showSnackBar(it)
         }
     }
-
 }

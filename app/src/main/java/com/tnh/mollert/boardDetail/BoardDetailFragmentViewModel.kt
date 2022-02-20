@@ -68,7 +68,26 @@ class BoardDetailFragmentViewModel @Inject constructor(
                 }
             }
         }
+    }
 
+    fun changeDescription(workspaceId: String, boardId: String, content: String){
+        val boardDoc = firestore.getBoardDoc(workspaceId, boardId)
+        viewModelScope.launch {
+            if(firestore.mergeDocument(
+                    boardDoc,
+                    mapOf(
+                        "boardDesc" to content
+                    )
+                )){
+                repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                    listMember.forEach { mem->
+                        val tracking = firestore.getTrackingDoc(mem.email)
+                        firestore.insertToArrayField(tracking, "boards", boardDoc.path)
+                        postMessage("Change description successfully")
+                    }
+                }
+            }
+        }
     }
 
     fun createNewList(workspaceId: String, boardId: String, listName: String){
