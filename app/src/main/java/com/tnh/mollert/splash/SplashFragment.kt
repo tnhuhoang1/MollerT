@@ -62,13 +62,6 @@ class SplashFragment : DataBindingFragment<SplashFragmentBinding>(R.layout.splas
             ),
             requireActivity()
         )
-        binding.splashFragmentViewPager.adapter = splashAdapter
-
-
-        TabLayoutMediator(binding.splashFragmentTab, binding.splashFragmentViewPager
-        ) { tab, position ->
-
-        }.attach()
     }
 
     private fun navigateToLogin(){

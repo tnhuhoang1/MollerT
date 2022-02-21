@@ -87,8 +87,8 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
 
     }
 
-    private fun navigateToBoardDetail(boardId: String) {
-        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBoardDetailFragment())
+    private fun navigateToBoardDetail(workspaceId: String, boardId: String, boardName: String) {
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToBoardDetailFragment(workspaceId, boardId, boardName))
     }
 
     private fun navigateToAddFragment(){
@@ -148,8 +148,20 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         }.show()
     }
 
-    private val onClick: (String) -> Unit = {
-        navigateToBoardDetail(it)
+    private val onClick: (workspaceId: String, boardId: String, boardName: String) -> Unit = { workspaceId, boardId, boardName->
+        lifecycleScope.launchWhenResumed {
+            if(viewModel.isJoinedThisBoard(boardId)){
+                navigateToBoardDetail(workspaceId, boardId, boardName)
+            }else{
+                AlertDialog.Builder(requireContext()).apply {
+                    setTitle("Join this board?")
+                    setPositiveButton("Join"){_,_->
+                        viewModel.joinBoard(workspaceId, boardId)
+                    }
+                }.show()
+            }
+        }
+
     }
 
 }

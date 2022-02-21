@@ -14,4 +14,7 @@ interface BoardDao: BaseDao<Board> {
 
     @Query("select count(boardId) from board limit 1")
     fun countOneFlow(): Flow<Int>
+
+    @Query("select * from board where boardId = :boardId")
+    fun getBoardById(boardId: String): Flow<Board>
 }

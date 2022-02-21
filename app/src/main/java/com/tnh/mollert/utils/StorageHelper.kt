@@ -4,14 +4,12 @@ import android.content.ContentResolver
 import android.net.Uri
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.tnh.tnhlibrary.logVar
 import com.tnh.tnhlibrary.trace
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import java.io.IOException
 import java.io.InputStream
-import kotlin.coroutines.resume
 
 @Suppress("BlockingMethodInNonBlockingContext")
 class StorageHelper private constructor(){
@@ -27,8 +25,8 @@ class StorageHelper private constructor(){
         return getAttachmentRoot(email, workspaceId, boardId).child(cardId)
     }
 
-    fun getUploadBackgroundLocation(email: String, workspaceId: String): StorageReference{
-        return storage.getReference("$BACKGROUND_ROOT/${email}_${workspaceId}")
+    fun getUploadBackgroundLocation(workspaceId: String, boardId: String): StorageReference{
+        return storage.getReference("$BACKGROUND_ROOT/${workspaceId}_${boardId}")
     }
 
     fun getCustomRef(path: String): StorageReference{
@@ -118,14 +116,13 @@ class StorageHelper private constructor(){
     }
 
     suspend fun uploadBackgroundImage(
-        email: String,
         workspaceId: String,
         boardId: String,
         contentResolver: ContentResolver,
         uri: Uri
     ): Uri?{
         return uploadImage(
-            getUploadBackgroundLocation(email, workspaceId),
+            getUploadBackgroundLocation(workspaceId, boardId),
             contentResolver,
             uri,
             boardId

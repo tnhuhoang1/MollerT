@@ -2,10 +2,8 @@ package com.tnh.mollert.utils
 
 import com.google.firebase.firestore.*
 import com.tnh.mollert.datasource.remote.model.RemoteModel
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.trace
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 
 class FirestoreHelper private constructor(){
     private val store = FirebaseFirestore.getInstance()
@@ -248,6 +246,14 @@ class FirestoreHelper private constructor(){
 
     fun getTrackingDoc(email: String): DocumentReference{
         return getDocRef("$TRACKING_ROOT_COL/$email")
+    }
+
+    fun getListDoc(workspaceId: String, boardId: String, listId: String): DocumentReference{
+        return getBoardDoc(workspaceId, boardId).collection("lists").document(listId)
+    }
+
+    fun getCardDoc(workspaceId: String, boardId: String, listId: String, cardId: String): DocumentReference{
+        return getListDoc(workspaceId, boardId, listId).collection("cards").document(cardId)
     }
 
     fun getBoardDoc(workspaceId: String, boardId: String): DocumentReference{

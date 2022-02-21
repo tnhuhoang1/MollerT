@@ -62,9 +62,9 @@ class HomeViewModel @Inject constructor(
                     cancel()
                 }
                 firestore.simpleGetDocumentModel<RemoteMember>(firestore.getMemberDoc(otherEmail))?.toMember()?.let { m ->
-                    val id = "invitation_${workspace.workspaceId}"
+                    val id = "invitation_${workspace.workspaceId}_"
                     val remoteActivity = RemoteActivity(
-                        id,
+                        id + System.currentTimeMillis(),
                         email,
                         null,
                         null,
@@ -80,6 +80,7 @@ class HomeViewModel @Inject constructor(
                         m.name
                     )
                     sendNotification(email, remoteActivity)
+                    remoteActivity.activityId = id + System.currentTimeMillis()
                     remoteActivity.actor = otherEmail
                     remoteActivity.activityType = Activity.TYPE_INVITATION
                     remoteActivity.message = MessageMaker.getWorkspaceInvitationReceiverMessage(
@@ -147,7 +148,40 @@ class HomeViewModel @Inject constructor(
                 }
             }
         }
+    }
 
+    suspend fun isJoinedThisBoard(boardId: String): Boolean{
+        repository.appDao.getBoardWithMembers(boardId)?.let { boardWithMembers->
+            UserWrapper.getInstance()?.currentUserEmail?.let { email->
+                boardWithMembers.members.forEach { member->
+                    if(member.email == email){
+                        return true
+                    }
+                }
+            }
+        }
+        return false
+    }
+
+    fun joinBoard(workspaceId: String, boardId: String){
+        UserWrapper.getInstance()?.currentUserEmail?.let { email->
+            val boardRef = firestore.getBoardDoc(workspaceId, boardId)
+            viewModelScope.launch {
+                if(firestore.insertToArrayField(
+                    boardRef,
+                    "members",
+                    RemoteMemberRef(email, firestore.getMemberDoc(email).path, RemoteMemberRef.ROLE_MEMBER)
+                )){
+                    if(firestore.insertToArrayField(
+                            firestore.getTrackingDoc(email),
+                            "boards",
+                            boardRef.path
+                        )){
+                        postMessage("Join board successfully")
+                    }
+                }
+            }
+        }
     }
 
 }

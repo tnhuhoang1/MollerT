@@ -7,7 +7,7 @@ data class RemoteWorkspace(
     val name: String? = null,
     val type: String? = null,
     val desc: String? = null,
-    val members: List<RemoteMemberRef>? = null
+    val members: List<RemoteMemberRef> = listOf()
 ): RemoteModel {
     fun toModel(): Workspace?{
         return convertTo {
