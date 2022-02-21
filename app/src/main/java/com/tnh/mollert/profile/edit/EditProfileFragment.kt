@@ -10,16 +10,22 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.google.firebase.auth.EmailAuthCredential
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.EditProfileFragmentBinding
 import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.profile.ProfileViewModel
+import com.tnh.mollert.utils.LoadingModal
 import com.tnh.mollert.utils.ValidationHelper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.logAny
+import com.tnh.tnhlibrary.logVar
+import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,14 +61,14 @@ class EditProfileFragment :
                     this.onChangeImageClicked()
                 }
 
-                ProfileViewModel.EVENT_SUCCESS->{
+                ProfileViewModel.EVENT_SUCCESS -> {
                     navigateToProfile()
                 }
 
             }
         }
 
-        eventObserve(viewModel.message){
+        eventObserve(viewModel.message) {
             binding.root.showSnackBar(it)
         }
 
@@ -79,8 +85,17 @@ class EditProfileFragment :
 
         val bio = binding.editProfileFragmentBio.text.toString()
         val name = binding.editProfileFragmentName.text.toString()
+        val newPassword = binding.editProfileFragmentPassword.text.toString()
+        val oldPassword = binding.editProfileFragmentOldPassword.text.toString()
 
+        // Change password
+        if (newPassword.isNotEmpty() && oldPassword.isNotEmpty()) {
+            viewModel.changePassword(oldPassword, newPassword)
+        }
+
+        // Save user info
         viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
+
         this.navigateToProfile()
     }
 
