@@ -9,37 +9,58 @@ import androidx.recyclerview.widget.RecyclerView
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.BoardDetailCardItemBinding
 import com.tnh.mollert.databinding.BoardDetailListItemBinding
+import com.tnh.mollert.datasource.local.dao.CardDao
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.utils.getDate
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 
 class BoardDetailAdapter(
+    private val cardDao: CardDao,
     private val addNewList:() -> Unit
 ) : ListAdapter<List, BoardDetailAdapter.BoardDetailViewHolder>(ListDiffUtil()) {
-    var listCards: kotlin.collections.List<kotlin.collections.List<Card>> = listOf()
     var onNewCardClicked: ((listId: String) -> Unit)? = null
     var onDeleteListClicked: ((listId: String) -> Unit)? = null
     var onCardClicked: ((l: String, c: String) -> Unit)? = null
+    private val scope = CoroutineScope(Dispatchers.IO)
 
-    fun resubmitCardList(viewHolder: BoardDetailViewHolder, position: Int){
-        listCards.getOrNull(position)?.let {
-            viewHolder.boardCardAdapter.submitList(it)
-        }
-    }
 
     inner class BoardDetailViewHolder(
         private val binding: BoardDetailListItemBinding,
     ): RecyclerView.ViewHolder(binding.root) {
-        val boardCardAdapter = BoardDetailCardAdapter()
+        private val boardCardAdapter = BoardDetailCardAdapter()
+        private var dataFlow: Flow<kotlin.collections.List<Card>>? = null
+        private var job: Job? = null
 
-
-        fun bind(list: List, position: Int) {
-            binding.boardDetailListItemRecyclerview.adapter = boardCardAdapter
-            listCards.getOrNull(position)?.let {
-                boardCardAdapter.submitList(it)
+        fun beginObserveData(){
+            job = scope.launch {
+                dataFlow?.collectLatest {
+                    withContext(Dispatchers.Main){
+                        submitCardList(it)
+                    }
+                }
             }
+        }
+
+        private fun submitCardList(list: kotlin.collections.List<Card>){
+            binding.root.layoutParams.height = RecyclerView.LayoutParams.MATCH_PARENT
+            boardCardAdapter.submitList(list)
+        }
+
+        fun pauseObserveData(){
+            job?.cancel()
+            job = null
+        }
+
+        fun bind(list: List) {
+            dataFlow = cardDao.getCardsWithListId(list.listId)
+            beginObserveData()
+            binding.boardDetailListItemRecyclerview.adapter = boardCardAdapter
             boardCardAdapter.onCardClicked = onCardClicked
             binding.boardDetailListItemToolbar.title = list.listName
             binding.boardDetailFragmentNewListButton.setOnClickListener {
@@ -57,6 +78,8 @@ class BoardDetailAdapter(
                 true
             }
         }
+
+
         fun bind() {
             (binding.boardDetailCardItem.layoutParams as RecyclerView.LayoutParams).height = RecyclerView.LayoutParams.WRAP_CONTENT
             binding.boardDetailListItemRecyclerview.visibility = View.GONE
@@ -68,6 +91,14 @@ class BoardDetailAdapter(
         }
     }
 
+//    override fun onViewAttachedToWindow(holder: BoardDetailViewHolder) {
+//        holder.beginObserveData()
+//    }
+//
+//    override fun onViewDetachedFromWindow(holder: BoardDetailViewHolder) {
+//        holder.pauseObserveData()
+//    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoardDetailViewHolder {
         return BoardDetailViewHolder(
             BoardDetailListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -75,7 +106,7 @@ class BoardDetailAdapter(
     }
 
     override fun onBindViewHolder(holder: BoardDetailViewHolder, position: Int) {
-        if (getItemViewType(position) == 1) holder.bind(getItem(position), position)
+        if (getItemViewType(position) == 1) holder.bind(getItem(position))
         else holder.bind()
     }
 

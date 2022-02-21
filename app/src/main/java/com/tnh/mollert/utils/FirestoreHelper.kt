@@ -2,11 +2,8 @@ package com.tnh.mollert.utils
 
 import com.google.firebase.firestore.*
 import com.tnh.mollert.datasource.remote.model.RemoteModel
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.trace
 import kotlinx.coroutines.suspendCancellableCoroutine
-import org.w3c.dom.Document
-import kotlin.coroutines.resume
 
 class FirestoreHelper private constructor(){
     private val store = FirebaseFirestore.getInstance()

@@ -12,12 +12,11 @@ import androidx.navigation.fragment.navArgs
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.BoardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
-import com.tnh.mollert.datasource.local.model.Card
+import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.utils.bindImageUriOrHide
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.view.show
@@ -102,17 +101,22 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        boardDetailAdapter = BoardDetailAdapter (){
+        boardDetailAdapter = BoardDetailAdapter (AppRepository.getInstance(requireContext()).cardDao){
             showCreateListDialog()
         }
         boardDetailAdapter.onNewCardClicked = { listId ->
             showCreateCardDialog(listId)
         }
         boardDetailAdapter.onCardClicked = {listId, cardId ->
-            listId.logAny()
+            navigateToCard(args.workspaceId, args.boardId, listId, cardId)
         }
+
         binding.boardDetailFragmentRecyclerview.adapter = boardDetailAdapter
         setupObserver()
+    }
+
+    private fun navigateToCard(workspaceId: String, boardId: String, listId: String, cardId: String){
+        findNavController().navigate(BoardDetailFragmentDirections.actionBoardDetailFragmentToCardDetailFragment(workspaceId, boardId, listId, cardId))
     }
 
     private fun showAlertDialog(title: String, builder: (AlertDialog.Builder, CreateBoardLayoutBinding)-> Unit){

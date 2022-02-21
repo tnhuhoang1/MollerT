@@ -39,6 +39,26 @@ class ActivityViewModel @Inject constructor(
                     registerInvitation(email, map)
                     registerInfoChanged(email, map)
                     registerList(email, map)
+                    registerCard(email, map)
+                }
+            }
+        }
+    }
+
+    private fun registerCard(email: String, map: Map<String, Any>) {
+        (map["cards"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Loading $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        firestore.simpleGetDocumentModel<RemoteCard>(doc)?.let { remoteCard ->
+                            remoteCard.toModel()?.let { card->
+                                repository.cardDao.insertOne(card)
+                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "cards", ref)
+                            }
+                        }
+                    }
                 }
             }
         }

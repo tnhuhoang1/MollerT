@@ -157,29 +157,6 @@ class BoardDetailFragmentViewModel @Inject constructor(
     }
 
 
-
-    fun getListTest() : ArrayList<List> {
-        val a = arrayListOf<List>()
-//        for (i in 1..5) {
-//            a.add(
-//                List(
-//                    "list $i",
-//                    "name $i",
-//                    "board id $i",
-//                    "good",
-//                    5
-//                )
-//            )
-//        }
-        a.add(
-            List("null",
-                "",
-                "",
-                "",
-                0))
-        return a
-    }
-
     fun getCardTest() : ArrayList<Card> {
         val a = arrayListOf<Card>()
         for (i in 1..10) {
