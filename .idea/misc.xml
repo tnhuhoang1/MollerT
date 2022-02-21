@@ -60,41 +60,26 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/bottom_nav.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/top_app_bar.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.121" />
-        <entry key="app/src/main/res/drawable/forgot_password_image.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/ic_outline.xml" value="0.2828125" />
-        <entry key="app/src/main/res/drawable/ic_round_chevron_right_24.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/outline_add_24.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/outline_search_24.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/splash_state_dot.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/splash_state_dot_default.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/splash_state_dot_selected.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_arrow_down.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_calendar.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_checked.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_first_line.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_invisible.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_new_workspace.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_note_text.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_notification.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_tag.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_tick.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_tick_white.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_user.xml" value="0.2984375" />
-        <entry key="app/src/main/res/drawable/vd_user_edit.xml" value="0.2984375" />
-        <entry key="app/src/main/res/layout/board_detail_fragment.xml" value="0.2604166666666667" />
-        <entry key="app/src/main/res/layout/card_detail_fragment.xml" value="0.19114583333333332" />
-        <entry key="app/src/main/res/layout/edit_profile_fragment.xml" value="0.26856884057971014" />
-        <entry key="app/src/main/res/layout/forgot_password_fragment.xml" value="0.1084" />
-        <entry key="app/src/main/res/layout/home_fragment.xml" value="0.2726449275362319" />
-        <entry key="app/src/main/res/layout/login_fragment.xml" value="0.12708333333333333" />
-        <entry key="app/src/main/res/layout/notification_fragment.xml" value="0.2125" />
-        <entry key="app/src/main/res/layout/profile_fragment.xml" value="0.2726449275362319" />
-        <entry key="app/src/main/res/layout/register_fragment.xml" value="0.21770833333333334" />
-        <entry key="app/src/main/res/layout/splash_fragment.xml" value="0.12708333333333333" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/drawable/corner_img_shape.xml" value="0.271" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/drawable/ic_baseline_chevron_left_24.xml" value="0.1995" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1995" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/drawable/outline_add_24.xml" value="0.238" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/drawable/outline_arrow_forward_ios_24.xml" value="0.271" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/drawable/outline_edit_note_20.xml" value="0.238" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/drawable/splash_state_dot.xml" value="0.1995" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/drawable/splash_state_dot_default.xml" value="0.1995" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/layout/activity_main.xml" value="0.19166666666666668" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/layout/add_label.xml" value="0.371875" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/layout/board_detail_fragment.xml" value="0.33" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/layout/card_detail_fragment.xml" value="0.33" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/layout/comment_item.xml" value="0.5" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/layout/notification_item.xml" value="0.2434402332361516" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/layout/splash_fragment.xml" value="0.19166666666666668" />
+        <entry key="..\:/dowloadappandfile/filehoc/phán triển dự án phần mềm/code folder/MollerT/app/src/main/res/menu/menu.xml" value="0.19166666666666668" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_15_PREVIEW" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
