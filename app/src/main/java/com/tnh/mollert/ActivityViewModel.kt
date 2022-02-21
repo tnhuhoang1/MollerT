@@ -1,10 +1,8 @@
 package com.tnh.mollert
 
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.tnh.mollert.datasource.AppRepository
-import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.*
@@ -22,12 +20,11 @@ class ActivityViewModel @Inject constructor(
     private val repository: AppRepository,
     private val firestore: FirestoreHelper
 ): BaseViewModel() {
-    private var workspaceListener: ListenerRegistration? = null
-    private var boardListener: ListenerRegistration? = null
+    private var eventChangedListener: ListenerRegistration? = null
 
     fun registerRemoteEvent(){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
-            workspaceListener = firestore.listenDocument(
+            eventChangedListener = firestore.listenDocument(
                 firestore.getTrackingDoc(email),
                 {
                     trace(it)
@@ -89,7 +86,8 @@ class ActivityViewModel @Inject constructor(
             if(listRef.isNotEmpty()){
                 listRef.forEach {
                     viewModelScope.launch {
-                        UserWrapper.getInstance()?.fetchMember(email)?.let { _->
+                        UserWrapper.getInstance()?.fetchMember(email)?.let { member ->
+                            "Updated user info: $member".logAny()
                             firestore.removeFromArrayField(firestore.getTrackingDoc(email), "info", it)
                         }
                     }
@@ -260,8 +258,8 @@ class ActivityViewModel @Inject constructor(
     }
 
     private fun unregisterRemoteEvent(){
-        workspaceListener?.remove()
-        workspaceListener = null
+        eventChangedListener?.remove()
+        eventChangedListener = null
     }
 
     override fun onCleared() {

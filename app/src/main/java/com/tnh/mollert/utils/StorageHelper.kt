@@ -29,6 +29,10 @@ class StorageHelper private constructor(){
         return storage.getReference("$BACKGROUND_ROOT/${workspaceId}_${boardId}")
     }
 
+    fun getAvatarLocation(email: String): StorageReference{
+        return storage.getReference("$AVATAR_ROOT/$email")
+    }
+
     fun getCustomRef(path: String): StorageReference{
         return storage.getReference(path)
     }
@@ -144,5 +148,6 @@ class StorageHelper private constructor(){
 
         const val ATTACHMENT_ROOT = "attachments"
         const val BACKGROUND_ROOT = "backgrounds"
+        const val AVATAR_ROOT = "avatars"
     }
 }

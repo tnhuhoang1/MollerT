@@ -3,18 +3,11 @@ package com.tnh.mollert
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.databinding.ActivityMainBinding
 import com.tnh.mollert.datasource.AppRepository
-import com.tnh.mollert.datasource.local.model.Member
-import com.tnh.mollert.datasource.remote.model.RemoteMember
-import com.tnh.mollert.datasource.remote.model.toMember
-import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         setupBottomNav()
         userWrapper.listenForUser(
             {
-                hidBottomNav()
+                hideBottomNav()
             }
         ) {
             viewModel.registerRemoteEvent()
@@ -55,7 +48,7 @@ class MainActivity : AppCompatActivity() {
         binding.activityMainBottomNav.show()
     }
 
-    fun hidBottomNav(){
+    fun hideBottomNav(){
         binding.activityMainBottomNav.gone()
     }
 

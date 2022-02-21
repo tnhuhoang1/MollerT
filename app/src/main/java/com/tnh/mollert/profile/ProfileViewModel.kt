@@ -1,6 +1,7 @@
 package com.tnh.mollert.profile
 
 import android.content.ContentResolver
+import androidx.core.net.toUri
 import androidx.lifecycle.*
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -11,6 +12,7 @@ import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -47,9 +49,18 @@ class ProfileViewModel @Inject constructor(
     fun saveMemberInfoToFirestore(name: String, bio: String, contentResolver: ContentResolver) {
         if(email.isNotEmpty()){
 
-            val remoteMember =  RemoteMember(email, name, "", bio).info()
-
             viewModelScope.launch {
+                val avatarUri = editAvatar.value ?: ""
+                var avatar = ""
+                if(avatarUri.isNotEmpty()){
+                    avatar = storage.uploadImage(
+                        storage.getAvatarLocation(email),
+                        contentResolver,
+                        avatarUri.toUri()
+                    )?.toString() ?: ""
+                }
+                val remoteMember =  RemoteMember(email, name, avatar, bio).info()
+
                 val doc = firestore.getMemberDoc(email)
                 if (firestore.mergeDocument(doc, remoteMember)) {
                     // succeeded
@@ -85,7 +96,7 @@ class ProfileViewModel @Inject constructor(
                     }
                     .addOnFailureListener { e ->
                         trace(e)
-                        postMessage("Old password invalied, please try again")
+                        postMessage("Old password invalid, please try again")
                         dispatchClickEvent(CHANGE_PASSWORD_FAILURE)
                     }
             }

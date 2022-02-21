@@ -113,11 +113,11 @@ object MessageMaker{
     }
 
     fun getWorkspaceInvitationSenderMessage(workspaceId: String, workspaceName: String, otherEmail: String, otherName: String): String{
-        return "invited ${getEncodedMember(otherEmail, otherName)} to ${getEncodedWorkspace(workspaceId, workspaceName)}"
+        return "invited ${getEncodedMember(otherEmail, otherName)} to ${getEncodedWorkspace(workspaceId, workspaceName)} workspace"
     }
 
     fun getWorkspaceInvitationReceiverMessage(workspaceId: String, workspaceName: String, otherEmail: String, otherName: String): String{
-        return "is invited by ${getEncodedMember(otherEmail, otherName)} to ${getEncodedWorkspace(workspaceId, workspaceName)}"
+        return "is invited by ${getEncodedMember(otherEmail, otherName)} to ${getEncodedWorkspace(workspaceId, workspaceName)} workspace"
     }
 
     fun getEncoded(header: String, ref: String, content: String): String{
