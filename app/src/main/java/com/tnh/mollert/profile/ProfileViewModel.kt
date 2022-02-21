@@ -2,6 +2,8 @@ package com.tnh.mollert.profile
 
 import android.content.ContentResolver
 import androidx.lifecycle.*
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.remote.model.RemoteMember
@@ -49,20 +51,48 @@ class ProfileViewModel @Inject constructor(
 
             viewModelScope.launch {
                 val doc = firestore.getMemberDoc(email)
-                if(firestore.mergeDocument(doc, remoteMember)){
+                if (firestore.mergeDocument(doc, remoteMember)) {
                     // succeeded
-                    if(notifyInfoChanged(email)){
+                    if (notifyInfoChanged(email)) {
                         postMessage("Edit profile successfully")
                         dispatchClickEvent(EVENT_SUCCESS)
                     }
-                }else{
+                } else {
                     // failed
                 }
             }
         }
     }
 
-    private suspend fun notifyInfoChanged(email: String): Boolean{
+    fun changePassword(oldPassword: String, newPassword: String) {
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        val credential = EmailAuthProvider.getCredential(memberEmail.value!!, oldPassword)
+
+        viewModelScope.launch {
+            firebaseUser?.let { user ->
+                user.reauthenticate(credential)
+                    .addOnSuccessListener {
+                        firebaseUser.updatePassword(newPassword)
+                            .addOnSuccessListener {
+                                dispatchClickEvent(CHANGE_PASSWORD_SUCCESS)
+                                postMessage("Change password successfully")
+                            }
+                            .addOnFailureListener { error ->
+                                trace(error)
+                                dispatchClickEvent(CHANGE_PASSWORD_FAILURE)
+                                postMessage("Change password failure")
+                            }
+                    }
+                    .addOnFailureListener { e ->
+                        trace(e)
+                        postMessage("Old password invalied, please try again")
+                        dispatchClickEvent(CHANGE_PASSWORD_FAILURE)
+                    }
+            }
+        }
+    }
+
+    private suspend fun notifyInfoChanged(email: String): Boolean {
         return firestore.insertToArrayField(firestore.getTrackingDoc(email), "info", "info")
     }
 
@@ -71,5 +101,7 @@ class ProfileViewModel @Inject constructor(
         const val EVENT_LOGOUT_CLICKED = "logout_clicked"
         const val EVENT_PROFILE_IMAGE_CLICKED = "profile_image_clicked"
         const val EVENT_SUCCESS = "success"
+        const val CHANGE_PASSWORD_SUCCESS = "change_pass_success"
+        const val CHANGE_PASSWORD_FAILURE = "change_pass_failure"
     }
 }
