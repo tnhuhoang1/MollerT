@@ -13,16 +13,26 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/board_detail_list_item_toolbar"
+        <com.google.android.material.appbar.AppBarLayout
+            android:elevation="@dimen/dimen_16"
             android:layout_width="match_parent"
+            android:id="@+id/board_detail_card_item_appbar"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:menu="@menu/board_detail_item_menu"
-            app:title="@string/app_name" />
+            >
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/board_detail_list_item_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:menu="@menu/board_detail_item_menu"
+                app:title="@string/app_name" />
+        </com.google.android.material.appbar.AppBarLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/board_detail_list_item_recyclerview"
@@ -32,7 +42,7 @@
             android:layout_marginTop="@dimen/dimen_8"
             android:layout_marginEnd="@dimen/dimen_8"
             android:layout_marginBottom="@dimen/dimen_8"
-            app:layout_constraintTop_toBottomOf="@id/board_detail_list_item_toolbar"
+            app:layout_constraintTop_toBottomOf="@id/board_detail_card_item_appbar"
             app:layout_constraintBottom_toTopOf="@id/board_detail_fragment_new_list_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

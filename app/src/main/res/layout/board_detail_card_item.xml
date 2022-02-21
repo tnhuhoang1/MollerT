@@ -14,15 +14,17 @@
     <androidx.cardview.widget.CardView
         android:focusable="true"
         android:clickable="true"
+        app:cardElevation="@dimen/dimen_8"
         android:foreground="?selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="@dimen/dimen_8"
-        android:layout_margin="@dimen/dimen_8">
+        android:layout_margin="@dimen/dimen_4">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:padding="@dimen/dimen_4"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
             <androidx.cardview.widget.CardView
                 app:layout_constraintDimensionRatio="4:3"
                 app:layout_constraintTop_toTopOf="parent"
@@ -31,16 +33,16 @@
                 android:id="@+id/board_detail_card_item_cover"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                app:cardElevation="0dp"
                 android:layout_margin="@dimen/dimen_8"
                 app:cardCornerRadius="@dimen/dimen_8">
                 <ImageView
                     android:id="@+id/board_detail_card_item_image"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:scaleType="fitXY"
                     app:bindImageUriOrHide="@{card.cover}"
                     android:contentDescription="@string/app_name" />
-
             </androidx.cardview.widget.CardView>
 
             <com.google.android.material.textview.MaterialTextView
@@ -49,8 +51,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="@dimen/dimen_8"
-                android:layout_marginTop="@dimen/dimen_8"
                 android:layout_marginEnd="@dimen/dimen_8"
+                android:layout_marginTop="@dimen/dimen_4"
                 android:layout_marginBottom="@dimen/dimen_8"
                 app:fontFamily="@font/poppins"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
@@ -59,9 +61,10 @@
                 android:layout_toStartOf="@+id/board_detail_card_item_member"
                 android:fontFamily="@font/poppins"
                 android:text="@{card.cardName}"
-                android:textSize="@dimen/text_size_14" />
+                android:textSize="@dimen/text_size_16" />
 
             <ImageView
+                android:visibility="gone"
                 android:id="@+id/board_detail_card_item_member"
                 android:layout_width="@dimen/dimen_64"
                 android:layout_height="@dimen/dimen_64"
@@ -80,6 +83,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 android:drawablePadding="@dimen/dimen_4"
                 android:layout_marginHorizontal="@dimen/dimen_8"
+                android:padding="@dimen/dimen_8"
                 android:drawableStart="@drawable/vd_paper_clip"
                 />
 
@@ -91,6 +95,7 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="@dimen/dimen_4"
                 android:layout_below="@id/board_detail_card_item_name"
+                android:padding="@dimen/dimen_8"
                 android:layout_marginHorizontal="@dimen/dimen_8"
                 android:layout_toStartOf="@id/board_detail_card_item_member"
                 android:layout_toEndOf="@id/board_detail_card_item_attachment_count"

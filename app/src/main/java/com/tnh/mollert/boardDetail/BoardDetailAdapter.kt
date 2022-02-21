@@ -48,8 +48,12 @@ class BoardDetailAdapter(
         }
 
         private fun submitCardList(list: kotlin.collections.List<Card>){
-            binding.root.layoutParams.height = RecyclerView.LayoutParams.MATCH_PARENT
-            boardCardAdapter.submitList(list)
+            if(list.isNotEmpty()){
+                binding.root.layoutParams.height = RecyclerView.LayoutParams.MATCH_PARENT
+                boardCardAdapter.submitList(list)
+            }else{
+                boardCardAdapter.submitList(list)
+            }
         }
 
         fun pauseObserveData(){
@@ -131,6 +135,13 @@ class BoardDetailAdapter(
 
             fun bind(card: Card) {
                 binding.card = card
+//                card.cover = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"
+                if(card.cover.isNullOrEmpty().not()){
+                    binding.boardDetailCardItemCover.show()
+                } else {
+                    binding.boardDetailCardItemCover.gone()
+                }
+
                 if(card.startDate != 0L && card.dueDate != 0L){
                     binding.boardDetailCardItemDueData.text = "${card.startDate.getDate()} - ${card.dueDate.getDate()}"
                     binding.boardDetailCardItemDueData.show()
