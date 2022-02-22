@@ -16,15 +16,16 @@ import com.tnh.mollert.utils.LoadingModal
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.logVar
+import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_fragment){
     private val viewModel by viewModels<HomeViewModel>()
     private lateinit var homeAdapter: HomeWorkSpaceAdapter
+    @Inject lateinit var prefManager: PrefManager
     private val loading by lazy {
         LoadingModal(requireContext())
     }
@@ -32,6 +33,7 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         (activity as MainActivity?)?.showBottomNav()
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
+        viewModel.syncWorkspacesAndBoardsDataFirstTime(prefManager)
         viewModel.loadMemberWithWorkspaces()
     }
 

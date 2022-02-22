@@ -106,13 +106,15 @@ class ActivityViewModel @Inject constructor(
                     }
                 }
             }else{
-                viewModelScope.launch {
-                    repository.workspaceDao.countOne()?.let {
-                        if(it == 0){
-                            reloadWorkspaceFromRemote(email)
-                        }
-                    }
-                }
+
+                // moved to home fragment
+//                viewModelScope.launch {
+//                    repository.workspaceDao.countOne()?.let {
+//                        if(it == 0){
+//                            reloadWorkspaceFromRemote(email)
+//                        }
+//                    }
+//                }
             }
         }
     }
@@ -129,14 +131,15 @@ class ActivityViewModel @Inject constructor(
                     }
                 }
             }else{
-                viewModelScope.launch {
-                    repository.boardDao.countOne()?.let {
-                        if(it == 0){
-                            "Reloading all boards from remote".logAny()
-                            reloadBoardFromRemote(email)
-                        }
-                    }
-                }
+                // moved to home fragment
+//                viewModelScope.launch {
+//                    repository.boardDao.countOne()?.let {
+//                        if(it == 0){
+//                            "Reloading all boards from remote".logAny()
+//                            reloadBoardFromRemote(email)
+//                        }
+//                    }
+//                }
             }
         }
     }

@@ -10,12 +10,15 @@ import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.MessageMaker
 import com.tnh.mollert.datasource.local.model.Workspace
+import com.tnh.mollert.datasource.local.relation.MemberBoardRel
+import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
+import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
@@ -48,6 +51,89 @@ class HomeViewModel @Inject constructor(
             memberWithWorkspaces = repository.appDao.getMemberWithWorkspaces(email).asLiveData()
         }
     }
+
+    fun syncWorkspacesAndBoardsDataFirstTime(
+        pref: PrefManager
+    ){
+        UserWrapper.getInstance()?.currentUserEmail?.let { email->
+            if(pref.getString("$email+sync+all").isEmpty()){
+                viewModelScope.launch {
+                    // need strong internet connect to avoid error
+                    repository.workspaceDao.countOne()?.let {
+                        if(it == 0){
+                            "Syncing all workspaces and boards data".logAny()
+                            reloadWorkspaceFromRemote(email)
+                            pref.putString("$email+sync+all", "synced")
+                            "Synced".logAny()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun reloadWorkspaceFromRemote(email: String) {
+        "Reloading all workspaces from remote".logAny()
+        firestore.simpleGetDocumentModel<RemoteMember>(
+            firestore.getMemberDoc(email)
+        )?.let { rm->
+            rm.workspaces?.forEach { ws->
+                ws.ref?.let { ref->
+                    saveWorkspaceFromRemote(email, ref)
+                }
+            }
+        }
+    }
+
+    private suspend fun saveWorkspaceFromRemote(email: String, ref: String){
+        firestore.simpleGetDocumentModel<RemoteWorkspace>(
+            firestore.getDocRef(ref)
+        )?.let {
+            it.toModel()?.let { model->
+                repository.workspaceDao.insertOne(model)
+                saveMemberWorkspaceRelation(it.members, model.workspaceId)
+                repository.memberWorkspaceDao.insertOne(MemberWorkspaceRel(email, model.workspaceId))
+                saveAllBoardFromRemote(model.workspaceId)
+            }
+        }
+    }
+
+    private suspend fun saveMemberWorkspaceRelation(list: List<RemoteMemberRef>, workspaceId: String){
+        list.forEach { rmr->
+            rmr.email?.let { email->
+                repository.memberWorkspaceDao.insertOne(MemberWorkspaceRel(email, workspaceId, rmr.role))
+            }
+        }
+    }
+
+    private suspend fun saveAllBoardFromRemote(workspaceId: String){
+        firestore.getCol(firestore.getBoardCol(workspaceId))?.documentChanges?.forEach { docChange->
+            val rb = docChange.document.toObject(RemoteBoard::class.java)
+            rb.toModel(workspaceId)?.let { board->
+                repository.boardDao.insertOne(board)
+                rb.members?.let { listMember->
+                    listMember.forEach { rmr->
+                        rmr.ref?.let {
+                            saveMemberAndRelationFromRemote(rmr.ref, board.boardId, rmr.role)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun saveMemberAndRelationFromRemote(ref: String, boardId: String, role: String){
+        firestore.simpleGetDocumentModel<RemoteMember>(
+            firestore.getDocRef(ref)
+        )?.let { rm->
+            rm.toMember()?.let {
+                repository.memberDao.insertOne(it)
+                repository.memberBoardDao.insertOne(MemberBoardRel(it.email, boardId, role))
+            }
+        }
+    }
+
+
 
     fun inviteMember(workspace: Workspace, otherEmail: String){
         viewModelScope.launch {
