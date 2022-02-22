@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.tnh.mollert.R
 import com.tnh.mollert.databinding.WorkspaceBoardItemBinding
 import com.tnh.mollert.databinding.WorkspaceItemBinding
 import com.tnh.mollert.datasource.local.model.Board
@@ -84,7 +85,7 @@ class HomeWorkSpaceAdapter(
                 }
                 binding.title = board.boardName
                 Glide.with(binding.root).load(board.background)
-                    .placeholder(ColorDrawable(Color.parseColor("#048ce4")))
+                    .placeholder(R.drawable.asset_3)
                     .into(binding.workspaceBoardItemImage)
             }
         }

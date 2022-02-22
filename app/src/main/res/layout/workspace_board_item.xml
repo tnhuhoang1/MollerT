@@ -17,36 +17,27 @@
         android:focusable="true"
         android:clickable="true"
         android:foreground="?selectableItemBackground"
-        android:layout_margin="@dimen/dimen_8"
+        android:layout_margin="@dimen/dimen_4"
         app:cardCornerRadius="@dimen/dimen_8">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dimen_8"
-            android:layout_marginBottom="@dimen/dimen_32"
+            android:layout_marginBottom="@dimen/dimen_8"
             android:orientation="vertical"
             tools:ignore="UseCompoundDrawables">
-
-            <androidx.cardview.widget.CardView
+            <ImageView
+                android:id="@+id/workspace_board_item_image"
                 android:layout_width="match_parent"
-                android:layout_height="90dp"
-                app:cardCornerRadius="@dimen/dimen_8">
-
-                <ImageView
-                    android:id="@+id/workspace_board_item_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:contentDescription="@string/app_name" />
-            </androidx.cardview.widget.CardView>
-
+                android:scaleType="fitXY"
+                android:layout_height="@dimen/dimen_90"
+                android:contentDescription="@string/app_name" />
             <TextView
                 android:id="@+id/workspace_board_item_title"
                 style="@style/TextAppearance.AppCompat.Caption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/dimen_8"
-                android:layout_marginBottom="@dimen/dimen_20"
+                android:layout_margin="@dimen/dimen_8"
                 android:text="@{title}"
                 android:fontFamily="@font/poppins"
                 android:textSize="16sp"

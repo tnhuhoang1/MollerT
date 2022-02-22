@@ -134,7 +134,6 @@ class HomeViewModel @Inject constructor(
     }
 
 
-
     fun inviteMember(workspace: Workspace, otherEmail: String){
         viewModelScope.launch {
             UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
@@ -211,7 +210,7 @@ class HomeViewModel @Inject constructor(
                 boardId,
                 boardName,
                 "",
-                "",
+                "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2Fphoto-1576502200916-3808e07386a5.jpg?alt=media&token=48950ff8-f59c-4036-9082-9e463fbb2932",
                 Board.STATUS_OPEN,
                 listOf(RemoteMemberRef(email, firestore.getMemberDoc(email).path)),
                 listOf()

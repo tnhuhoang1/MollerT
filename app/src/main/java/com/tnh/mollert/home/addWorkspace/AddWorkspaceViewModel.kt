@@ -11,6 +11,7 @@ import com.tnh.mollert.datasource.remote.model.RemoteMemberRef
 import com.tnh.mollert.datasource.remote.model.RemoteWorkspace
 import com.tnh.mollert.datasource.remote.model.RemoteWorkspaceRef
 import com.tnh.mollert.utils.FirestoreHelper
+import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddWorkspaceViewModel @Inject constructor(
     private val repository: AppRepository,
-    private val firestore: FirestoreHelper
+    private val firestore: FirestoreHelper,
 ): BaseViewModel() {
     private val wsTypes = listOf(
         Workspace.TYPE_EDUCATION,
