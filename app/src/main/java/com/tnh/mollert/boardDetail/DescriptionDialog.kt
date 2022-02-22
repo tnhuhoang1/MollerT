@@ -39,6 +39,10 @@ class DescriptionDialog(
         setContentView(binding.root)
     }
 
+    fun setHint(hint: String){
+        binding.boardDescDesc.hint = hint
+    }
+
     fun showFullscreen(content: String?){
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
         binding.boardDescDesc.setText(content)

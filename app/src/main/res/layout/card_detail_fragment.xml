@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+            name="viewModel"
+            type="com.tnh.mollert.cardDetail.CardDetailFragmentViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -49,34 +51,35 @@
             android:layout_height="200dp"
             android:gravity="bottom"
             android:paddingHorizontal="@dimen/dimen_16"
+            android:text="card"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:text="Member"
             android:paddingBottom="@dimen/dimen_12"
             android:textSize="20sp"
             android:textStyle="bold" />
-
-        <EditText
-            android:id="@+id/card_detail_fragment_description"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dimen_120"
-            android:hint="Add a more detailed description..."
-            android:background="#F1EEFB"
-            android:drawableStart="@drawable/vd_first_line"
-            android:padding="@dimen/dimen_16"
-            android:drawablePadding="@dimen/dimen_8"
-            app:layout_constraintTop_toBottomOf="@id/card_detail_textview_name_card"
-            app:layout_constraintStart_toStartOf="parent"
-            />
         <androidx.appcompat.widget.LinearLayoutCompat
             android:background="#F1EEFB"
             android:id="@+id/card_detail_fragment_selectable_container"
             android:layout_width="match_parent"
-            app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_description"
+            app:layout_constraintTop_toBottomOf="@id/card_detail_textview_name_card"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             >
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/card_detail_fragment_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Add a more detailed description..."
+                android:drawableStart="@drawable/vd_first_line"
+                android:padding="@dimen/dimen_16"
+                android:drawablePadding="@dimen/dimen_8"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?selectableItemBackground"
+                app:layout_constraintTop_toBottomOf="@id/card_detail_textview_name_card"
+                app:layout_constraintStart_toStartOf="parent"
+                />
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/card_detail_fragment_date"
                 android:layout_width="match_parent"
@@ -102,8 +105,15 @@
                 android:clickable="true"
                 android:drawableStart="@drawable/vd_tag"
                 />
-
-
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:padding="@dimen/dimen_16"
+                android:id="@+id/card_detail_fragment_label_recycler"
+                />
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/card_detail_fragment_checked_list"
                 android:layout_width="match_parent"

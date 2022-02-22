@@ -21,9 +21,8 @@
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/board_desc_desc"
             app:layout_constraintStart_toStartOf="parent"
-            android:hint="Write you board description..."
             android:gravity="top"
-            android:paddingHorizontal="@dimen/dimen_8"
+            android:paddingHorizontal="@dimen/dimen_16"
             android:paddingVertical="@dimen/dimen_8"
             android:background="@color/white"
             app:layout_constraintEnd_toEndOf="parent"

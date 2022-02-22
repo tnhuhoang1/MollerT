@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/card_detail_menu_change_name"
+        android:title="Change name" />
+    <item
+        android:id="@+id/card_detail_menu_change_cover"
+        android:title="Change cover" />
+    <item
+        android:id="@+id/card_detail_menu_add_work"
+        android:title="Add work" />
+    <item android:id="@+id/card_detail_menu_join_card"
+        android:title="Join card"/>
+    <item android:id="@+id/card_detail_menu_achieved"
+        android:title="Archive"
+        />
+    <item android:id="@+id/card_detail_menu_delete"
+        android:visible="false"
+        android:title="Delete"
+        />
+</menu>

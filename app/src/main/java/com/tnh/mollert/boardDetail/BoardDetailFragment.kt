@@ -82,6 +82,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                         descriptionDialog.onCreateClick = { content->
                             viewModel.changeDescription(args.workspaceId, args.boardId, content)
                         }
+                        descriptionDialog.setHint("Write your board description...")
                         descriptionDialog.showFullscreen(boardWithLists.board.boardDesc)
                     }
                 }
