@@ -8,6 +8,7 @@ data class Label(
     @PrimaryKey
     val labelId: String,
     var labelColor: String,
-    var labelName: String? = null,
+    var labelName: String = "",
+    var boardId: String
 ) {
 }

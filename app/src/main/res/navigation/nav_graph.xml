@@ -154,7 +154,22 @@
         android:name="com.tnh.mollert.cardDetail.label.AddEditLabelFragment"
         android:label="AddEditLabelFragment" >
         <argument
+            android:name="workspaceId"
+            app:argType="string" />
+        <argument
+            android:name="boardId"
+            app:argType="string" />
+        <argument
+            android:name="listId"
+            app:argType="string" />
+        <argument
+            android:name="cardId"
+            app:argType="string" />
+        <argument
             android:name="labelId"
+            app:argType="string" />
+        <argument
+            android:name="labelName"
             app:argType="string" />
     </fragment>
     <fragment

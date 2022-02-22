@@ -4,6 +4,7 @@ import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentReference
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Card
+import com.tnh.mollert.datasource.local.model.Label
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.logAny
@@ -23,6 +24,9 @@ class CardDetailFragmentViewModel @Inject constructor(
     var card: LiveData<Card> = MutableLiveData(null)
     private set
 
+    var labels: LiveData<List<Label>> = MutableLiveData(null)
+        private set
+
     private var cardDoc: DocumentReference? = null
 
     fun setCardDoc(workspaceId: String, boardId: String, listId: String, cardId: String){
@@ -31,6 +35,10 @@ class CardDetailFragmentViewModel @Inject constructor(
 
     fun getCardById(cardId: String){
         card = reposiory.cardDao.getCardById(cardId).asLiveData()
+    }
+
+    fun getLabelById(boardId: String){
+        labels = reposiory.labelDao.getLabelsWithBoardId(boardId).asLiveData()
     }
 
 

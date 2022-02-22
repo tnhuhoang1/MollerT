@@ -35,7 +35,6 @@
             android:singleLine="true"
             android:fontFamily="@font/poppins"
             android:background="@color/neutrals9"
-            android:layout_marginTop="@dimen/dimen_16"
             />
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/label_item_recycler"
@@ -65,10 +64,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="#DF4146"
+                android:focusable="true"
+                android:clickable="true"
+                android:background="?selectableItemBackground"
                 android:visibility="gone"
-                android:padding="@dimen/dimen_8"
+                android:paddingHorizontal="@dimen/dimen_8"
+                android:paddingVertical="@dimen/dimen_16"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-                android:text="Slide to remove"
+                android:text="Click to remove"
                 android:drawableStart="@drawable/ic_round_chevron_right_24"
                 />
         </LinearLayout>

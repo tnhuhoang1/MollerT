@@ -14,10 +14,8 @@ import com.tnh.mollert.databinding.CardDetailFragmentBinding
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import dagger.hilt.android.AndroidEntryPoint
-import com.tnh.tnhlibrary.dataBinding.utils.initBinding
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 
@@ -26,7 +24,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     val viewModel by viewModels<CardDetailFragmentViewModel>()
     private val args by navArgs<CardDetailFragmentArgs>()
     private var container: ViewGroup? = null
-    private val dialog by lazy(){
+    private val labelPickerDialog by lazy(){
         LabelPickerDialog(requireContext(), container)
     }
     private val descriptionDialog by lazy {
@@ -50,6 +48,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         setupToolbar()
         viewModel.setCardDoc(args.workspaceId, args.boardId, args.listId, args.cardId)
         viewModel.getCardById(args.cardId)
+        viewModel.getLabelById(args.boardId)
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.executePendingBindings()
@@ -90,10 +89,14 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
     private fun setupListener(){
         binding.cardDetailFragmentLabel.setOnClickListener {
-            dialog.onCreateClick = {
+            labelPickerDialog.onCreateClick = {
                 navigateToCreateLabel()
             }
-            dialog.showFullscreen()
+            labelPickerDialog.setEditLabelListener { labelId, labelName ->
+                labelPickerDialog.dismiss()
+                navigateToEditLabel(labelId, labelName)
+            }
+            labelPickerDialog.showFullscreen()
         }
 
         binding.cardDetailFragmentDescription.setOnClickListener {
@@ -106,12 +109,35 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     }
 
     private fun navigateToCreateLabel(){
-        findNavController().navigate(CardDetailFragmentDirections.actionCardDetailFragmentToAddEditLabelFragment(""))
+        findNavController().navigate(CardDetailFragmentDirections.actionCardDetailFragmentToAddEditLabelFragment(
+            args.workspaceId,
+            args.boardId,
+            args.listId,
+            args.cardId,
+            "",
+            ""
+        ))
     }
+    private fun navigateToEditLabel(labelId: String, labelName: String){
+        findNavController().navigate(CardDetailFragmentDirections.actionCardDetailFragmentToAddEditLabelFragment(
+            args.workspaceId,
+            args.boardId,
+            args.listId,
+            args.cardId,
+            labelId,
+            labelName
+        ))
+    }
+
+
 
     private fun setupObserver(){
         eventObserve(viewModel.message){
             binding.root.showSnackBar(it)
+        }
+
+        safeObserve(viewModel.labels){
+            labelPickerDialog.submitList(it)
         }
 
         safeObserve(viewModel.card){

@@ -6,13 +6,15 @@ data class RemoteLabel(
     val labelId: String = "",
     val labelName: String? = null,
     val labelColor: String? = null,
+    val boardId: String? = null
 ): RemoteModel {
     fun toLabel(): Label?{
         return convertTo {
             Label(
                 labelId,
                 labelColor!!,
-                labelName!!
+                labelName!!,
+                boardId!!
             )
         }
     }

@@ -1,39 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/primaryColor"
-    android:layout_marginVertical="@dimen/dimen_2"
-    android:layout_height="wrap_content">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/label_item_name"
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/white"
-        android:paddingVertical="@dimen/dimen_12"
-        android:background="?selectableItemBackground"
-        android:focusable="true"
-        android:clickable="true"
-        android:fontFamily="@font/poppins"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-        android:drawablePadding="@dimen/dimen_8"
-        android:paddingStart="@dimen/dimen_8"
-        android:paddingEnd="@dimen/dimen_8"
-        android:drawableStart="@drawable/vd_invisible"
-        />
-    <ImageButton
-        android:id="@+id/label_item_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/vd_edit_2"
-        android:background="?selectableItemBackgroundBorderless"
-        app:layout_constraintTop_toTopOf="@id/label_item_name"
-        app:layout_constraintBottom_toBottomOf="@id/label_item_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="@dimen/dimen_16"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:background="@color/primaryColor"
+        android:layout_marginVertical="@dimen/dimen_2"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/label_item_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:textColor="@color/white"
+            android:paddingVertical="@dimen/dimen_12"
+            android:background="?selectableItemBackground"
+            android:focusable="true"
+            android:clickable="true"
+            android:fontFamily="@font/poppins"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+            android:drawablePadding="@dimen/dimen_8"
+            android:paddingStart="@dimen/dimen_8"
+            android:paddingEnd="@dimen/dimen_8"
+            android:drawableStart="@drawable/vd_invisible" />
+
+        <ImageButton
+            android:id="@+id/label_item_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/vd_edit_2"
+            android:background="?selectableItemBackgroundBorderless"
+            app:layout_constraintTop_toTopOf="@id/label_item_name"
+            app:layout_constraintBottom_toBottomOf="@id/label_item_name"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="@dimen/dimen_16" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

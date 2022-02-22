@@ -111,6 +111,30 @@ class FirestoreHelper private constructor(){
         }
     }
 
+    fun deleteDocument(
+        document: DocumentReference,
+        onFailure: (Exception) -> Unit,
+        onSuccess: () -> Unit
+    ){
+        document.delete()
+            .addOnFailureListener(onFailure)
+            .addOnSuccessListener {
+                onSuccess()
+            }
+    }
+
+    suspend fun deleteDocument(document: DocumentReference) = suspendCancellableCoroutine<Boolean> { cont->
+        deleteDocument(
+            document,
+            {
+                trace(it)
+                cont.safeResume { false }
+            }
+        ){
+            cont.safeResume { true }
+        }
+    }
+
     fun insertToArrayField(
         document: DocumentReference,
         field: String,

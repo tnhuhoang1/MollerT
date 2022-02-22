@@ -9,27 +9,32 @@ object LabelPreset {
             RemoteLabel(
                 "${boardId}_green",
                 "Done",
-                "#18BA80"
+                "#18BA80",
+                boardId
             ),
             RemoteLabel(
                 "${boardId}_red",
                 "Late",
-                "#DF4146"
+                "#DF4146",
+                boardId
             ),
             RemoteLabel(
                 "${boardId}_sky",
                 "Working",
-                "#3EB8ED"
+                "#3EB8ED",
+                boardId
             ),
             RemoteLabel(
                 "${boardId}_yellow",
                 "Invalid",
-                "#FCD660"
+                "#FCD660",
+                boardId
             ),
             RemoteLabel(
                 "${boardId}_blue",
                 "Seen",
-                "#4957F2"
+                "#4957F2",
+                boardId
             )
         )
     }
