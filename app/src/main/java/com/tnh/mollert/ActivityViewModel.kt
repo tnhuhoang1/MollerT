@@ -37,6 +37,26 @@ class ActivityViewModel @Inject constructor(
                     registerInfoChanged(email, map)
                     registerList(email, map)
                     registerCard(email, map)
+                    registerLabel(email, map)
+                }
+            }
+        }
+    }
+
+    private fun registerLabel(email: String, map: Map<String, Any>) {
+        (map["labels"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Loading labels $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        firestore.simpleGetDocumentModel<RemoteLabel>(doc)?.let { remoteLabel ->
+                            remoteLabel.toLabel()?.let { label->
+                                repository.labelDao.insertOne(label)
+                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "labels", ref)
+                            }
+                        }
+                    }
                 }
             }
         }

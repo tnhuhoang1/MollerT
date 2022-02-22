@@ -34,6 +34,7 @@ class LabelPickerDialog(
 
             twoActionToolbarEndIcon.setOnClickListener {
                 onCreateClick?.invoke()
+                dismiss()
             }
         }
         setContentView(binding.root)

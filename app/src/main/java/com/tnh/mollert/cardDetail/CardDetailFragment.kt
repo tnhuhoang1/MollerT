@@ -90,6 +90,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
     private fun setupListener(){
         binding.cardDetailFragmentLabel.setOnClickListener {
+            dialog.onCreateClick = {
+                navigateToCreateLabel()
+            }
             dialog.showFullscreen()
         }
 
@@ -100,6 +103,10 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             descriptionDialog.setHint("Write card description")
             descriptionDialog.showFullscreen(viewModel.card.value?.cardDesc)
         }
+    }
+
+    private fun navigateToCreateLabel(){
+        findNavController().navigate(CardDetailFragmentDirections.actionCardDetailFragmentToAddEditLabelFragment(""))
     }
 
     private fun setupObserver(){
@@ -114,7 +121,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
     private fun bindData(card: Card){
         binding.cardDetailTextviewNameCard.text = card.cardName ?: ""
-        binding.cardDetailFragmentDescription.setText(card.cardDesc ?: "")
+        binding.cardDetailFragmentDescription.text = card.cardDesc ?: ""
     }
 
 }

@@ -14,6 +14,7 @@ import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
+import com.tnh.mollert.utils.LabelPreset
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.log
@@ -23,6 +24,7 @@ import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import java.util.regex.Pattern
 import javax.inject.Inject
 
@@ -218,6 +220,19 @@ class HomeViewModel @Inject constructor(
             val boardDoc = firestore.getBoardDoc(workspace.workspaceId, boardId)
             viewModelScope.launch {
                 if(firestore.addDocument(boardDoc, remoteBoard)){
+                    LabelPreset.getPresetLabelList(boardId).forEach { remoteLabel->
+                        val labelDoc = firestore.getLabelDoc(workspace.workspaceId, boardId, remoteLabel.labelId)
+                        if(firestore.addDocument(
+                            labelDoc,
+                            remoteLabel
+                        )){
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(email),
+                                "labels",
+                                labelDoc.path
+                            )
+                        }
+                    }
                     repository.appDao.getWorkspaceWithMembersNoFlow(workspace.workspaceId)?.members?.let { members->
                         "Notify to other members about new board inserted".logAny()
                         members.forEach {

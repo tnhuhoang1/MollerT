@@ -260,6 +260,10 @@ class FirestoreHelper private constructor(){
         return getDocRef("$WORKSPACE_ROOT_COL/${workspaceId}/boards/${boardId}")
     }
 
+    fun getLabelDoc(workspaceId: String, boardId: String, labelId: String): DocumentReference{
+        return getBoardDoc(workspaceId, boardId).collection("labels").document(labelId)
+    }
+
     fun getBoardCol(workspaceId: String): CollectionReference{
         return getColRef("$WORKSPACE_ROOT_COL/$workspaceId/boards")
     }

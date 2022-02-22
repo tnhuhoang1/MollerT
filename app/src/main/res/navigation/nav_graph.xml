@@ -74,6 +74,9 @@
         <argument
             android:name="cardId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_cardDetailFragment_to_addEditLabelFragment"
+            app:destination="@id/addEditLabelFragment" />
     </fragment>
     <fragment
         android:id="@+id/boardDetailFragment"
@@ -149,7 +152,11 @@
     <fragment
         android:id="@+id/addEditLabelFragment"
         android:name="com.tnh.mollert.cardDetail.label.AddEditLabelFragment"
-        android:label="AddEditLabelFragment" />
+        android:label="AddEditLabelFragment" >
+        <argument
+            android:name="labelId"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/editProfileFragment"
         android:name="com.tnh.mollert.profile.edit.EditProfileFragment"
