@@ -3,6 +3,8 @@ package com.tnh.mollert
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.tnh.mollert.databinding.ActivityMainBinding
@@ -39,8 +41,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
     }
 
-    fun setupBottomNav(){
+    private fun setupBottomNav(){
         binding.activityMainBottomNav.setupWithNavController(navController)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when(destination.id){
+                R.id.cardDetailFragment, R.id.splashFragment, R.id.loginFragment, R.id.registerFragment, R.id.forgotPasswordFragment ->{
+                    hideBottomNav()
+                }
+                else->{
+                    showBottomNav()
+                }
+            }
+
+        }
     }
 
 

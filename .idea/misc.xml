@@ -13,15 +13,24 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot_active.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/splash_state_dot_default.xml" value="0.175" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_add.xml" value="0.1565" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_add_blue.xml" value="0.1565" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_add_square.xml" value="0.121" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_arrow_down.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_arrow_left.xml" value="0.1775" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_attachment.xml" value="0.1565" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_checked.xml" value="0.1815" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_clock.xml" value="0.1565" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_clock_24.xml" value="0.1565" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_close_circle.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_firstline.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_invisible.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_new_workspace.xml" value="0.175" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_paper_clip.xml" value="0.114" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_send.xml" value="0.1565" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_tag.xml" value="0.1565" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_tick_blue.xml" value="0.1565" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_tick_square.xml" value="0.1565" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/drawable/vd_user.xml" value="0.1815" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/add_attachment.xml" value="0.264" />
