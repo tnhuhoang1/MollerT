@@ -39,4 +39,12 @@ interface AppDao {
     @Transaction
     @Query("select * from board where boardId = :boardId")
     fun getBoardWithLists(boardId: String): Flow<BoardWithLists>
+
+    @Transaction
+    @Query("select * from card where cardId = :cardId")
+    suspend fun getCardWithLabels(cardId: String): CardWithLabels
+
+    @Transaction
+    @Query("select * from card where cardId = :cardId")
+    fun getCardWithLabelsFlow(cardId: String): Flow<CardWithLabels>
 }

@@ -10,7 +10,6 @@ import com.tnh.mollert.R
 import com.tnh.mollert.databinding.LabelPickerBinding
 import com.tnh.mollert.datasource.local.model.Label
 import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.logVar
 import com.tnh.tnhlibrary.view.show
 
 class LabelPickerDialog(
@@ -19,11 +18,16 @@ class LabelPickerDialog(
 ): BottomSheetDialog(context) {
     var onCreateClick: (() -> Unit)? = null
     var onEditLabelClicked: ((labelId: String, name: String) -> Unit)? = null
+    var onApplyLabelClicked: (newList: List<Label>)-> Unit = {}
     private val adapter = LabelAdapter()
 
     fun setEditLabelListener(listener: (String, name: String) -> Unit){
         onEditLabelClicked = listener
         adapter.onEditClicked = onEditLabelClicked
+    }
+
+    fun setSelectedList(list: List<Label>){
+        adapter.setSelectedList(list)
     }
 
     val binding: LabelPickerBinding =
@@ -41,7 +45,8 @@ class LabelPickerDialog(
                 dismiss()
             }
             twoActionToolbarEndIcon.setOnClickListener {
-
+                dismiss()
+                onApplyLabelClicked(adapter.getSelectedList())
             }
         }
         binding.labelPickerNewLabel.setOnClickListener{

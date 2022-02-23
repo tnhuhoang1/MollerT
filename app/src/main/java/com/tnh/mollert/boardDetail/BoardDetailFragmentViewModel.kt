@@ -136,7 +136,14 @@ class BoardDetailFragmentViewModel @Inject constructor(
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                         listMember.forEach { mem->
                             val tracking = firestore.getTrackingDoc(mem.email)
-                            firestore.insertToArrayField(tracking, "cards", cardLoc.path)
+                            firestore.insertToArrayField(
+                                tracking,
+                                "cards",
+                                mapOf(
+                                    "what" to "info",
+                                    "ref" to cardLoc.path
+                                )
+                            )
                         }
                     }
                 }else{

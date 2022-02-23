@@ -5,10 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.tnh.mollert.R
 import com.tnh.mollert.boardDetail.DescriptionDialog
+import com.tnh.mollert.cardDetail.label.LabelChipAdapter
 import com.tnh.mollert.cardDetail.label.LabelPickerDialog
 import com.tnh.mollert.databinding.CardDetailFragmentBinding
 import com.tnh.mollert.datasource.local.model.Card
@@ -16,6 +18,7 @@ import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 
@@ -29,6 +32,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     }
     private val descriptionDialog by lazy {
         DescriptionDialog(requireContext(), container)
+    }
+    private val chipAdapter by lazy {
+        LabelChipAdapter()
     }
 
     private val optionMenu by lazy {
@@ -52,6 +58,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
         binding.executePendingBindings()
+
     }
 
     private fun setupToolbar(){
@@ -89,6 +96,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
     private fun setupListener(){
         binding.cardDetailFragmentLabel.setOnClickListener {
+
             labelPickerDialog.onCreateClick = {
                 navigateToCreateLabel()
             }
@@ -96,7 +104,13 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 labelPickerDialog.dismiss()
                 navigateToEditLabel(labelId, labelName)
             }
-            labelPickerDialog.showFullscreen()
+            labelPickerDialog.onApplyLabelClicked = {
+                viewModel.applyLabelsToCard(args.workspaceId, args.boardId, it)
+            }
+            lifecycleScope.launchWhenResumed {
+                labelPickerDialog.setSelectedList(viewModel.getCardWithLabels(args.cardId).labels)
+                labelPickerDialog.showFullscreen()
+            }
         }
 
         binding.cardDetailFragmentDescription.setOnClickListener {
@@ -142,6 +156,16 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
         safeObserve(viewModel.card){
             bindData(it)
+        }
+
+        safeObserve(viewModel.cardWithLabels){
+            if(it.labels.isEmpty()){
+                binding.cardDetailFragmentLabelRecycler.gone()
+            }else{
+                binding.cardDetailFragmentLabelRecycler.show()
+                binding.cardDetailFragmentLabelRecycler.adapter = chipAdapter
+                chipAdapter.submitList(it.labels)
+            }
         }
     }
 

@@ -7,7 +7,9 @@ import com.tnh.tnhlibrary.room.BaseDao
 
 @Dao
 interface CardLabelDao: BaseDao<CardLabelRel> {
-
     @Query("select * from cardlabelrel where cardId = :cardId")
-    suspend fun getAllByCardId(cardId: String): List<CardLabelRel>
+    suspend fun getRelByCardId(cardId: String): List<CardLabelRel>
+
+    @Query("select * from cardlabelrel where cardId = :labelId")
+    suspend fun getRelByLabelId(labelId: String): List<CardLabelRel>
 }

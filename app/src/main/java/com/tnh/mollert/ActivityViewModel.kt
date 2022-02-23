@@ -3,6 +3,7 @@ package com.tnh.mollert
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.local.relation.CardLabelRel
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.*
@@ -38,6 +39,30 @@ class ActivityViewModel @Inject constructor(
                     registerList(email, map)
                     registerCard(email, map)
                     registerLabel(email, map)
+                    registerDelLabel(email, map)
+                }
+            }
+        }
+    }
+
+    private fun registerDelLabel(email: String, map: Map<String, Any>) {
+        (map["delLabels"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Deleting labels $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        if(firestore.deleteDocument(doc)){
+                            val labelId = doc.id
+                            repository.labelDao.getLabelById(labelId)?.let { label ->
+                                repository.labelDao.deleteOne(label)
+                                repository.cardLabelDao.getRelByLabelId(labelId).forEach {
+                                    repository.cardLabelDao.deleteAll(it)
+                                }
+                            }
+                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delLabels", ref)
+                        }
+                    }
                 }
             }
         }
@@ -63,16 +88,33 @@ class ActivityViewModel @Inject constructor(
     }
 
     private fun registerCard(email: String, map: Map<String, Any>) {
-        (map["cards"] as List<String>?)?.let { listRef->
+        (map["cards"] as List<Map<String, String>>?)?.let { listRef->
             if(listRef.isNotEmpty()){
-                listRef.forEach { ref->
-                    "Loading $ref".logAny()
+                listRef.forEach { entry->
+                    "Loading card $entry".logAny()
+                    val what = entry.getOrElse("what"){"info"}
+                    val ref = entry["ref"]
                     viewModelScope.launch {
-                        val doc = firestore.getDocRef(ref)
-                        firestore.simpleGetDocumentModel<RemoteCard>(doc)?.let { remoteCard ->
-                            remoteCard.toModel()?.let { card->
-                                repository.cardDao.insertOne(card)
-                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "cards", ref)
+                        ref?.let {
+                            val doc = firestore.getDocRef(ref)
+                            firestore.simpleGetDocumentModel<RemoteCard>(doc)?.let { remoteCard ->
+                                when(what){
+                                    "info"->{
+                                        remoteCard.toModel()?.let { card->
+                                            repository.cardDao.insertOne(card)
+                                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "cards", entry)
+                                        }
+                                    }
+                                    "label"->{
+                                        remoteCard.cardId?.let {
+                                            addCardLabelRel(remoteCard.cardId, remoteCard.labels)
+                                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "cards", entry)
+                                        }
+                                    }
+                                    "member"->{
+
+                                    }
+                                }
                             }
                         }
                     }
@@ -80,6 +122,18 @@ class ActivityViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun addCardLabelRel(cardId: String, remoteCard: List<RemoteLabelRef>){
+        repository.cardLabelDao.getRelByCardId(cardId).forEach {
+            repository.cardLabelDao.deleteOne(it)
+        }
+        remoteCard.forEach { remoteLabelRef ->
+            remoteLabelRef.labelId?.let {
+                repository.cardLabelDao.insertOne(CardLabelRel(cardId, it))
+            }
+        }
+    }
+
 
     private fun registerList(email: String, map: Map<String, Any>) {
         (map["lists"] as List<String>?)?.let { listRef->
