@@ -58,6 +58,14 @@ object MessageMaker{
         return getEncoded(HEADER_WORKSPACE, workspaceId, workspaceName)
     }
 
+    fun getEncodedCard(cardId: String, cardName: String): String{
+        return getEncoded(HEADER_CARD, cardId, cardName)
+    }
+
+    fun getEncodedComment(commentContent: String): String{
+        return getEncoded(HEADER_COMMENT, " ", commentContent)
+    }
+
     /**
      * @return pair of email? and workspace id
      *
@@ -79,8 +87,6 @@ object MessageMaker{
         return Pair(first, second)
     }
 
-    fun getCreateBoardMessage(){
-    }
 
     fun getDecodedMessage(encodedMessage: String): String{
         return encodedMessage.split("***").joinToString("") { s ->
@@ -120,6 +126,22 @@ object MessageMaker{
         return "is invited by ${getEncodedMember(otherEmail, otherName)} to ${getEncodedWorkspace(workspaceId, workspaceName)} workspace"
     }
 
+    fun getCommentMessage(userEmail: String, userName: String, cardId: String, cardName: String, comment: String): String{
+        return "${getEncodedMember(userEmail, userName)} comments ${getEncodedComment(comment)} on card ${getEncodedCard(cardId, cardName)}"
+    }
+
+    fun getCommentContent(encodedMessage: String): String{
+        encodedMessage.split("***").forEach{ s ->
+            if (s.startsWith("[*") && s.endsWith("*]")) {
+                val list = s.removePrefix("[*").removeSuffix("*]").split("/*")
+                if(list.getOrNull(0) == HEADER_COMMENT){
+                    return list[2]
+                }
+            }
+        }
+        return ""
+    }
+
     fun getEncoded(header: String, ref: String, content: String): String{
         return "***${getHeader(header)}${getRef(ref)}${getContent(content)}***"
     }
@@ -130,5 +152,7 @@ object MessageMaker{
     const val HEADER_BOARD = "board"
     const val HEADER_WORKSPACE = "workspace"
     const val HEADER_MEMBER = "member"
+    const val HEADER_COMMENT = "comment"
+    const val HEADER_CARD = "card"
 
 }

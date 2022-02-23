@@ -1,19 +1,21 @@
 package com.tnh.mollert.cardDetail
 
 import android.content.ContentResolver
+import android.content.SyncStats
 import android.net.Uri
 import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentReference
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.compound.CardWithLabels
-import com.tnh.mollert.datasource.local.model.Attachment
-import com.tnh.mollert.datasource.local.model.Card
-import com.tnh.mollert.datasource.local.model.Label
+import com.tnh.mollert.datasource.local.compound.MemberAndActivity
+import com.tnh.mollert.datasource.local.model.*
+import com.tnh.mollert.datasource.remote.model.RemoteActivity
 import com.tnh.mollert.datasource.remote.model.RemoteAttachment
 import com.tnh.mollert.datasource.remote.model.RemoteLabelRef
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -34,6 +36,9 @@ class CardDetailFragmentViewModel @Inject constructor(
     var labels: LiveData<List<Label>> = MutableLiveData(null)
         private set
 
+    var memberAndActivity: LiveData<List<MemberAndActivity>> = MutableLiveData(null)
+    private set
+
     var cardWithLabels: LiveData<CardWithLabels> = MutableLiveData(null)
 
     var attachments: LiveData<List<Attachment>> = MutableLiveData(null)
@@ -53,6 +58,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         card = repository.cardDao.getCardById(cardId).asLiveData()
         cardWithLabels = repository.appDao.getCardWithLabelsFlow(cardId).asLiveData()
         attachments = repository.attachmentDao.getAllByCardId(cardId).asLiveData()
+        memberAndActivity = repository.appDao.getMemberAndActivityByCardIdFlow(cardId).asLiveData()
     }
 
     fun getLabelById(boardId: String){
@@ -206,5 +212,42 @@ class CardDetailFragmentViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun addComment(workspaceId: String, boardId: String, cardId:String, comment: String){
+        val time = System.currentTimeMillis()
+        val activityId = "comment_$time"
+        val activityDoc = firestore.getActivityDoc(workspaceId, boardId, activityId)
+
+        viewModelScope.launch {
+            UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                card.value?.cardName?.let { cardName->
+                    val message = MessageMaker.getCommentMessage(member.email, member.name, cardId, cardName, comment)
+                    val remoteActivity = RemoteActivity(
+                        activityId,
+                        email,
+                        boardId,
+                        cardId,
+                        message,
+                        false,
+                        Activity.TYPE_COMMENT,
+                        time
+                    )
+                    if(firestore.addDocument(
+                        activityDoc,
+                        remoteActivity
+                    )){
+                        if(firestore.insertToArrayField(
+                            firestore.getTrackingDoc(member.email),
+                            "activities",
+                            activityDoc.path
+                        )){
+                            "Posted a comment".logAny()
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }

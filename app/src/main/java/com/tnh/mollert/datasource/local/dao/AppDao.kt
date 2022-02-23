@@ -32,6 +32,9 @@ interface AppDao {
     @Query("select * from member, activity where member.email = activity.actor and member.email = :email")
     fun getActivityAssocWithEmail(email: String): Flow<List<MemberAndActivity>>
 
+    @Query("select * from member, activity where member.email = activity.actor and activity.cardId = :cardId")
+    fun getMemberAndActivityByCardIdFlow(cardId: String): Flow<List<MemberAndActivity>>
+
     @Transaction
     @Query("select * from board where boardId = :boardId")
     suspend fun getBoardWithMembers(boardId: String): BoardWithMembers?

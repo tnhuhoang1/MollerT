@@ -41,6 +41,26 @@ class ActivityViewModel @Inject constructor(
                     registerLabel(email, map)
                     registerDelLabel(email, map)
                     registerAttachment(email, map)
+                    registerActivity(email, map)
+                }
+            }
+        }
+    }
+
+    private fun registerActivity(email: String, map: Map<String, Any>) {
+        (map["activities"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Loading activity $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        firestore.simpleGetDocumentModel<RemoteActivity>(doc)?.let { remoteActivity ->
+                            remoteActivity.toModel()?.let { activity->
+                                repository.activityDao.insertOne(activity)
+                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "activities", ref)
+                            }
+                        }
+                    }
                 }
             }
         }

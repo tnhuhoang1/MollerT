@@ -14,8 +14,8 @@ val Int.pxToDp
 val Int.dpToPx
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
-fun Long.getDate(): String{
-    return SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(this)
+fun Long.getDate(format: String = "dd/MM/yy"): String{
+    return SimpleDateFormat(format, Locale.getDefault()).format(this)
 }
 
 inline fun<T> CancellableContinuation<T>.safeResume(block: () -> T){

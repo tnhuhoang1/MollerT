@@ -30,6 +30,7 @@ import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.toast.showToast
 import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.gone
@@ -53,6 +54,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     }
     private val chipAdapter by lazy {
         LabelChipAdapter()
+    }
+    private val commentAdapter by lazy {
+        CommentAdapter()
     }
     private val attachmentAdapter by lazy {
         AttachmentAdapter()
@@ -196,6 +200,8 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             }
         }
 
+        binding.cardDetailFragmentCommentRecycler.adapter = commentAdapter
+
         setupListener()
         setupObserver()
     }
@@ -229,6 +235,13 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
         binding.cardDetailFragmentAttachment.setOnClickListener {
             showAttachmentDialog()
+        }
+
+        binding.cardDetailFragmentSend.setOnClickListener {
+            if(binding.cardDetailFragmentCommentInput.text.isNullOrEmpty().not()){
+                viewModel.addComment(args.workspaceId, args.boardId, args.cardId, binding.cardDetailFragmentCommentInput.text.toString())
+                binding.cardDetailFragmentCommentInput.setText("")
+            }
         }
     }
 
@@ -299,6 +312,15 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             }else{
                 binding.cardDetailFragmentAttachmentRecycler.show()
                 attachmentAdapter.submitList(it)
+            }
+        }
+
+        safeObserve(viewModel.memberAndActivity){
+            if(it.isEmpty()){
+                binding.cardDetailFragmentCommentRecycler.gone()
+            }else{
+                binding.cardDetailFragmentCommentRecycler.show()
+                commentAdapter.submitList(it)
             }
         }
     }

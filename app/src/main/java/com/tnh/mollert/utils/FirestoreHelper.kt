@@ -288,6 +288,10 @@ class FirestoreHelper private constructor(){
         return getDocRef("$TRACKING_ROOT_COL/$email")
     }
 
+    fun getActivityDoc(workspaceId: String, boardId: String, activityId: String): DocumentReference{
+        return getBoardDoc(workspaceId, boardId).collection("activities").document(activityId)
+    }
+
     fun getListDoc(workspaceId: String, boardId: String, listId: String): DocumentReference{
         return getBoardDoc(workspaceId, boardId).collection("lists").document(listId)
     }
