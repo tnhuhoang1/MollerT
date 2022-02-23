@@ -264,6 +264,22 @@ class FirestoreHelper private constructor(){
         return store.collection(refPath)
     }
 
+    fun getListCol(workspaceId: String, boardId: String): CollectionReference{
+        return getBoardDoc(workspaceId, boardId).collection("lists")
+    }
+
+    fun getCardCol(workspaceId: String, boardId: String, listId: String): CollectionReference{
+        return getListDoc(workspaceId, boardId, listId).collection("cards")
+    }
+
+    fun getLabelCol(workspaceId: String, boardId: String): CollectionReference{
+        return getBoardDoc(workspaceId, boardId).collection("labels")
+    }
+
+    fun getAttachmentCol(workspaceId: String, boardId: String, listId: String, cardId: String): CollectionReference{
+        return getCardDoc(workspaceId, boardId, listId, cardId).collection("attachments")
+    }
+
     fun getMemberDoc(email: String): DocumentReference{
         return getDocRef("$MEMBER_ROOT_COL/$email")
     }

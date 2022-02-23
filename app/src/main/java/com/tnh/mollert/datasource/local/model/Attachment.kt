@@ -6,10 +6,14 @@ import androidx.room.PrimaryKey
 @Entity
 data class Attachment(
     @PrimaryKey
-    val attachment: String,
+    val attachmentId: String,
     var name: String,
     var type: String,
     var linkRemote: String,
     val cardId: String
 ) {
+    companion object{
+        const val TYPE_IMAGE = "image"
+        const val TYPE_LINK = "link"
+    }
 }

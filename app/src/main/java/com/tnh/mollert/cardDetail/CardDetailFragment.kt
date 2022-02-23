@@ -38,6 +38,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     private val labelPickerDialog by lazy(){
         LabelPickerDialog(requireContext(), container)
     }
+    private val attachmentDialog by lazy {
+        AddAttachmentDialog(requireContext(), container)
+    }
     private val descriptionDialog by lazy {
         DescriptionDialog(requireContext(), container)
     }
@@ -110,6 +113,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 R.id.card_detail_menu_change_cover->{
                     imageLauncher.launch(arrayOf("image/*"))
                 }
+                R.id.card_detail_menu_add_attachemnt->{
+                    showAttachmentDialog()
+                }
             }
             true
         }
@@ -170,6 +176,14 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             descriptionDialog.setHint("Write card description")
             descriptionDialog.showFullscreen(viewModel.card.value?.cardDesc)
         }
+
+        binding.cardDetailFragmentAttachment.setOnClickListener {
+            showAttachmentDialog()
+        }
+    }
+
+    private fun showAttachmentDialog(){
+        attachmentDialog.show()
     }
 
     private fun navigateToCreateLabel(){

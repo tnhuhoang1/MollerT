@@ -9,10 +9,8 @@ import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.datasource.local.model.Member
-import com.tnh.mollert.datasource.remote.model.RemoteBoard
-import com.tnh.mollert.datasource.remote.model.RemoteCard
-import com.tnh.mollert.datasource.remote.model.RemoteList
-import com.tnh.mollert.datasource.remote.model.RemoteMemberRef
+import com.tnh.mollert.datasource.local.relation.CardLabelRel
+import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
@@ -156,28 +154,61 @@ class BoardDetailFragmentViewModel @Inject constructor(
 
     fun checkAndFetchList(prefManager: PrefManager, workspaceId: String, boardId: String){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
-            if(prefManager.getString("$email+$workspaceId").isEmpty()){
+            if(prefManager.getString("$email+$workspaceId+$boardId").isEmpty()){
                 "Fetching all board content".logAny()
+                viewModelScope.launch {
+                    fetchAllLabels(workspaceId, boardId)
+                    fetchAllList(workspaceId, boardId)
+                    prefManager.putString("$email+$workspaceId+$boardId", "synced")
+                }
             }
         }
-
     }
 
+    private suspend fun fetchAllLabels(workspaceId: String, boardId: String): Boolean{
+        val col = firestore.getLabelCol(workspaceId, boardId)
+        firestore.getCol(col)?.documents?.forEach { document->
+            document.toObject(RemoteLabel::class.java)?.let { remoteLabel ->
+                remoteLabel.toLabel()?.let {
+                    repository.labelDao.insertOne(it)
+                }
+            }
+        } ?: return false
+        return true
+    }
 
-    fun getCardTest() : ArrayList<Card> {
-        val a = arrayListOf<Card>()
-        for (i in 1..10) {
-            a.add(
-                Card(
-                    "hoang",
-                    "card name $i",
-                    i,
-                    "",
-                    dueDate = 1645343440321L,
-                    cover = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"
-                )
-            )
+    private suspend fun fetchAllList(workspaceId: String, boardId: String){
+        val col = firestore.getListCol(workspaceId, boardId)
+        firestore.getCol(col)?.documents?.forEach { document->
+            document.toObject(RemoteList::class.java)?.let { remoteList ->
+                remoteList.toModel()?.let {
+                    repository.listDao.insertOne(it)
+                }
+            }
+            fetchAllCardInList(workspaceId, boardId, document.id)
         }
-        return a
+    }
+
+    private suspend fun fetchAllCardInList(workspaceId: String, boardId: String, listId: String){
+        val col = firestore.getCardCol(workspaceId, boardId, listId)
+        firestore.getCol(col)?.documents?.forEach { document->
+            document.toObject(RemoteCard::class.java)?.let { remoteCard ->
+                remoteCard.toModel()?.let {
+                    repository.cardDao.insertOne(it)
+                    addCardLabelRel(it.cardId, remoteCard.labels)
+                }
+            }
+        }
+    }
+
+    private suspend fun addCardLabelRel(cardId: String, remoteCard: kotlin.collections.List<RemoteLabelRef>){
+        repository.cardLabelDao.getRelByCardId(cardId).forEach {
+            repository.cardLabelDao.deleteOne(it)
+        }
+        remoteCard.forEach { remoteLabelRef ->
+            remoteLabelRef.labelId?.let {
+                repository.cardLabelDao.insertOne(CardLabelRel(cardId, it))
+            }
+        }
     }
 }

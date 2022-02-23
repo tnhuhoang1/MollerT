@@ -54,11 +54,17 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.checkAndFetchList(prefManager, args.workspaceId, args.boardId)
+        viewModel.getAllList(args.boardId)
+    }
+
     override fun doOnCreateView() {
         setupToolbar()
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-        viewModel.getAllList(args.boardId)
+
     }
 
     private fun setupToolbar(){
@@ -163,7 +169,6 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                 boardDetailAdapter.submitList(viewModel.getConcatList(listOf()))
             }else{
                 if(boardWithLists.lists.isEmpty()){
-                    viewModel.checkAndFetchList(prefManager, args.workspaceId, args.boardId)
                     boardDetailAdapter.submitList(viewModel.getConcatList(boardWithLists.lists))
                 }else{
                     boardDetailAdapter.submitList(viewModel.getConcatList(boardWithLists.lists))
