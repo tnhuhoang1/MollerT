@@ -1,11 +1,15 @@
 package com.tnh.mollert.cardDetail
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +20,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.datepicker.RangeDateSelector
 import com.tnh.mollert.R
 import com.tnh.mollert.boardDetail.DescriptionDialog
 import com.tnh.mollert.cardDetail.label.LabelChipAdapter
@@ -26,6 +32,7 @@ import com.tnh.mollert.datasource.local.model.Attachment
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.utils.bindImageUri
 import com.tnh.mollert.utils.dpToPx
+import com.tnh.mollert.utils.getDate
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
@@ -243,6 +250,24 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 binding.cardDetailFragmentCommentInput.setText("")
             }
         }
+
+        binding.cardDetailFragmentDate.setOnClickListener {
+            val datePicker = MaterialDatePicker.Builder.dateRangePicker().apply {
+                setTitleText("Select date")
+            }.build()
+
+            datePicker.addOnPositiveButtonClickListener {
+                datePicker.selection?.let { pair->
+                    viewModel.saveDate(pair.first, pair.second)
+                }
+            }
+            datePicker.show(requireActivity().supportFragmentManager, "datePicker")
+        }
+        
+        binding.cardDetailFragmentDateCheckbox.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.saveDateChecked(isChecked)
+        }
+
     }
 
     private fun showAttachmentDialog(){
@@ -341,6 +366,18 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             binding.cardDetailFragmentCover.gone()
             binding.cardDetailTextviewNameCard.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
             binding.cardDetailTextviewNameCard.background = ColorDrawable(Color.WHITE)
+        }
+        if(card.startDate != 0L && card.dueDate != 0L){
+            val spanString = SpannableString("${card.startDate.getDate()} - ${card.dueDate.getDate()}")
+            if(System.currentTimeMillis() > card.dueDate){
+                spanString.setSpan(ForegroundColorSpan(Color.RED), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }else if(card.dueDate - System.currentTimeMillis() <= 86400000){
+                spanString.setSpan(ForegroundColorSpan(Color.YELLOW), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }else if(card.checked){
+                spanString.setSpan(ForegroundColorSpan(Color.GREEN), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+            binding.cardDetailFragmentDateCheckbox.isChecked = card.checked
+            binding.cardDetailFragmentDateCheckbox.text = spanString
         }
     }
 

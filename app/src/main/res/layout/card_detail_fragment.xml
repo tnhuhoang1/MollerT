@@ -92,12 +92,17 @@
                         android:layout_height="wrap_content"
                         android:padding="@dimen/dimen_16"
                         android:drawablePadding="@dimen/dimen_8"
-                        android:hint="Start Date"
+                        android:hint="Date"
                         android:focusable="true"
                         android:clickable="true"
                         android:background="?selectableItemBackground"
                         android:drawableStart="@drawable/vd_clock_24"/>
-
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/card_detail_fragment_date_checkbox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/dimen_12"
+                        />
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/card_detail_fragment_label"
                         android:layout_width="match_parent"

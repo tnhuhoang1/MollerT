@@ -214,6 +214,59 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
+    fun saveDate(startDate: Long, dueDate: Long){
+        cardDoc?.let { doc->
+            viewModelScope.launch {
+                if(firestore.mergeDocument(
+                    doc,
+                    mapOf(
+                        "startDate" to startDate,
+                        "dueDate" to dueDate
+                    )
+                )){
+                    if(firestore.insertToArrayField(
+                        firestore.getTrackingDoc(email),
+                        "cards",
+                        mapOf(
+                            "what" to "info",
+                            "ref" to doc.path
+                        )
+                    )){
+                        postMessage("Set date successfully")
+                    }
+                }
+            }
+        }
+    }
+
+    fun saveDateChecked(isChecked: Boolean){
+        card.value?.let { c->
+            if(c.checked != isChecked){
+                cardDoc?.let { doc->
+                    viewModelScope.launch {
+                        if(firestore.mergeDocument(
+                                doc,
+                                mapOf(
+                                    "checked" to isChecked,
+                                )
+                            )){
+                            if(firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(email),
+                                    "cards",
+                                    mapOf(
+                                        "what" to "info",
+                                        "ref" to doc.path
+                                    )
+                                )){
+                                "change checked".logAny()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     fun addComment(workspaceId: String, boardId: String, cardId:String, comment: String){
         val time = System.currentTimeMillis()
         val activityId = "comment_$time"
@@ -248,6 +301,5 @@ class CardDetailFragmentViewModel @Inject constructor(
                 }
             }
         }
-
     }
 }
