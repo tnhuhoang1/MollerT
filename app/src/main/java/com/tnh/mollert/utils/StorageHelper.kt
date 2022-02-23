@@ -29,6 +29,10 @@ class StorageHelper private constructor(){
         return storage.getReference("$BACKGROUND_ROOT/${workspaceId}_${boardId}")
     }
 
+    fun getUploadCoverLocation(cardId: String): StorageReference{
+        return storage.getReference("$COVER_ROOT/${cardId}")
+    }
+
     fun getAvatarLocation(email: String): StorageReference{
         return storage.getReference("$AVATAR_ROOT/$email")
     }
@@ -119,6 +123,19 @@ class StorageHelper private constructor(){
         return null
     }
 
+    suspend fun uploadCardCover(
+        contentResolver: ContentResolver,
+        uri: Uri,
+        cardId: String
+    ): Uri?{
+        return uploadImage(
+            getUploadCoverLocation(cardId),
+            contentResolver,
+            uri,
+            cardId
+        )
+    }
+
     suspend fun uploadBackgroundImage(
         workspaceId: String,
         boardId: String,
@@ -148,6 +165,7 @@ class StorageHelper private constructor(){
 
         const val ATTACHMENT_ROOT = "attachments"
         const val BACKGROUND_ROOT = "backgrounds"
+        const val COVER_ROOT = "covers"
         const val AVATAR_ROOT = "avatars"
     }
 }

@@ -1,9 +1,14 @@
 package com.tnh.mollert.cardDetail
 
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -13,7 +18,10 @@ import com.tnh.mollert.boardDetail.DescriptionDialog
 import com.tnh.mollert.cardDetail.label.LabelChipAdapter
 import com.tnh.mollert.cardDetail.label.LabelPickerDialog
 import com.tnh.mollert.databinding.CardDetailFragmentBinding
+import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.datasource.local.model.Card
+import com.tnh.mollert.utils.bindImageUri
+import com.tnh.mollert.utils.dpToPx
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
@@ -41,6 +49,12 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         CardPopupMenu(requireContext(), binding.cardDetailFragmentToolbar.twoActionToolbarEndIcon)
     }
 
+    private val imageLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
+        if(uri != null){
+            viewModel.changeCardCover(requireContext().contentResolver, uri, args.cardId)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -61,7 +75,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
     }
 
-    private fun setupToolbar(){
+    private fun setupToolbar(hasCover: Boolean = false){
         binding.cardDetailFragmentToolbar.apply {
             twoActionToolbarStartIcon.setImageResource(R.drawable.vd_close_circle)
             twoActionToolbarStartIcon.show()
@@ -75,17 +89,53 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             twoActionToolbarEndIcon.setOnClickListener {
                 showOptionMenu()
             }
+            if(hasCover){
+                twoActionToolbarStartIcon.imageTintList = ColorStateList.valueOf(Color.WHITE)
+                twoActionToolbarEndIcon.imageTintList = ColorStateList.valueOf(Color.WHITE)
+                root.background = ColorDrawable(Color.parseColor("#33000000"))
+            }else{
+                twoActionToolbarStartIcon.imageTintList = ColorStateList.valueOf(Color.BLACK)
+                twoActionToolbarEndIcon.imageTintList = ColorStateList.valueOf(Color.BLACK)
+                root.background = ColorDrawable(Color.WHITE)
+            }
         }
     }
 
     private fun showOptionMenu(){
         optionMenu.setOnMenuItemClickListener { item->
             when(item.itemId){
-
+                R.id.card_detail_menu_change_name->{
+                    showChangeNameDialog()
+                }
+                R.id.card_detail_menu_change_cover->{
+                    imageLauncher.launch(arrayOf("image/*"))
+                }
             }
             true
         }
         optionMenu.show()
+    }
+
+    private fun showAlertDialog(title: String, builder: (AlertDialog.Builder, CreateBoardLayoutBinding)-> Unit){
+        AlertDialog.Builder(requireContext()).apply {
+            val binding = CreateBoardLayoutBinding.inflate(layoutInflater)
+            setTitle(title)
+            setView(binding.root)
+            builder(this, binding)
+        }.show()
+    }
+
+    private fun showChangeNameDialog(){
+        showAlertDialog("Change card name"){ builder, dialogBinding ->
+            dialogBinding.createBoardLayoutName.hint = "New name"
+            builder.setPositiveButton("OK") { _, _ ->
+                if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                    viewModel.setMessage("Card name cannot be empty")
+                }else{
+                    viewModel.changeCardName(dialogBinding.createBoardLayoutName.text.toString())
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -170,8 +220,22 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     }
 
     private fun bindData(card: Card){
-        binding.cardDetailTextviewNameCard.text = card.cardName ?: ""
+        binding.cardDetailTextviewNameCard.text = card.cardName
         binding.cardDetailFragmentDescription.text = card.cardDesc ?: ""
+        if(card.cover.isNotEmpty()){
+            setupToolbar(true)
+            binding.cardDetailTextviewNameCard.setTextColor(Color.WHITE)
+            binding.cardDetailTextviewNameCard.background = ColorDrawable(Color.parseColor("#33000000"))
+            binding.cardDetailFragmentCover.show()
+            binding.cardDetailFragmentCover.bindImageUri(card.cover)
+            binding.cardDetailTextviewNameCard.height = 200.dpToPx
+        }else{
+            setupToolbar(false)
+            binding.cardDetailTextviewNameCard.setTextColor(Color.BLACK)
+            binding.cardDetailFragmentCover.gone()
+            binding.cardDetailTextviewNameCard.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            binding.cardDetailTextviewNameCard.background = ColorDrawable(Color.WHITE)
+        }
     }
 
 }

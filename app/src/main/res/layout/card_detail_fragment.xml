@@ -23,7 +23,7 @@
             android:layout_width="0dp"
             android:scaleType="fitXY"
             android:layout_height="0dp"
-            android:src="@drawable/app_icon"
+            android:visibility="gone"
             android:layout_alignParentEnd="true"
             />
         <FrameLayout
@@ -48,7 +48,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:id="@+id/card_detail_textview_name_card"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:gravity="bottom"
             android:paddingHorizontal="@dimen/dimen_16"
             android:text="card"

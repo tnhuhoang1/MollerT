@@ -16,7 +16,7 @@ class Card(
     var startDate: Long = 0L,
     var dueDate: Long = 0L,
     var checked: Boolean = false,
-    var cover: String? = null,
+    var cover: String = "",
     var autoCover: Boolean = true
 ) {
     companion object{

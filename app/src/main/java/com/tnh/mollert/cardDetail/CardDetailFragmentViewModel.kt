@@ -1,5 +1,7 @@
 package com.tnh.mollert.cardDetail
 
+import android.content.ContentResolver
+import android.net.Uri
 import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentReference
 import com.tnh.mollert.datasource.AppRepository
@@ -8,8 +10,8 @@ import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.Label
 import com.tnh.mollert.datasource.remote.model.RemoteLabelRef
 import com.tnh.mollert.utils.FirestoreHelper
+import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -18,7 +20,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CardDetailFragmentViewModel @Inject constructor(
     private val firestore: FirestoreHelper,
-    private val reposiory: AppRepository,
+    private val repository: AppRepository,
+    private val storage: StorageHelper
 ): BaseViewModel() {
 
     private var email = UserWrapper.getInstance()?.currentUserEmail ?: ""
@@ -32,7 +35,7 @@ class CardDetailFragmentViewModel @Inject constructor(
     var cardWithLabels: LiveData<CardWithLabels> = MutableLiveData(null)
 
     suspend fun getCardWithLabels(cardId: String): CardWithLabels{
-        return reposiory.appDao.getCardWithLabels(cardId)
+        return repository.appDao.getCardWithLabels(cardId)
     }
 
     private var cardDoc: DocumentReference? = null
@@ -42,12 +45,12 @@ class CardDetailFragmentViewModel @Inject constructor(
     }
 
     fun getCardById(cardId: String){
-        card = reposiory.cardDao.getCardById(cardId).asLiveData()
-        cardWithLabels = reposiory.appDao.getCardWithLabelsFlow(cardId).asLiveData()
+        card = repository.cardDao.getCardById(cardId).asLiveData()
+        cardWithLabels = repository.appDao.getCardWithLabelsFlow(cardId).asLiveData()
     }
 
     fun getLabelById(boardId: String){
-        labels = reposiory.labelDao.getLabelsWithBoardId(boardId).asLiveData()
+        labels = repository.labelDao.getLabelsWithBoardId(boardId).asLiveData()
     }
 
 
@@ -97,7 +100,52 @@ class CardDetailFragmentViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
 
+    fun changeCardName(name: String){
+        cardDoc?.let { doc->
+            viewModelScope.launch {
+                if(firestore.mergeDocument(
+                        doc,
+                        mapOf("name" to name)
+                    )){
+                    if(firestore.insertToArrayField(
+                            firestore.getTrackingDoc(email),
+                            "cards",
+                            mapOf(
+                                "what" to "info",
+                                "ref" to doc.path
+                            )
+                        )){
+                        postMessage("Change name successfully")
+                    }
+                }
+            }
+        }
+    }
+
+    fun changeCardCover(contentResolver: ContentResolver, uri: Uri, cardId: String){
+        cardDoc?.let { doc->
+            viewModelScope.launch {
+                storage.uploadCardCover(contentResolver, uri, cardId)?.let { url->
+                    if(firestore.mergeDocument(
+                        doc,
+                        mapOf("cover" to url.toString())
+                    )){
+                        if(firestore.insertToArrayField(
+                                firestore.getTrackingDoc(email),
+                                "cards",
+                                mapOf(
+                                    "what" to "info",
+                                    "ref" to doc.path
+                                )
+                            )){
+                            postMessage("Change cover successfully")
+                        }
+                    }
+                }
+            }
         }
     }
 }
