@@ -6,8 +6,10 @@ import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentReference
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.compound.CardWithLabels
+import com.tnh.mollert.datasource.local.model.Attachment
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.Label
+import com.tnh.mollert.datasource.remote.model.RemoteAttachment
 import com.tnh.mollert.datasource.remote.model.RemoteLabelRef
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
@@ -34,6 +36,9 @@ class CardDetailFragmentViewModel @Inject constructor(
 
     var cardWithLabels: LiveData<CardWithLabels> = MutableLiveData(null)
 
+    var attachments: LiveData<List<Attachment>> = MutableLiveData(null)
+    private set
+
     suspend fun getCardWithLabels(cardId: String): CardWithLabels{
         return repository.appDao.getCardWithLabels(cardId)
     }
@@ -47,6 +52,7 @@ class CardDetailFragmentViewModel @Inject constructor(
     fun getCardById(cardId: String){
         card = repository.cardDao.getCardById(cardId).asLiveData()
         cardWithLabels = repository.appDao.getCardWithLabelsFlow(cardId).asLiveData()
+        attachments = repository.attachmentDao.getAllByCardId(cardId).asLiveData()
     }
 
     fun getLabelById(boardId: String){
@@ -143,6 +149,59 @@ class CardDetailFragmentViewModel @Inject constructor(
                             )){
                             postMessage("Change cover successfully")
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    fun addImageAttachment(contentResolver: ContentResolver, uri: Uri, boardId: String, cardId: String){
+        cardDoc?.let { doc->
+            viewModelScope.launch {
+                val attachmentId = "attachment_${System.currentTimeMillis()}"
+                storage.uploadImageAttachment(contentResolver, uri, boardId, cardId, attachmentId)?.let { url->
+                    val attDoc = firestore.getAttachmentDoc(doc, attachmentId)
+                    val remoteAttachment = RemoteAttachment(
+                        attachmentId,
+                        "Image attachment",
+                        Attachment.TYPE_IMAGE,
+                        url.toString(),
+                        cardId
+                    )
+                    if(firestore.addDocument(attDoc, remoteAttachment)){
+                        if(firestore.insertToArrayField(
+                                firestore.getTrackingDoc(email),
+                                "attachments",
+                                attDoc.path
+                            )){
+                            postMessage("Add attachment successfully")
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    fun addLinkAttachment(cardId: String, link: String){
+        cardDoc?.let { doc->
+            viewModelScope.launch {
+                val attachmentId = "attachment_${System.currentTimeMillis()}"
+                val attDoc = firestore.getAttachmentDoc(doc, attachmentId)
+                val remoteAttachment = RemoteAttachment(
+                    attachmentId,
+                    "Link attachment",
+                    Attachment.TYPE_LINK,
+                    link,
+                    cardId
+                )
+                if(firestore.addDocument(attDoc, remoteAttachment)){
+                    if(firestore.insertToArrayField(
+                            firestore.getTrackingDoc(email),
+                            "attachments",
+                            attDoc.path
+                        )){
+                        postMessage("Add attachment successfully")
                     }
                 }
             }

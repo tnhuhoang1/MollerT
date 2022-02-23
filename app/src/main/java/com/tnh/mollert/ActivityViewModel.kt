@@ -40,6 +40,7 @@ class ActivityViewModel @Inject constructor(
                     registerCard(email, map)
                     registerLabel(email, map)
                     registerDelLabel(email, map)
+                    registerAttachment(email, map)
                 }
             }
         }
@@ -79,6 +80,25 @@ class ActivityViewModel @Inject constructor(
                             remoteLabel.toLabel()?.let { label->
                                 repository.labelDao.insertOne(label)
                                 firestore.removeFromArrayField(firestore.getTrackingDoc(email), "labels", ref)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun registerAttachment(email: String, map: Map<String, Any>) {
+        (map["attachments"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Loading attachment $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        firestore.simpleGetDocumentModel<RemoteAttachment>(doc)?.let { remoteAttachment ->
+                            remoteAttachment.toModel().let { attachment->
+                                repository.attachmentDao.insertOne(attachment)
+                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "attachments", ref)
                             }
                         }
                     }

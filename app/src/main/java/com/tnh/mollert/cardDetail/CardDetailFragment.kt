@@ -1,9 +1,12 @@
 package com.tnh.mollert.cardDetail
 
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +22,7 @@ import com.tnh.mollert.cardDetail.label.LabelChipAdapter
 import com.tnh.mollert.cardDetail.label.LabelPickerDialog
 import com.tnh.mollert.databinding.CardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
+import com.tnh.mollert.datasource.local.model.Attachment
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.utils.bindImageUri
 import com.tnh.mollert.utils.dpToPx
@@ -26,9 +30,12 @@ import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import dagger.hilt.android.AndroidEntryPoint
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.toast.showToast
+import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
+import com.tnh.tnhlibrary.view.snackbar.showSnackbar
 
 @AndroidEntryPoint
 class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layout.card_detail_fragment) {
@@ -47,6 +54,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     private val chipAdapter by lazy {
         LabelChipAdapter()
     }
+    private val attachmentAdapter by lazy {
+        AttachmentAdapter()
+    }
 
     private val optionMenu by lazy {
         CardPopupMenu(requireContext(), binding.cardDetailFragmentToolbar.twoActionToolbarEndIcon)
@@ -55,6 +65,12 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     private val imageLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
         if(uri != null){
             viewModel.changeCardCover(requireContext().contentResolver, uri, args.cardId)
+        }
+    }
+
+    private val imageAttachmentLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
+        if(uri != null){
+            viewModel.addImageAttachment(requireContext().contentResolver, uri, args.boardId, args.cardId)
         }
     }
 
@@ -144,8 +160,42 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         }
     }
 
+    private fun showLinkAttachmentDialog(){
+        showAlertDialog("Add link"){ builder, dialogBinding ->
+            dialogBinding.createBoardLayoutName.hint = "Link"
+            builder.setPositiveButton("OK") { _, _ ->
+                if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                    viewModel.setMessage("Link cannot be empty")
+                }else{
+                    if(Patterns.WEB_URL.matcher(dialogBinding.createBoardLayoutName.text.toString()).matches()){
+                        viewModel.addLinkAttachment(args.cardId, dialogBinding.createBoardLayoutName.text.toString())
+                    }else{
+                        viewModel.postMessage("Not an url")
+                    }
+                }
+            }
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        binding.cardDetailFragmentAttachmentRecycler.adapter = attachmentAdapter
+        attachmentAdapter.onItemClicked = { attachment->
+            when(attachment.type){
+                Attachment.TYPE_LINK->{
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = Uri.parse(attachment.linkRemote)
+                        startActivity(intent)
+                    }catch (e: Exception){
+                        trace(e)
+                        viewModel.postMessage("Unable to open link")
+                    }
+                }
+            }
+        }
+
         setupListener()
         setupObserver()
     }
@@ -183,6 +233,17 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     }
 
     private fun showAttachmentDialog(){
+        attachmentDialog.onCloseClicked = {
+            attachmentDialog.dismiss()
+        }
+        attachmentDialog.onImageClicked = {
+            attachmentDialog.dismiss()
+            imageAttachmentLauncher.launch(arrayOf("image/*"))
+        }
+        attachmentDialog.onLinkClicked = {
+            attachmentDialog.dismiss()
+            showLinkAttachmentDialog()
+        }
         attachmentDialog.show()
     }
 
@@ -211,7 +272,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
     private fun setupObserver(){
         eventObserve(viewModel.message){
-            binding.root.showSnackBar(it)
+            requireActivity().showSnackbar(it)
         }
 
         safeObserve(viewModel.labels){
@@ -229,6 +290,15 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 binding.cardDetailFragmentLabelRecycler.show()
                 binding.cardDetailFragmentLabelRecycler.adapter = chipAdapter
                 chipAdapter.submitList(it.labels)
+            }
+        }
+
+        safeObserve(viewModel.attachments){
+            if(it.isEmpty()){
+                binding.cardDetailFragmentAttachmentRecycler.gone()
+            }else{
+                binding.cardDetailFragmentAttachmentRecycler.show()
+                attachmentAdapter.submitList(it)
             }
         }
     }

@@ -8,168 +8,202 @@
             name="viewModel"
             type="com.tnh.mollert.cardDetail.CardDetailFragmentViewModel" />
     </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <ImageView
-            android:focusable="false"
-            android:clickable="false"
-            android:id="@+id/card_detail_fragment_cover"
-            app:layout_constraintTop_toTopOf="@id/card_detail_fragment_appbar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/card_detail_textview_name_card"
-            android:layout_width="0dp"
-            android:scaleType="fitXY"
-            android:layout_height="0dp"
-            android:visibility="gone"
-            android:layout_alignParentEnd="true"
-            />
+        <ScrollView
+            android:layout_width="match_parent"
+            android:paddingBottom="@dimen/dimen_50"
+            android:layout_height="match_parent">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:focusable="false"
+                    android:clickable="false"
+                    android:id="@+id/card_detail_fragment_cover"
+                    app:layout_constraintTop_toTopOf="@id/card_detail_fragment_appbar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="@id/card_detail_textview_name_card"
+                    android:layout_width="0dp"
+                    android:scaleType="fitXY"
+                    android:layout_height="0dp"
+                    android:visibility="gone"
+                    android:layout_alignParentEnd="true"
+                    />
+                <FrameLayout
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:id="@+id/card_detail_fragment_appbar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:background="#01ffffff"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <include layout="@layout/two_action_toolbar"
+                        android:id="@+id/card_detail_fragment_toolbar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+
+                        />
+                </FrameLayout>
+
+                <com.google.android.material.textview.MaterialTextView
+                    app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_appbar"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:id="@+id/card_detail_textview_name_card"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="bottom"
+                    android:paddingHorizontal="@dimen/dimen_16"
+                    android:text="card"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                    android:paddingBottom="@dimen/dimen_12"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:background="#F1EEFB"
+                    android:id="@+id/card_detail_fragment_selectable_container"
+                    android:layout_width="match_parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_detail_textview_name_card"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/card_detail_fragment_description"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Add a more detailed description..."
+                        android:drawableStart="@drawable/vd_first_line"
+                        android:padding="@dimen/dimen_16"
+                        android:drawablePadding="@dimen/dimen_8"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:background="?selectableItemBackground"
+                        app:layout_constraintTop_toBottomOf="@id/card_detail_textview_name_card"
+                        app:layout_constraintStart_toStartOf="parent"
+                        />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/card_detail_fragment_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/dimen_16"
+                        android:drawablePadding="@dimen/dimen_8"
+                        android:hint="Start Date"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:background="?selectableItemBackground"
+                        android:drawableStart="@drawable/vd_clock_24"/>
+
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/card_detail_fragment_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/dimen_16"
+                        android:hint="Label"
+                        android:drawableEnd="@drawable/vd_add_blue"
+                        android:drawablePadding="@dimen/dimen_8"
+                        android:background="?selectableItemBackground"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:drawableStart="@drawable/vd_tag"
+                        />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:orientation="horizontal"
+                        android:clipToPadding="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:paddingHorizontal="@dimen/dimen_16"
+                        android:id="@+id/card_detail_fragment_label_recycler"
+                        />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/card_detail_fragment_checked_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/dimen_16"
+                        android:hint="Add checklist"
+                        android:background="?selectableItemBackground"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:drawableEnd="@drawable/vd_add_blue"
+                        android:drawablePadding="@dimen/dimen_8"
+                        app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_label"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        android:drawableStart="@drawable/vd_tick_square"
+
+                        />
+                    <com.google.android.material.textview.MaterialTextView
+                        android:id="@+id/card_detail_fragment_attachment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Attachment"
+                        android:drawableEnd="@drawable/vd_add_blue"
+                        android:drawablePadding="@dimen/dimen_8"
+                        android:padding="@dimen/dimen_16"
+                        android:background="?selectableItemBackground"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:drawableStart="@drawable/vd_attachment"
+                        app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_checked_list"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:orientation="vertical"
+                        android:clipToPadding="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:id="@+id/card_detail_fragment_attachment_recycler"
+                        />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/card_detail_fragment_comment_text"
+                    app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_selectable_container"
+                    android:paddingHorizontal="@dimen/dimen_16"
+                    android:paddingVertical="@dimen/dimen_8"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+                    android:text="Comment"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    />
+                <androidx.recyclerview.widget.RecyclerView
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_comment_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:orientation="vertical"
+                    android:clipToPadding="false"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:paddingHorizontal="@dimen/dimen_16"
+                    android:id="@+id/card_detail_fragment_comment_recycler"
+                    />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
         <FrameLayout
-            app:layout_constraintTop_toTopOf="parent"
-            android:id="@+id/card_detail_fragment_appbar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:background="#01ffffff"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <include layout="@layout/two_action_toolbar"
-                android:id="@+id/card_detail_fragment_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                />
-        </FrameLayout>
-
-        <com.google.android.material.textview.MaterialTextView
-            app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_appbar"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:id="@+id/card_detail_textview_name_card"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:paddingHorizontal="@dimen/dimen_16"
-            android:text="card"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
-            android:paddingBottom="@dimen/dimen_12"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:background="#F1EEFB"
-            android:id="@+id/card_detail_fragment_selectable_container"
-            android:layout_width="match_parent"
-            app:layout_constraintTop_toBottomOf="@id/card_detail_textview_name_card"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/card_detail_fragment_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Add a more detailed description..."
-                android:drawableStart="@drawable/vd_first_line"
-                android:padding="@dimen/dimen_16"
-                android:drawablePadding="@dimen/dimen_8"
-                android:focusable="true"
-                android:clickable="true"
-                android:background="?selectableItemBackground"
-                app:layout_constraintTop_toBottomOf="@id/card_detail_textview_name_card"
-                app:layout_constraintStart_toStartOf="parent"
-                />
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/card_detail_fragment_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dimen_16"
-                android:drawablePadding="@dimen/dimen_8"
-                android:hint="Start Date"
-                android:focusable="true"
-                android:clickable="true"
-                android:background="?selectableItemBackground"
-                android:drawableStart="@drawable/vd_clock_24"/>
-
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/card_detail_fragment_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dimen_16"
-                android:hint="Label"
-                android:drawableEnd="@drawable/vd_add_blue"
-                android:drawablePadding="@dimen/dimen_8"
-                android:background="?selectableItemBackground"
-                android:focusable="true"
-                android:clickable="true"
-                android:drawableStart="@drawable/vd_tag"
-                />
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:padding="@dimen/dimen_16"
-                android:id="@+id/card_detail_fragment_label_recycler"
-                />
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/card_detail_fragment_checked_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/dimen_16"
-                android:hint="Add checklist"
-                android:background="?selectableItemBackground"
-                android:focusable="true"
-                android:clickable="true"
-                android:drawableEnd="@drawable/vd_add_blue"
-                android:drawablePadding="@dimen/dimen_8"
-                app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_label"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                android:drawableStart="@drawable/vd_tick_square"
-
-                />
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/card_detail_fragment_attachment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Attachment"
-                android:drawableEnd="@drawable/vd_add_blue"
-                android:drawablePadding="@dimen/dimen_8"
-                android:padding="@dimen/dimen_16"
-                android:background="?selectableItemBackground"
-                android:focusable="true"
-                android:clickable="true"
-                android:drawableStart="@drawable/vd_attachment"
-                app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_checked_list"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                />
-        </androidx.appcompat.widget.LinearLayoutCompat>
-
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/card_detail_fragment_comment_text"
-            app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_selectable_container"
-            android:paddingHorizontal="@dimen/dimen_16"
-            android:paddingVertical="@dimen/dimen_8"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-            android:text="Comment"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            />
-        <FrameLayout
+            android:layout_gravity="bottom"
+            android:elevation="@dimen/dimen_16"
             android:background="#F1EEFB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_detail_fragment_comment_recycler"
             app:layout_constraintBottom_toBottomOf="parent"
             >
             <EditText
@@ -196,6 +230,5 @@
                 android:padding="@dimen/dimen_16"
                 />
         </FrameLayout>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

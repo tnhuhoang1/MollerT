@@ -13,6 +13,8 @@ class AddAttachmentDialog(context: Context, container: ViewGroup?): BottomSheetD
     val binding: AddAttachmentBinding = AddAttachmentBinding.inflate(LayoutInflater.from(context), container, false)
 
     var onCloseClicked: () -> Unit = {}
+    var onImageClicked: () -> Unit = {}
+    var onLinkClicked: () -> Unit = {}
 
     init {
 
@@ -24,6 +26,9 @@ class AddAttachmentDialog(context: Context, container: ViewGroup?): BottomSheetD
 
         binding.addAttachmentImage.attachmentItemImage.setBackgroundResource(R.drawable.vd_image)
         binding.addAttachmentImage.attachmentItemText.text = "Image"
+        binding.addAttachmentImage.root.setOnClickListener{
+            onImageClicked()
+        }
 
         binding.addAttachmentFile.root.gone()
         binding.addAttachmentFile.attachmentItemImage.setBackgroundResource(R.drawable.app_icon)
@@ -31,6 +36,9 @@ class AddAttachmentDialog(context: Context, container: ViewGroup?): BottomSheetD
 
         binding.addAttachmentLink.attachmentItemImage.setBackgroundResource(R.drawable.vd_link)
         binding.addAttachmentLink.attachmentItemText.text = "Link"
+        binding.addAttachmentLink.root.setOnClickListener {
+            onLinkClicked()
+        }
 
         setContentView(binding.root)
     }

@@ -37,6 +37,7 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/add_attachment.xml" value="0.264" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/add_label.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/add_workspace_fragment.xml" value="0.264" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/attachment_detail_item.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/attachment_item.xml" value="0.4" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/board_desc.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/board_detail_card_item.xml" value="0.264" />
@@ -92,7 +93,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_15_PREVIEW" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

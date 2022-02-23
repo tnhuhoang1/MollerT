@@ -13,16 +13,8 @@ import java.io.InputStream
 
 @Suppress("BlockingMethodInNonBlockingContext")
 class StorageHelper private constructor(){
-    fun getAttachmentRoot(email: String, workspaceId: String,  boardId: String): StorageReference{
-        return storage.getReference("$ATTACHMENT_ROOT/${email}_${workspaceId}_${boardId}")
-    }
-
-    fun getUploadAttachmentWithFilename(email: String, workspaceId: String, boardId: String, cardId: String, fileName: String): StorageReference{
-        return getAttachmentRoot(email, workspaceId, boardId).child("$cardId/$fileName")
-    }
-
-    fun getUploadAttachmentLocation(email: String, workspaceId: String, boardId: String, cardId: String): StorageReference{
-        return getAttachmentRoot(email, workspaceId, boardId).child(cardId)
+    fun getUploadAttachmentLocation(boardId: String, cardId: String): StorageReference{
+        return storage.getReference("$ATTACHMENT_ROOT/${boardId}_${cardId}")
     }
 
     fun getUploadBackgroundLocation(workspaceId: String, boardId: String): StorageReference{
@@ -133,6 +125,21 @@ class StorageHelper private constructor(){
             contentResolver,
             uri,
             cardId
+        )
+    }
+
+    suspend fun uploadImageAttachment(
+        contentResolver: ContentResolver,
+        uri: Uri,
+        boardId: String,
+        cardId: String,
+        attachmentId: String,
+    ): Uri?{
+        return uploadImage(
+            getUploadAttachmentLocation(boardId, cardId),
+            contentResolver,
+            uri,
+            attachmentId
         )
     }
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:background="?selectableItemBackground"
+        android:focusable="true"
+        android:clickable="true"
+        android:layout_marginVertical="@dimen/dimen_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:paddingHorizontal="@dimen/dimen_16"
+            android:paddingVertical="@dimen/dimen_12"
+            android:drawablePadding="@dimen/dimen_8"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+            android:id="@+id/attachment_detail_item_name"
+            />
+        <ImageView
+            android:id="@+id/attachment_detail_item_image"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:visibility="gone"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/attachment_detail_item_name"
+            android:src="@drawable/app_icon"
+            android:layout_marginHorizontal="@dimen/dimen_16"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
