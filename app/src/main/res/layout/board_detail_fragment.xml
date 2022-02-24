@@ -39,6 +39,7 @@
                 android:id="@+id/board_detail_fragment_search_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
                 android:hint="@string/search_card"
                 android:textColorHint="@color/highlightStrokeColor"
                 />

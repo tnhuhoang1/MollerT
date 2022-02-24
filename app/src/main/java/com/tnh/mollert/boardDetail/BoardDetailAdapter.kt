@@ -135,8 +135,7 @@ class BoardDetailAdapter(
 
             fun bind(card: Card) {
                 binding.card = card
-//                card.cover = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/800px-Image_created_with_a_mobile_phone.png"
-                if(card.cover.isNullOrEmpty().not()){
+                if(card.cover.isEmpty().not()){
                     binding.boardDetailCardItemCover.show()
                 } else {
                     binding.boardDetailCardItemCover.gone()

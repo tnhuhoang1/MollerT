@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Transaction
 import com.tnh.mollert.datasource.local.compound.*
+import com.tnh.mollert.datasource.local.model.Board
 import kotlinx.coroutines.flow.Flow
 import java.lang.StringBuilder
 

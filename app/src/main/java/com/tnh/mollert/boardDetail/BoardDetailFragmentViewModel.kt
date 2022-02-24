@@ -33,11 +33,14 @@ class BoardDetailFragmentViewModel @Inject constructor(
     var boardWithLists: LiveData<BoardWithLists> = MutableLiveData(null)
     private set
 
+    var cardAchieved: LiveData<kotlin.collections.List<Card>> = MutableLiveData(null)
+
     var memberAndActivity: LiveData<kotlin.collections.List<MemberAndActivity>> = MutableLiveData(null)
 
     fun getAllList(boardId: String){
         boardWithLists = repository.appDao.getBoardWithLists(boardId).asLiveData()
         memberAndActivity = repository.appDao.getMemberAndActivityByBoardIdFlow(boardId).asLiveData()
+        cardAchieved = repository.cardDao.getCardsWithBoardId(boardId, Card.STATUS_ACHIEVED).asLiveData()
     }
 
     fun getConcatList(list: kotlin.collections.List<List>): kotlin.collections.List<List>{

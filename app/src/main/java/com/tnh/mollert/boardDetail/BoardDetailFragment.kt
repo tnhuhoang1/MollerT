@@ -29,6 +29,9 @@ import javax.inject.Inject
 class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.layout.board_detail_fragment) {
     val viewModel by viewModels<BoardDetailFragmentViewModel>()
     private lateinit var boardDetailAdapter: BoardDetailAdapter
+    private val achievedCardDialog by lazy {
+        AchievedCardDialog(requireContext(), viewGroup)
+    }
     private val args: BoardDetailFragmentArgs by navArgs()
     private var viewGroup: ViewGroup? = null
     private val descriptionDialog by lazy {
@@ -104,9 +107,18 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                     activityDialog.setTitle("Board activities")
                     activityDialog.show()
                 }
+                R.id.board_detail_menu_achieved_cards->{
+                    showAchievedDialog()
+                }
             }
             true
         }
+    }
+
+    private fun showAchievedDialog(){
+
+
+        achievedCardDialog.showFullscreen()
     }
 
 
@@ -192,6 +204,10 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         }
         safeObserve(viewModel.memberAndActivity){
             activityDialog.submitList(it)
+        }
+
+        safeObserve(viewModel.cardAchieved){
+            achievedCardDialog.submitList(it)
         }
     }
 }
