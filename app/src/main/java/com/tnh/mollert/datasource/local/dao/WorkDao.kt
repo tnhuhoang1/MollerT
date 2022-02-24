@@ -10,4 +10,10 @@ import kotlinx.coroutines.flow.Flow
 interface WorkDao: BaseDao<Work> {
     @Query("select * from work where cardId = :cardId")
     fun getWorksByCardIdFlow(cardId: String): Flow<List<Work>>
+
+    @Query("select * from work where cardId = :cardId")
+    suspend fun getWorksByCardId(cardId: String): List<Work>
+
+    @Query("select * from work where workId = :workId")
+    suspend fun getWorkById(workId: String): Work?
 }

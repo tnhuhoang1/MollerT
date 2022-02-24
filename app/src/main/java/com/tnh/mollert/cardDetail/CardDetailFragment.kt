@@ -30,6 +30,7 @@ import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.model.Attachment
 import com.tnh.mollert.datasource.local.model.Card
+import com.tnh.mollert.utils.LoadingModal
 import com.tnh.mollert.utils.bindImageUri
 import com.tnh.mollert.utils.dpToPx
 import com.tnh.mollert.utils.getDate
@@ -47,6 +48,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     val viewModel by viewModels<CardDetailFragmentViewModel>()
     private val args by navArgs<CardDetailFragmentArgs>()
     private var container: ViewGroup? = null
+    private val loadingModal by lazy {
+        LoadingModal(requireContext())
+    }
     private val labelPickerDialog by lazy(){
         LabelPickerDialog(requireContext(), container)
     }
@@ -183,7 +187,13 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         AlertDialog.Builder(requireContext()).apply {
             setTitle("Do you really want to delete this card?")
             setPositiveButton("DELETE"){_, _->
-
+                loadingModal.show()
+                viewModel.deleteThisCard(args.workspaceId, args.boardId, {
+                    loadingModal.dismiss()
+                }){
+                    loadingModal.dismiss()
+                    findNavController().navigateUp()
+                }
             }
         }.show()
     }
@@ -272,8 +282,26 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 }
             }
         }
+        attachmentAdapter.onLongClicked = { attachment->
+            AlertDialog.Builder(requireContext()).apply {
+                setTitle("Do you want to delete this attachment?")
+                setPositiveButton("DELETE"){_, _->
+                    viewModel.deleteAttachment(attachment)
+                }
+            }.show()
+        }
 
         binding.cardDetailFragmentCommentRecycler.adapter = commentAdapter
+
+        commentAdapter.onLongClicked = { activity ->
+            AlertDialog.Builder(requireContext()).apply {
+                setTitle("Do you want to delete this comment?")
+                setPositiveButton("DELETE"){_, _->
+                    viewModel.deleteActivity(args.workspaceId, args.boardId, activity)
+                }
+            }.show()
+        }
+
         binding.cardDetailFragmentMemberRecycler.adapter = memberAdapter
         binding.cardDetailFragmentWorkRecycler.adapter = workAdapter
 

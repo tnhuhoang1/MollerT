@@ -10,4 +10,11 @@ import kotlinx.coroutines.flow.Flow
 interface AttachmentDao: BaseDao<Attachment> {
     @Query("select * from attachment where cardId = :cardId")
     fun getAllByCardId(cardId: String): Flow<List<Attachment>>
+
+    @Query("select * from attachment where cardId = :cardId")
+    suspend fun getAllByCardIdNoFlow(cardId: String): List<Attachment>
+
+
+    @Query("select * from attachment where attachmentId = :attachmentId")
+    suspend fun getAttachmentById(attachmentId: String): Attachment?
 }

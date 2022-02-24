@@ -19,6 +19,7 @@ import com.tnh.tnhlibrary.view.show
 class AttachmentAdapter: SimpleDataBindingListAdapter<Attachment, AttachmentDetailItemBinding>(R.layout.attachment_detail_item) {
 
     var onItemClicked: (Attachment) -> Unit = {}
+    var onLongClicked: (Attachment) -> Unit = {}
 
     override fun onBindViewHolder(
         holder: DataBindingViewHolder<AttachmentDetailItemBinding>,
@@ -43,6 +44,11 @@ class AttachmentAdapter: SimpleDataBindingListAdapter<Attachment, AttachmentDeta
             }
             root.setOnClickListener {
                 onItemClicked(item)
+            }
+
+            root.setOnLongClickListener {
+                onLongClicked(item)
+                true
             }
         }
     }

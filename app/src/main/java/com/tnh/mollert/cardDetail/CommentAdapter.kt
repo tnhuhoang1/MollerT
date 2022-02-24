@@ -11,6 +11,7 @@ import com.tnh.tnhlibrary.dataBinding.recycler.DataBindingViewHolder
 import com.tnh.tnhlibrary.dataBinding.recycler.SimpleDataBindingListAdapter
 
 class CommentAdapter: SimpleDataBindingListAdapter<MemberAndActivity, CommentItemBinding>(R.layout.comment_item) {
+    var onLongClicked: (Activity) -> Unit = {}
     override fun onBindViewHolder(
         holder: DataBindingViewHolder<CommentItemBinding>,
         position: Int
@@ -21,6 +22,10 @@ class CommentAdapter: SimpleDataBindingListAdapter<MemberAndActivity, CommentIte
             commentItemName.text = item.member.name
             commentItemTextComment.text = MessageMaker.getCommentContent(item.activity.message)
             commentItemTimestamp.text = item.activity.timestamp.getDate("dd/MM/yy HH:mm")
+            root.setOnLongClickListener {
+                onLongClicked(item.activity)
+                true
+            }
         }
     }
 }

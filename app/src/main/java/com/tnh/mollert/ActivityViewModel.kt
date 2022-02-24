@@ -47,6 +47,82 @@ class ActivityViewModel @Inject constructor(
 
                     registerDelLabel(email, map)
                     registerDelTask(email, map)
+                    registerDelActivity(email, map)
+                    registerDelWork(email, map)
+                    registerDelAttachment(email, map)
+                    registerDelCard(email, map)
+                }
+            }
+        }
+    }
+
+    private fun registerDelCard(email: String, map: Map<String, Any>) {
+        (map["delCards"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Deleting card $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        val cardId = doc.id
+                        repository.cardDao.getCardByIdNoFlow(cardId)?.let { card ->
+                            repository.cardDao.deleteOne(card)
+                        }
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delCards", ref)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun registerDelAttachment(email: String, map: Map<String, Any>) {
+        (map["delAttachments"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Deleting attachment $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        val attachmentId = doc.id
+                        repository.attachmentDao.getAttachmentById(attachmentId)?.let { attachment ->
+                            repository.attachmentDao.deleteOne(attachment)
+                        }
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delAttachments", ref)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun registerDelWork(email: String, map: Map<String, Any>) {
+        (map["delWorks"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Deleting work $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        val workId = doc.id
+                        repository.workDao.getWorkById(workId)?.let { work ->
+                            repository.workDao.deleteOne(work)
+                        }
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delWorks", ref)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun registerDelActivity(email: String, map: Map<String, Any>) {
+        (map["delActivities"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Deleting activity $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        val activityId = doc.id
+                        repository.activityDao.getActivityById(activityId)?.let { activity ->
+                            repository.activityDao.deleteOne(activity)
+                        }
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delActivities", ref)
+                    }
                 }
             }
         }
@@ -116,16 +192,14 @@ class ActivityViewModel @Inject constructor(
                     "Deleting labels $ref".logAny()
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
-                        if(firestore.deleteDocument(doc)){
-                            val labelId = doc.id
-                            repository.labelDao.getLabelById(labelId)?.let { label ->
-                                repository.labelDao.deleteOne(label)
-                                repository.cardLabelDao.getRelByLabelId(labelId).forEach {
-                                    repository.cardLabelDao.deleteAll(it)
-                                }
+                        val labelId = doc.id
+                        repository.labelDao.getLabelById(labelId)?.let { label ->
+                            repository.labelDao.deleteOne(label)
+                            repository.cardLabelDao.getRelByLabelId(labelId).forEach {
+                                repository.cardLabelDao.deleteAll(it)
                             }
-                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delLabels", ref)
                         }
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delLabels", ref)
                     }
                 }
             }
@@ -139,13 +213,11 @@ class ActivityViewModel @Inject constructor(
                     "Deleting tasks $ref".logAny()
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
-                        if(firestore.deleteDocument(doc)){
                             val taskId = doc.id
-                            repository.taskDao.getTaskByTaskId(taskId)?.let { task ->
-                                repository.taskDao.deleteOne(task)
-                            }
-                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delTasks", ref)
+                        repository.taskDao.getTaskByTaskId(taskId)?.let { task ->
+                            repository.taskDao.deleteOne(task)
                         }
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delTasks", ref)
                     }
                 }
             }

@@ -9,8 +9,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_marginHorizontal="@dimen/dimen_16"
-        android:layout_marginVertical="@dimen/dimen_4"
+        android:paddingHorizontal="@dimen/dimen_16"
+        android:focusable="true"
+        android:clickable="true"
+        android:background="?selectableItemBackground"
+        android:paddingVertical="@dimen/dimen_4"
         android:layout_height="wrap_content">
 
         <androidx.cardview.widget.CardView

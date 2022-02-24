@@ -14,4 +14,7 @@ interface CardDao: BaseDao<Card> {
 
     @Query("select * from card where cardId = :cardId")
     fun getCardById(cardId: String): Flow<Card>
+
+    @Query("select * from card where cardId = :cardId")
+    suspend fun getCardByIdNoFlow(cardId: String): Card?
 }

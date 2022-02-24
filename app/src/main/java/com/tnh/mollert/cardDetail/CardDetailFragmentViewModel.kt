@@ -411,9 +411,6 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun deleteThisCard(){
-
-    }
 
     fun addWork(cardId: String, workName: String) {
         val workId = "${workName}_${System.currentTimeMillis()}"
@@ -528,6 +525,83 @@ class CardDetailFragmentViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun deleteActivity(workspaceId: String, boardId: String, activity: Activity) {
+        val activityDoc = firestore.getActivityDoc(workspaceId, boardId, activity.activityId)
+        viewModelScope.launch {
+            if(firestore.deleteDocument(
+                    activityDoc,
+                )){
+                if(repository.activityDao.deleteOne(activity) > 0){
+                    if(firestore.insertToArrayField(
+                        firestore.getTrackingDoc(email),
+                        "delActivities",
+                        activityDoc.path
+                    )){
+                        postMessage("Delete comment successfully")
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteAttachment(attachment: Attachment) {
+        cardDoc?.let { doc->
+            val attachmentDoc = firestore.getAttachmentDoc(doc, attachment.attachmentId)
+            viewModelScope.launch {
+                if(firestore.deleteDocument(
+                    attachmentDoc,
+                )){
+                    if(repository.attachmentDao.deleteOne(attachment) > 0){
+                        if(firestore.insertToArrayField(
+                            firestore.getTrackingDoc(email),
+                            "delAttachments",
+                            attachmentDoc.path
+                        )){
+                            postMessage("Delete attachment successfully")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteThisCard(
+        workspaceId: String,
+        boardId: String,
+        doOnFailed: () -> Unit,
+        doOnSuccess: () -> Unit
+    ){
+        cardDoc?.let { doc->
+            card.value?.let { c->
+                viewModelScope.launch {
+                    if(firestore.deleteDocument(
+                        doc,
+                    )){
+                        repository.activityDao.getActivityByCardId(c.cardId).forEach {
+                            deleteActivity(workspaceId, boardId, it)
+                        }
+                        repository.attachmentDao.getAllByCardIdNoFlow(c.cardId).forEach {
+                            deleteAttachment(it)
+                        }
+                        repository.workDao.getWorksByCardId(c.cardId).forEach {
+                            deleteWork(it)
+                        }
+                        if(repository.cardDao.deleteOne(c) > 0){
+                            if(firestore.insertToArrayField(
+                                firestore.getTrackingDoc(email),
+                                "delCards",
+                                doc.path
+                            )){
+                                doOnSuccess()
+                            }
+                        }
+                    }
+                    doOnFailed()
+                }
+            }?: doOnFailed()
+        } ?: doOnFailed()
     }
 
 }
