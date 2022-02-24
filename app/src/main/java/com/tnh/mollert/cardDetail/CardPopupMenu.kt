@@ -6,6 +6,7 @@ import androidx.appcompat.widget.PopupMenu
 import com.tnh.mollert.R
 import com.tnh.mollert.datasource.local.compound.CardWithMembers
 import com.tnh.mollert.datasource.local.model.Card
+import com.tnh.tnhlibrary.logAny
 
 class CardPopupMenu(
     context: Context,
@@ -67,7 +68,6 @@ class CardPopupMenu(
                 }
             }
         }
-
         show()
     }
 

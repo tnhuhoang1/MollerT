@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.*
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.compound.BoardWithLists
+import com.tnh.mollert.datasource.local.compound.MemberAndActivity
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
@@ -30,9 +31,13 @@ class BoardDetailFragmentViewModel @Inject constructor(
 ): BaseViewModel() {
 
     var boardWithLists: LiveData<BoardWithLists> = MutableLiveData(null)
+    private set
+
+    var memberAndActivity: LiveData<kotlin.collections.List<MemberAndActivity>> = MutableLiveData(null)
 
     fun getAllList(boardId: String){
         boardWithLists = repository.appDao.getBoardWithLists(boardId).asLiveData()
+        memberAndActivity = repository.appDao.getMemberAndActivityByBoardIdFlow(boardId).asLiveData()
     }
 
     fun getConcatList(list: kotlin.collections.List<List>): kotlin.collections.List<List>{

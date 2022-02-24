@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.tnh.mollert.R
+import com.tnh.mollert.cardDetail.ActivityDialog
 import com.tnh.mollert.databinding.BoardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.datasource.AppRepository
@@ -37,6 +38,10 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
     private val popupMenu by lazy {
         BoardPopupMenu(requireContext(), binding.boardDetailFragmentToolbar.twoActionToolbarEndIcon)
+    }
+
+    private val activityDialog by lazy {
+        ActivityDialog(requireContext(),viewGroup)
     }
 
     private val imageLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
@@ -94,6 +99,10 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                 }
                 R.id.board_detail_menu_background->{
                     imageLauncher.launch(arrayOf("image/*"))
+                }
+                R.id.board_detail_menu_activity->{
+                    activityDialog.setTitle("Board activities")
+                    activityDialog.show()
                 }
             }
             true
@@ -180,6 +189,9 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         }
         eventObserve(viewModel.message){
             binding.root.showSnackBar(it)
+        }
+        safeObserve(viewModel.memberAndActivity){
+            activityDialog.submitList(it)
         }
     }
 }

@@ -12,33 +12,59 @@
         android:foreground="?selectableItemBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:backgroundTint="#DBD6EF"
+        android:layout_marginHorizontal="@dimen/dimen_8"
+        android:layout_marginVertical="@dimen/dimen_4"
+        android:backgroundTint="@color/neutrals9"
         app:cardCornerRadius="8dp"
-        app:cardElevation="12dp">
+        app:cardElevation="4dp">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/notification_item_imgView"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_centerVertical="true"
-                android:src="@drawable/app_icon"
-                />
+            <androidx.cardview.widget.CardView
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_margin="@dimen/dimen_4"
+                android:id="@+id/notification_item_card_view"
+                app:cardCornerRadius="@dimen/dimen_56"
+                android:layout_width="56dp"
+                android:layout_height="56dp">
+                <ImageView
+                    android:id="@+id/notification_item_avatar"
+                    android:src="@drawable/app_icon"
+                    android:scaleType="centerCrop"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
 
-            <TextView
-                android:id="@+id/notification_item_textView"
-                android:layout_width="match_parent"
+                    />
+            </androidx.cardview.widget.CardView>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/notification_item_message"
+                app:layout_constraintStart_toEndOf="@id/notification_item_card_view"
+                app:layout_constraintTop_toTopOf="@id/notification_item_card_view"
+                android:layout_width="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:maxLines="2"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/notification_item_imgView"
-                android:text="Vu Quyen Linh metion you on the card UI sprint 1 on MollerT"
-                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-                android:paddingVertical="@dimen/dimen_8"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+                android:paddingBottom="@dimen/dimen_8"
+                android:paddingTop="@dimen/dimen_4"
                 android:paddingHorizontal="@dimen/dimen_8" />
-        </RelativeLayout>
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/notification_item_timestamp"
+                app:layout_constraintStart_toEndOf="@id/notification_item_card_view"
+                app:layout_constraintTop_toBottomOf="@id/notification_item_message"
+                android:layout_width="0dp"
+                android:textSize="@dimen/text_size_12"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                android:paddingVertical="@dimen/dimen_2"
+                android:paddingHorizontal="@dimen/dimen_8" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>
 

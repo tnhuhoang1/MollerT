@@ -28,6 +28,7 @@ import com.tnh.mollert.cardDetail.label.LabelChipAdapter
 import com.tnh.mollert.cardDetail.label.LabelPickerDialog
 import com.tnh.mollert.databinding.CardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
+import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.model.Attachment
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.utils.bindImageUri
@@ -55,6 +56,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     }
     private val attachmentDialog by lazy {
         AddAttachmentDialog(requireContext(), container)
+    }
+    private val activityDialog by lazy {
+        ActivityDialog(requireContext(), container)
     }
     private val descriptionDialog by lazy {
         DescriptionDialog(requireContext(), container)
@@ -155,6 +159,10 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                     }else{
                         viewModel.joinCard()
                     }
+                }
+                R.id.card_detail_menu_activity->{
+                    activityDialog.setTitle("Card activities")
+                    activityDialog.showFullscreen()
                 }
                 R.id.card_detail_menu_achieved->{
                     if(optionMenu.getCardStatus() == Card.STATUS_ACTIVE){
@@ -374,11 +382,14 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         }
 
         safeObserve(viewModel.memberAndActivity){
+            activityDialog.submitList(it)
             if(it.isEmpty()){
                 binding.cardDetailFragmentCommentRecycler.gone()
             }else{
                 binding.cardDetailFragmentCommentRecycler.show()
-                commentAdapter.submitList(it)
+                commentAdapter.submitList(it.filter { memberAndActivity->
+                    memberAndActivity.activity.activityType == Activity.TYPE_COMMENT
+                })
             }
         }
 
