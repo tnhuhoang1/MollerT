@@ -7,11 +7,13 @@ import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentReference
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.compound.CardWithLabels
+import com.tnh.mollert.datasource.local.compound.CardWithMembers
 import com.tnh.mollert.datasource.local.compound.MemberAndActivity
 import com.tnh.mollert.datasource.local.model.*
 import com.tnh.mollert.datasource.remote.model.RemoteActivity
 import com.tnh.mollert.datasource.remote.model.RemoteAttachment
 import com.tnh.mollert.datasource.remote.model.RemoteLabelRef
+import com.tnh.mollert.datasource.remote.model.RemoteMemberRef
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
@@ -28,7 +30,8 @@ class CardDetailFragmentViewModel @Inject constructor(
     private val storage: StorageHelper
 ): BaseViewModel() {
 
-    private var email = UserWrapper.getInstance()?.currentUserEmail ?: ""
+    var email = UserWrapper.getInstance()?.currentUserEmail ?: ""
+    private set
 
     var card: LiveData<Card> = MutableLiveData(null)
     private set
@@ -38,6 +41,9 @@ class CardDetailFragmentViewModel @Inject constructor(
 
     var memberAndActivity: LiveData<List<MemberAndActivity>> = MutableLiveData(null)
     private set
+
+    var cardWithMembers: LiveData<CardWithMembers> = MutableLiveData(null)
+        private set
 
     var cardWithLabels: LiveData<CardWithLabels> = MutableLiveData(null)
 
@@ -59,6 +65,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         cardWithLabels = repository.appDao.getCardWithLabelsFlow(cardId).asLiveData()
         attachments = repository.attachmentDao.getAllByCardId(cardId).asLiveData()
         memberAndActivity = repository.appDao.getMemberAndActivityByCardIdFlow(cardId).asLiveData()
+        cardWithMembers = repository.appDao.getCardWithMembersByCardIdFlow(cardId).asLiveData()
     }
 
     fun getLabelById(boardId: String){
@@ -301,5 +308,109 @@ class CardDetailFragmentViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun achieveCard(){
+        cardDoc?.let { doc->
+            viewModelScope.launch {
+                if(firestore.mergeDocument(
+                        doc,
+                        mapOf(
+                            "status" to Card.STATUS_ACHIEVED,
+                        )
+                    )){
+                    if(firestore.insertToArrayField(
+                            firestore.getTrackingDoc(email),
+                            "cards",
+                            mapOf(
+                                "what" to "info",
+                                "ref" to doc.path
+                            )
+                        )){
+                        postMessage("Card achieved")
+                    }
+                }
+            }
+        }
+    }
+
+    fun activateCard(){
+        cardDoc?.let { doc->
+            viewModelScope.launch {
+                if(firestore.mergeDocument(
+                        doc,
+                        mapOf(
+                            "status" to Card.STATUS_ACTIVE,
+                        )
+                    )){
+                    if(firestore.insertToArrayField(
+                            firestore.getTrackingDoc(email),
+                            "cards",
+                            mapOf(
+                                "what" to "info",
+                                "ref" to doc.path
+                            )
+                        )){
+                        postMessage("Card activated")
+                    }
+                }
+            }
+        }
+    }
+
+    fun joinCard(){
+        cardDoc?.let { doc->
+            viewModelScope.launch {
+                if(firestore.insertToArrayField(
+                        doc,
+                        "members",
+                        RemoteMemberRef(
+                            email,
+                            firestore.getMemberDoc(email).path,
+                            RemoteMemberRef.ROLE_MEMBER
+                        )
+                    )){
+                    if(firestore.insertToArrayField(
+                            firestore.getTrackingDoc(email),
+                            "cards",
+                            mapOf(
+                                "what" to "member",
+                                "ref" to doc.path
+                            )
+                        )){
+                        postMessage("Join successfully")
+                    }
+                }
+            }
+        }
+    }
+
+    fun leaveCard(cardId: String){
+        cardDoc?.let { doc->
+            viewModelScope.launch {
+                repository.memberCarDao.getRelByEmailAndCardId(email, cardId)?.let { memberCardRel ->
+                    if(firestore.removeFromArrayField(
+                            doc,
+                            "members",
+                            memberCardRel.toRemote(firestore.getMemberDoc(email).path)
+                        )){
+                        if(firestore.insertToArrayField(
+                                firestore.getTrackingDoc(email),
+                                "cards",
+                                mapOf(
+                                    "what" to "member",
+                                    "ref" to doc.path
+                                )
+                            )){
+                            postMessage("Leave successfully")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteThisCard(){
+
     }
 }

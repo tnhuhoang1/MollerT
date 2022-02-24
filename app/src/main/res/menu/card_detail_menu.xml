@@ -9,10 +9,14 @@
     <item
         android:id="@+id/card_detail_menu_add_work"
         android:title="Add work" />
-    <item android:id="@+id/card_detail_menu_add_attachemnt"
+    <item android:id="@+id/card_detail_menu_add_attachment"
         android:title="Add attachment"/>
     <item android:id="@+id/card_detail_menu_join_card"
+        android:visible="false"
         android:title="Join card"/>
+    <item android:title="Activities"
+        android:id="@+id/card_detail_menu_activity"
+        />
     <item android:id="@+id/card_detail_menu_achieved"
         android:title="Archive"
         />

@@ -82,7 +82,6 @@
                 app:layout_constraintTop_toBottomOf="@id/board_detail_card_item_name"
                 app:layout_constraintStart_toStartOf="parent"
                 android:drawablePadding="@dimen/dimen_4"
-                android:layout_marginHorizontal="@dimen/dimen_8"
                 android:padding="@dimen/dimen_8"
                 android:drawableStart="@drawable/vd_paper_clip"
                 />
@@ -96,7 +95,6 @@
                 android:drawablePadding="@dimen/dimen_4"
                 android:layout_below="@id/board_detail_card_item_name"
                 android:padding="@dimen/dimen_8"
-                android:layout_marginHorizontal="@dimen/dimen_8"
                 android:layout_toStartOf="@id/board_detail_card_item_member"
                 android:layout_toEndOf="@id/board_detail_card_item_attachment_count"
                 android:drawableStart="@drawable/vd_clock"

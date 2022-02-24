@@ -5,6 +5,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.relation.CardLabelRel
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
+import com.tnh.mollert.datasource.local.relation.MemberCardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
@@ -152,13 +153,31 @@ class ActivityViewModel @Inject constructor(
                                         }
                                     }
                                     "member"->{
-
+                                        remoteCard.cardId?.let {
+                                            addCardMemberRel(remoteCard.cardId, remoteCard.members)
+                                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "cards", entry)
+                                        }
                                     }
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private suspend fun addCardMemberRel(cardId: String, remoteCard: List<RemoteMemberRef>){
+        repository.memberCarDao.getRelByCardId(cardId).forEach {
+            repository.memberCarDao.deleteOne(it)
+        }
+        remoteCard.forEach { remoteMemberRef ->
+            remoteMemberRef.email?.let { e->
+                repository.memberCarDao.insertOne(MemberCardRel(
+                    e,
+                    cardId,
+                    remoteMemberRef.role
+                ))
             }
         }
     }
@@ -173,7 +192,6 @@ class ActivityViewModel @Inject constructor(
             }
         }
     }
-
 
     private fun registerList(email: String, map: Map<String, Any>) {
         (map["lists"] as List<String>?)?.let { listRef->

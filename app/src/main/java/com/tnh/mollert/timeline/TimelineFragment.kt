@@ -26,7 +26,7 @@ class TimelineFragment: DataBindingFragment<TimelineFragmentBinding>(R.layout.ti
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        labelDialog.showFullscreen()
+
     }
 
 }

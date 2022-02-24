@@ -72,6 +72,16 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     >
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:orientation="horizontal"
+                        android:clipToPadding="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:paddingHorizontal="@dimen/dimen_16"
+                        android:id="@+id/card_detail_fragment_member_recycler"
+                        />
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/card_detail_fragment_description"
                         android:layout_width="match_parent"

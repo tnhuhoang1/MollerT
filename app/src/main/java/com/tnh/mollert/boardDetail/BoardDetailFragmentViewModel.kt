@@ -10,6 +10,7 @@ import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.local.relation.CardLabelRel
+import com.tnh.mollert.datasource.local.relation.MemberCardRel
 import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
@@ -159,7 +160,19 @@ class BoardDetailFragmentViewModel @Inject constructor(
                 viewModelScope.launch {
                     fetchAllLabels(workspaceId, boardId)
                     fetchAllList(workspaceId, boardId)
+                    fetchAllActivity(workspaceId, boardId)
                     prefManager.putString("$email+$workspaceId+$boardId", "synced")
+                }
+            }
+        }
+    }
+
+    private suspend fun fetchAllActivity(workspaceId: String, boardId: String) {
+        val col = firestore.getActivityCol(workspaceId, boardId)
+        firestore.getCol(col)?.documents?.forEach { document->
+            document.toObject(RemoteActivity::class.java)?.let { remoteActivity ->
+                remoteActivity.toModel()?.let {
+                    repository.activityDao.insertOne(it)
                 }
             }
         }
@@ -196,6 +209,19 @@ class BoardDetailFragmentViewModel @Inject constructor(
                 remoteCard.toModel()?.let {
                     repository.cardDao.insertOne(it)
                     addCardLabelRel(it.cardId, remoteCard.labels)
+                    addCardMemberRel(it.cardId, remoteCard.members)
+                    fetchAttachmentsInCard(workspaceId, boardId, listId, it.cardId)
+                }
+            }
+        }
+    }
+
+    private suspend fun fetchAttachmentsInCard(workspaceId: String, boardId: String, listId: String, cardId: String){
+        val col = firestore.getAttachmentCol(workspaceId, boardId, listId, cardId)
+        firestore.getCol(col)?.documents?.forEach { document->
+            document.toObject(RemoteAttachment::class.java)?.let { remoteAttachment ->
+                remoteAttachment.toModel().let {
+                    repository.attachmentDao.insertOne(it)
                 }
             }
         }
@@ -208,6 +234,23 @@ class BoardDetailFragmentViewModel @Inject constructor(
         remoteCard.forEach { remoteLabelRef ->
             remoteLabelRef.labelId?.let {
                 repository.cardLabelDao.insertOne(CardLabelRel(cardId, it))
+            }
+        }
+    }
+
+    private suspend fun addCardMemberRel(cardId: String, remoteCard: kotlin.collections.List<RemoteMemberRef>){
+        repository.memberCarDao.getRelByCardId(cardId).forEach {
+            repository.memberCarDao.deleteOne(it)
+        }
+        remoteCard.forEach { remoteMemberRef ->
+            remoteMemberRef.email?.let { e->
+                repository.memberCarDao.insertOne(
+                    MemberCardRel(
+                    e,
+                    cardId,
+                    remoteMemberRef.role
+                )
+                )
             }
         }
     }

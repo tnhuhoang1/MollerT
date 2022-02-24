@@ -62,6 +62,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     private val chipAdapter by lazy {
         LabelChipAdapter()
     }
+    private val memberAdapter by lazy {
+        MemberAdapter()
+    }
     private val commentAdapter by lazy {
         CommentAdapter()
     }
@@ -140,13 +143,42 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 R.id.card_detail_menu_change_cover->{
                     imageLauncher.launch(arrayOf("image/*"))
                 }
-                R.id.card_detail_menu_add_attachemnt->{
+                R.id.card_detail_menu_add_attachment->{
                     showAttachmentDialog()
+                }
+                R.id.card_detail_menu_add_work->{
+
+                }
+                R.id.card_detail_menu_join_card->{
+                    if(optionMenu.isMemberInCard(viewModel.email)){
+                        viewModel.leaveCard(args.cardId)
+                    }else{
+                        viewModel.joinCard()
+                    }
+                }
+                R.id.card_detail_menu_achieved->{
+                    if(optionMenu.getCardStatus() == Card.STATUS_ACTIVE){
+                        viewModel.achieveCard()
+                    }else{
+                        viewModel.activateCard()
+                    }
+                }
+                R.id.card_detail_menu_delete->{
+                    showDeleteCardDialog()
                 }
             }
             true
         }
-        optionMenu.show()
+        optionMenu.showWithMember(viewModel.email)
+    }
+
+    private fun showDeleteCardDialog(){
+        AlertDialog.Builder(requireContext()).apply {
+            setTitle("Do you really want to delete this card?")
+            setPositiveButton("DELETE"){_, _->
+
+            }
+        }.show()
     }
 
     private fun showAlertDialog(title: String, builder: (AlertDialog.Builder, CreateBoardLayoutBinding)-> Unit){
@@ -208,6 +240,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         }
 
         binding.cardDetailFragmentCommentRecycler.adapter = commentAdapter
+        binding.cardDetailFragmentMemberRecycler.adapter = memberAdapter
 
         setupListener()
         setupObserver()
@@ -346,6 +379,16 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             }else{
                 binding.cardDetailFragmentCommentRecycler.show()
                 commentAdapter.submitList(it)
+            }
+        }
+
+        safeObserve(viewModel.cardWithMembers){
+            optionMenu.setCardWithMembers(it)
+            if(it.members.isEmpty()){
+                binding.cardDetailFragmentMemberRecycler.gone()
+            }else{
+                binding.cardDetailFragmentMemberRecycler.show()
+                memberAdapter.submitList(it.members)
             }
         }
     }
