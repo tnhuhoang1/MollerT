@@ -51,6 +51,35 @@ class ActivityViewModel @Inject constructor(
                     registerDelWork(email, map)
                     registerDelAttachment(email, map)
                     registerDelCard(email, map)
+                    registerLeaveBoard(email, map)
+                }
+            }
+        }
+    }
+
+    private fun registerLeaveBoard(email: String, map: Map<String, Any>) {
+        (map["leaveBoards"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Leaving board $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        firestore.simpleGetDocumentModel<RemoteBoard>(doc)?.let { remoteBoard->
+                            remoteBoard.members?.let { listMember->
+                                remoteBoard.boardId?.let { boardId->
+                                    repository.memberBoardDao.getRelsByBoardId(boardId).forEach {
+                                        repository.memberBoardDao.deleteOne(it)
+                                    }
+                                    listMember.forEach { rmr->
+                                        rmr.toMemberBoardReal(remoteBoard.boardId)?.let {
+                                            repository.memberBoardDao.insertOne(it)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "leaveBoards", ref)
+                    }
                 }
             }
         }

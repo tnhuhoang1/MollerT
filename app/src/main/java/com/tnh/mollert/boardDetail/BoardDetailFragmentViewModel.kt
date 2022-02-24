@@ -11,6 +11,7 @@ import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.local.relation.CardLabelRel
+import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberCardRel
 import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
@@ -33,6 +34,8 @@ class BoardDetailFragmentViewModel @Inject constructor(
     var boardWithLists: LiveData<BoardWithLists> = MutableLiveData(null)
     private set
 
+    var isOwner: Boolean = false
+
     var cardAchieved: LiveData<kotlin.collections.List<Card>> = MutableLiveData(null)
 
     var memberAndActivity: LiveData<kotlin.collections.List<MemberAndActivity>> = MutableLiveData(null)
@@ -41,6 +44,15 @@ class BoardDetailFragmentViewModel @Inject constructor(
         boardWithLists = repository.appDao.getBoardWithLists(boardId).asLiveData()
         memberAndActivity = repository.appDao.getMemberAndActivityByBoardIdFlow(boardId).asLiveData()
         cardAchieved = repository.cardDao.getCardsWithBoardId(boardId, Card.STATUS_ACHIEVED).asLiveData()
+        viewModelScope.launch {
+            repository.memberDao.getBoardOwner(boardId)?.let { member->
+                UserWrapper.getInstance()?.currentUserEmail?.let { email->
+                    if(member.email == email){
+                        isOwner = true
+                    }
+                }
+            }
+        }
     }
 
     fun getConcatList(list: kotlin.collections.List<List>): kotlin.collections.List<List>{
@@ -262,4 +274,36 @@ class BoardDetailFragmentViewModel @Inject constructor(
             }
         }
     }
+
+    fun leaveBoard(workspaceId: String, boardId: String, onSuccess: ()-> Unit){
+        UserWrapper.getInstance()?.currentUserEmail?.let { email->
+            val memberDoc = firestore.getMemberDoc(email)
+            viewModelScope.launch {
+                if(firestore.removeFromArrayField(
+                    firestore.getBoardDoc(workspaceId, boardId),
+                    "members",
+                    RemoteMemberRef(
+                        email,
+                        memberDoc.path,
+                        MemberBoardRel.ROLE_MEMBER
+                    )
+                )){
+                    repository.memberBoardDao.getRelByEmailAndBoardId(email, boardId)?.let {
+                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            listMember.forEach { mem->
+                                val tracking = firestore.getTrackingDoc(mem.email)
+                                firestore.insertToArrayField(
+                                    tracking,
+                                    "leaveBoards",
+                                    firestore.getBoardDoc(workspaceId, boardId).path
+                                )
+                            }
+                        }
+                        onSuccess()
+                    }
+                }
+            }
+        }
+    }
+
 }

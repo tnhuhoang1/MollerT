@@ -10,6 +10,11 @@
     <item android:id="@+id/board_detail_menu_achieved_cards"
         android:title="Achieved cards"/>
     <item android:id="@+id/board_detail_menu_leave"
+        android:visible="false"
         android:title="Leave board"
+        />
+    <item android:id="@+id/board_detail_menu_close"
+        android:visible="false"
+        android:title="Close board"
         />
 </menu>

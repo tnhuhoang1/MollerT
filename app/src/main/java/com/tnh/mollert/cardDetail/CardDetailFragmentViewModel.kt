@@ -2,7 +2,10 @@ package com.tnh.mollert.cardDetail
 
 import android.content.ContentResolver
 import android.net.Uri
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.DocumentReference
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.compound.CardWithLabels
@@ -85,14 +88,17 @@ class CardDetailFragmentViewModel @Inject constructor(
         viewModelScope.launch {
             cardDoc?.let { doc->
                 if(firestore.mergeDocument(doc, mapOf("labels" to list))){
-                    if(firestore.insertToArrayField(
-                        firestore.getTrackingDoc(email),
-                        "cards",
-                            mapOf(
-                                "what" to "label",
-                                "ref" to doc.path
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "cards",
+                                mapOf(
+                                    "what" to "label",
+                                    "ref" to doc.path
+                                )
                             )
-                    )){
+                        }
                         postMessage("Set labels successfully")
                     }
                 }
@@ -101,21 +107,24 @@ class CardDetailFragmentViewModel @Inject constructor(
     }
 
 
-    fun saveCardDescription(desc: String){
+    fun saveCardDescription(boardId: String, desc: String){
         cardDoc?.let { doc->
             viewModelScope.launch {
                 if(firestore.mergeDocument(
                     doc,
                     mapOf("desc" to desc)
                 )){
-                    if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(email),
-                            "cards",
-                            mapOf(
-                                "what" to "info",
-                                "ref" to doc.path
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "cards",
+                                mapOf(
+                                    "what" to "info",
+                                    "ref" to doc.path
+                                )
                             )
-                    )){
+                        }
                         postMessage("Change description successfully")
                     }
                 }
@@ -123,21 +132,24 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun changeCardName(name: String){
+    fun changeCardName(boardId: String, name: String){
         cardDoc?.let { doc->
             viewModelScope.launch {
                 if(firestore.mergeDocument(
-                        doc,
-                        mapOf("name" to name)
-                    )){
-                    if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(email),
-                            "cards",
-                            mapOf(
-                                "what" to "info",
-                                "ref" to doc.path
+                    doc,
+                    mapOf("name" to name)
+                )){
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "cards",
+                                mapOf(
+                                    "what" to "info",
+                                    "ref" to doc.path
+                                )
                             )
-                        )){
+                        }
                         postMessage("Change name successfully")
                     }
                 }
@@ -145,7 +157,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun changeCardCover(contentResolver: ContentResolver, uri: Uri, cardId: String){
+    fun changeCardCover(boardId: String, contentResolver: ContentResolver, uri: Uri, cardId: String){
         cardDoc?.let { doc->
             viewModelScope.launch {
                 storage.uploadCardCover(contentResolver, uri, cardId)?.let { url->
@@ -153,14 +165,17 @@ class CardDetailFragmentViewModel @Inject constructor(
                         doc,
                         mapOf("cover" to url.toString())
                     )){
-                        if(firestore.insertToArrayField(
-                                firestore.getTrackingDoc(email),
-                                "cards",
-                                mapOf(
-                                    "what" to "info",
-                                    "ref" to doc.path
+                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            listMember.forEach { mem->
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "cards",
+                                    mapOf(
+                                        "what" to "info",
+                                        "ref" to doc.path
+                                    )
                                 )
-                            )){
+                            }
                             postMessage("Change cover successfully")
                         }
                     }
@@ -183,21 +198,23 @@ class CardDetailFragmentViewModel @Inject constructor(
                         cardId
                     )
                     if(firestore.addDocument(attDoc, remoteAttachment)){
-                        if(firestore.insertToArrayField(
-                                firestore.getTrackingDoc(email),
-                                "attachments",
-                                attDoc.path
-                            )){
+                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            listMember.forEach { mem->
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "attachments",
+                                    attDoc.path
+                                )
+                            }
                             postMessage("Add attachment successfully")
                         }
                     }
-
                 }
             }
         }
     }
 
-    fun addLinkAttachment(cardId: String, link: String){
+    fun addLinkAttachment(boardId: String, cardId: String, link: String){
         cardDoc?.let { doc->
             viewModelScope.launch {
                 val attachmentId = "attachment_${System.currentTimeMillis()}"
@@ -210,11 +227,14 @@ class CardDetailFragmentViewModel @Inject constructor(
                     cardId
                 )
                 if(firestore.addDocument(attDoc, remoteAttachment)){
-                    if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(email),
-                            "attachments",
-                            attDoc.path
-                        )){
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "attachments",
+                                attDoc.path
+                            )
+                        }
                         postMessage("Add attachment successfully")
                     }
                 }
@@ -222,7 +242,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun saveDate(startDate: Long, dueDate: Long){
+    fun saveDate(boardId: String, startDate: Long, dueDate: Long){
         cardDoc?.let { doc->
             viewModelScope.launch {
                 if(firestore.mergeDocument(
@@ -232,14 +252,17 @@ class CardDetailFragmentViewModel @Inject constructor(
                         "dueDate" to dueDate
                     )
                 )){
-                    if(firestore.insertToArrayField(
-                        firestore.getTrackingDoc(email),
-                        "cards",
-                        mapOf(
-                            "what" to "info",
-                            "ref" to doc.path
-                        )
-                    )){
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "cards",
+                                mapOf(
+                                    "what" to "info",
+                                    "ref" to doc.path
+                                )
+                            )
+                        }
                         postMessage("Set date successfully")
                     }
                 }
@@ -247,7 +270,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun saveDateChecked(isChecked: Boolean){
+    fun saveDateChecked(boardId: String, isChecked: Boolean){
         card.value?.let { c->
             if(c.checked != isChecked){
                 cardDoc?.let { doc->
@@ -258,14 +281,17 @@ class CardDetailFragmentViewModel @Inject constructor(
                                     "checked" to isChecked,
                                 )
                             )){
-                            if(firestore.insertToArrayField(
-                                    firestore.getTrackingDoc(email),
-                                    "cards",
-                                    mapOf(
-                                        "what" to "info",
-                                        "ref" to doc.path
+                            repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                                listMember.forEach { mem->
+                                    firestore.insertToArrayField(
+                                        firestore.getTrackingDoc(mem.email),
+                                        "cards",
+                                        mapOf(
+                                            "what" to "info",
+                                            "ref" to doc.path
+                                        )
                                     )
-                                )){
+                                }
                                 "change checked".logAny()
                             }
                         }
@@ -298,11 +324,14 @@ class CardDetailFragmentViewModel @Inject constructor(
                         activityDoc,
                         remoteActivity
                     )){
-                        if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(member.email),
-                            "activities",
-                            activityDoc.path
-                        )){
+                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            listMember.forEach { mem->
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "activities",
+                                    activityDoc.path
+                                )
+                            }
                             "Posted a comment".logAny()
                         }
                     }
@@ -311,7 +340,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun achieveCard(){
+    fun achieveCard(boardId: String){
         cardDoc?.let { doc->
             viewModelScope.launch {
                 if(firestore.mergeDocument(
@@ -320,14 +349,17 @@ class CardDetailFragmentViewModel @Inject constructor(
                             "status" to Card.STATUS_ACHIEVED,
                         )
                     )){
-                    if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(email),
-                            "cards",
-                            mapOf(
-                                "what" to "info",
-                                "ref" to doc.path
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "cards",
+                                mapOf(
+                                    "what" to "info",
+                                    "ref" to doc.path
+                                )
                             )
-                        )){
+                        }
                         postMessage("Card achieved")
                     }
                 }
@@ -335,7 +367,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun activateCard(){
+    fun activateCard(boardId: String){
         cardDoc?.let { doc->
             viewModelScope.launch {
                 if(firestore.mergeDocument(
@@ -344,14 +376,17 @@ class CardDetailFragmentViewModel @Inject constructor(
                             "status" to Card.STATUS_ACTIVE,
                         )
                     )){
-                    if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(email),
-                            "cards",
-                            mapOf(
-                                "what" to "info",
-                                "ref" to doc.path
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "cards",
+                                mapOf(
+                                    "what" to "info",
+                                    "ref" to doc.path
+                                )
                             )
-                        )){
+                        }
                         postMessage("Card activated")
                     }
                 }
@@ -359,26 +394,29 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun joinCard(){
+    fun joinCard(boardId: String){
         cardDoc?.let { doc->
             viewModelScope.launch {
                 if(firestore.insertToArrayField(
-                        doc,
-                        "members",
-                        RemoteMemberRef(
-                            email,
-                            firestore.getMemberDoc(email).path,
-                            RemoteMemberRef.ROLE_MEMBER
-                        )
-                    )){
-                    if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(email),
-                            "cards",
-                            mapOf(
-                                "what" to "member",
-                                "ref" to doc.path
+                    doc,
+                    "members",
+                    RemoteMemberRef(
+                        email,
+                        firestore.getMemberDoc(email).path,
+                        RemoteMemberRef.ROLE_MEMBER
+                    )
+                )){
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "cards",
+                                mapOf(
+                                    "what" to "member",
+                                    "ref" to doc.path
+                                )
                             )
-                        )){
+                        }
                         postMessage("Join successfully")
                     }
                 }
@@ -386,25 +424,28 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun leaveCard(cardId: String){
+    fun leaveCard(boardId: String, cardId: String){
         cardDoc?.let { doc->
             viewModelScope.launch {
                 repository.memberCarDao.getRelByEmailAndCardId(email, cardId)?.let { memberCardRel ->
-                    if(firestore.removeFromArrayField(
-                            doc,
-                            "members",
-                            memberCardRel.toRemote(firestore.getMemberDoc(email).path)
-                        )){
-                        if(firestore.insertToArrayField(
-                                firestore.getTrackingDoc(email),
-                                "cards",
-                                mapOf(
-                                    "what" to "member",
-                                    "ref" to doc.path
-                                )
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            if(firestore.removeFromArrayField(
+                                doc,
+                                "members",
+                                memberCardRel.toRemote(firestore.getMemberDoc(mem.email).path)
                             )){
-                            postMessage("Leave successfully")
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "cards",
+                                    mapOf(
+                                        "what" to "member",
+                                        "ref" to doc.path
+                                    )
+                                )
+                            }
                         }
+                        postMessage("Leave successfully")
                     }
                 }
             }
@@ -412,7 +453,7 @@ class CardDetailFragmentViewModel @Inject constructor(
     }
 
 
-    fun addWork(cardId: String, workName: String) {
+    fun addWork(boardId: String, cardId: String, workName: String) {
         val workId = "${workName}_${System.currentTimeMillis()}"
         cardDoc?.let { doc->
             val workDoc = firestore.getWorkDoc(doc, workId)
@@ -422,11 +463,14 @@ class CardDetailFragmentViewModel @Inject constructor(
                     workDoc,
                     remoteWork
                 )){
-                    if(firestore.insertToArrayField(
-                        firestore.getTrackingDoc(email),
-                        "works",
-                        workDoc.path
-                    )){
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "works",
+                                workDoc.path
+                            )
+                        }
                         postMessage("Add work successfully")
                     }
                 }
@@ -434,7 +478,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun addTask(workId: String, taskName: String){
+    fun addTask(boardId: String, workId: String, taskName: String){
         val taskId = "${taskName}_${System.currentTimeMillis()}"
         cardDoc?.let { doc->
             val taskDoc = firestore.getTaskDoc(doc, workId, taskId)
@@ -444,11 +488,14 @@ class CardDetailFragmentViewModel @Inject constructor(
                     taskDoc,
                     remoteTask
                 )){
-                    if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(email),
-                            "tasks",
-                            taskDoc.path
-                        )){
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "tasks",
+                                taskDoc.path
+                            )
+                        }
                         postMessage("Add task successfully")
                     }
                 }
@@ -456,7 +503,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun deleteTask(task: Task, isShow: Boolean = true){
+    fun deleteTask(boardId: String, task: Task, isShow: Boolean = true){
         cardDoc?.let { doc->
             val taskDoc = firestore.getTaskDoc(doc, task.workId, task.taskId)
             viewModelScope.launch {
@@ -464,11 +511,14 @@ class CardDetailFragmentViewModel @Inject constructor(
                         taskDoc,
                 )){
                     if(repository.taskDao.deleteOne(task) > 0){
-                        if(firestore.insertToArrayField(
-                                firestore.getTrackingDoc(email),
-                                "delTasks",
-                                taskDoc.path
-                        )){
+                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            listMember.forEach { mem->
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "delTasks",
+                                    taskDoc.path
+                                )
+                            }
                             if(isShow){
                                 postMessage("Delete task successfully")
                             }
@@ -503,7 +553,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun deleteWork(work: Work) {
+    fun deleteWork(boardId: String, work: Work) {
         cardDoc?.let { doc->
             val workDoc = firestore.getWorkDoc(doc, work.workId)
             viewModelScope.launch {
@@ -511,13 +561,17 @@ class CardDetailFragmentViewModel @Inject constructor(
                         workDoc,
                 )){
                     if(repository.workDao.deleteOne(work) > 0){
-                        if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(email),
-                            "delWorks",
-                            workDoc.path
-                        )){
-                            repository.taskDao.getTasksByWorkIdNoFlow(work.workId).forEach { task ->
-                                deleteTask(task, false)
+                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            listMember.forEach { mem->
+                                if(firestore.insertToArrayField(
+                                        firestore.getTrackingDoc(mem.email),
+                                        "delWorks",
+                                        workDoc.path
+                                    )){
+                                    repository.taskDao.getTasksByWorkIdNoFlow(work.workId).forEach { task ->
+                                        deleteTask(boardId, task, false)
+                                    }
+                                }
                             }
                             postMessage("Delete work successfully")
                         }
@@ -534,11 +588,14 @@ class CardDetailFragmentViewModel @Inject constructor(
                     activityDoc,
                 )){
                 if(repository.activityDao.deleteOne(activity) > 0){
-                    if(firestore.insertToArrayField(
-                        firestore.getTrackingDoc(email),
-                        "delActivities",
-                        activityDoc.path
-                    )){
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "delActivities",
+                                activityDoc.path
+                            )
+                        }
                         postMessage("Delete comment successfully")
                     }
                 }
@@ -546,7 +603,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun deleteAttachment(attachment: Attachment) {
+    fun deleteAttachment(boardId: String, attachment: Attachment) {
         cardDoc?.let { doc->
             val attachmentDoc = firestore.getAttachmentDoc(doc, attachment.attachmentId)
             viewModelScope.launch {
@@ -554,11 +611,14 @@ class CardDetailFragmentViewModel @Inject constructor(
                     attachmentDoc,
                 )){
                     if(repository.attachmentDao.deleteOne(attachment) > 0){
-                        if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(email),
-                            "delAttachments",
-                            attachmentDoc.path
-                        )){
+                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            listMember.forEach { mem->
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "delAttachments",
+                                    attachmentDoc.path
+                                )
+                            }
                             postMessage("Delete attachment successfully")
                         }
                     }
@@ -583,17 +643,20 @@ class CardDetailFragmentViewModel @Inject constructor(
                             deleteActivity(workspaceId, boardId, it)
                         }
                         repository.attachmentDao.getAllByCardIdNoFlow(c.cardId).forEach {
-                            deleteAttachment(it)
+                            deleteAttachment(boardId, it)
                         }
                         repository.workDao.getWorksByCardId(c.cardId).forEach {
-                            deleteWork(it)
+                            deleteWork(boardId, it)
                         }
                         if(repository.cardDao.deleteOne(c) > 0){
-                            if(firestore.insertToArrayField(
-                                firestore.getTrackingDoc(email),
-                                "delCards",
-                                doc.path
-                            )){
+                            repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                                listMember.forEach { mem->
+                                    firestore.insertToArrayField(
+                                        firestore.getTrackingDoc(mem.email),
+                                        "delCards",
+                                        doc.path
+                                    )
+                                }
                                 doOnSuccess()
                             }
                         }

@@ -9,4 +9,22 @@ class BoardPopupMenu(context: Context, anchorView: View): PopupMenu(context, anc
     init {
         menuInflater.inflate(R.menu.board_detail_menu, menu)
     }
+
+    fun setLeaveOrClose(isOwner: Boolean){
+        if(isOwner){
+            menu?.findItem(R.id.board_detail_menu_close)?.let {
+                it.isVisible = false
+            }
+            menu?.findItem(R.id.board_detail_menu_leave)?.let {
+                it.isVisible = false
+            }
+        }else{
+            menu?.findItem(R.id.board_detail_menu_close)?.let {
+                it.isVisible = false
+            }
+            menu?.findItem(R.id.board_detail_menu_leave)?.let {
+                it.isVisible = true
+            }
+        }
+    }
 }

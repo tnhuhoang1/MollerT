@@ -85,7 +85,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
     private val imageLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
         if(uri != null){
-            viewModel.changeCardCover(requireContext().contentResolver, uri, args.cardId)
+            viewModel.changeCardCover(args.boardId, requireContext().contentResolver, uri, args.cardId)
         }
     }
 
@@ -158,9 +158,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 }
                 R.id.card_detail_menu_join_card->{
                     if(optionMenu.isMemberInCard(viewModel.email)){
-                        viewModel.leaveCard(args.cardId)
+                        viewModel.leaveCard(args.boardId, args.cardId)
                     }else{
-                        viewModel.joinCard()
+                        viewModel.joinCard(args.boardId)
                     }
                 }
                 R.id.card_detail_menu_activity->{
@@ -169,9 +169,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 }
                 R.id.card_detail_menu_achieved->{
                     if(optionMenu.getCardStatus() == Card.STATUS_ACTIVE){
-                        viewModel.achieveCard()
+                        viewModel.achieveCard(args.boardId)
                     }else{
-                        viewModel.activateCard()
+                        viewModel.activateCard(args.boardId)
                     }
                 }
                 R.id.card_detail_menu_delete->{
@@ -214,7 +214,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
                     viewModel.setMessage("Work name cannot be empty")
                 }else{
-                    viewModel.addWork(args.cardId, dialogBinding.createBoardLayoutName.text.toString())
+                    viewModel.addWork(args.boardId, args.cardId, dialogBinding.createBoardLayoutName.text.toString())
                 }
             }
         }
@@ -227,7 +227,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
                     viewModel.setMessage("Task name cannot be empty")
                 }else{
-                    viewModel.addTask(workId, dialogBinding.createBoardLayoutName.text.toString())
+                    viewModel.addTask(args.boardId, workId, dialogBinding.createBoardLayoutName.text.toString())
                 }
             }
         }
@@ -241,7 +241,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
                     viewModel.setMessage("Card name cannot be empty")
                 }else{
-                    viewModel.changeCardName(dialogBinding.createBoardLayoutName.text.toString())
+                    viewModel.changeCardName(args.boardId, dialogBinding.createBoardLayoutName.text.toString())
                 }
             }
         }
@@ -255,7 +255,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                     viewModel.setMessage("Link cannot be empty")
                 }else{
                     if(Patterns.WEB_URL.matcher(dialogBinding.createBoardLayoutName.text.toString()).matches()){
-                        viewModel.addLinkAttachment(args.cardId, dialogBinding.createBoardLayoutName.text.toString())
+                        viewModel.addLinkAttachment(args.boardId, args.cardId, dialogBinding.createBoardLayoutName.text.toString())
                     }else{
                         viewModel.postMessage("Not an url")
                     }
@@ -286,7 +286,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             AlertDialog.Builder(requireContext()).apply {
                 setTitle("Do you want to delete this attachment?")
                 setPositiveButton("DELETE"){_, _->
-                    viewModel.deleteAttachment(attachment)
+                    viewModel.deleteAttachment(args.boardId, attachment)
                 }
             }.show()
         }
@@ -310,14 +310,14 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         }  
         
         workAdapter.onDeleteTaskClicked = { task ->
-            viewModel.deleteTask(task)
+            viewModel.deleteTask(args.boardId, task)
         }
 
         workAdapter.onDeleteWorkClicked = { work ->
             AlertDialog.Builder(requireContext()).apply {
                 setTitle("Do you want to delete this work?")
                 setPositiveButton("DELETE"){_, _->
-                    viewModel.deleteWork(work)
+                    viewModel.deleteWork(args.boardId, work)
                 }
             }.show()
         }
@@ -351,7 +351,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
         binding.cardDetailFragmentDescription.setOnClickListener {
             descriptionDialog.onCreateClick = { newDesc->
-                viewModel.saveCardDescription(newDesc)
+                viewModel.saveCardDescription(args.boardId, newDesc)
             }
             descriptionDialog.setHint("Write card description")
             descriptionDialog.showFullscreen(viewModel.card.value?.cardDesc)
@@ -375,14 +375,14 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
             datePicker.addOnPositiveButtonClickListener {
                 datePicker.selection?.let { pair->
-                    viewModel.saveDate(pair.first, pair.second)
+                    viewModel.saveDate(args.boardId, pair.first, pair.second)
                 }
             }
             datePicker.show(requireActivity().supportFragmentManager, "datePicker")
         }
         
         binding.cardDetailFragmentDateCheckbox.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.saveDateChecked(isChecked)
+            viewModel.saveDateChecked(args.boardId, isChecked)
         }
         binding.cardDetailFragmentCheckedList.setOnClickListener {
             showCreateWorkDialog()

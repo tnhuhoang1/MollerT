@@ -17,4 +17,5 @@ interface BoardDao: BaseDao<Board> {
 
     @Query("select * from board where boardId = :boardId")
     fun getBoardById(boardId: String): Flow<Board>
+
 }

@@ -14,6 +14,7 @@ import com.tnh.mollert.cardDetail.ActivityDialog
 import com.tnh.mollert.databinding.BoardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.utils.UserWrapper
 import com.tnh.mollert.utils.bindImageUriOrHide
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
@@ -110,6 +111,14 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                 R.id.board_detail_menu_achieved_cards->{
                     showAchievedDialog()
                 }
+                R.id.board_detail_menu_leave->{
+                    viewModel.leaveBoard(args.workspaceId, args.boardId){
+                        findNavController().navigateUp()
+                    }
+                }
+                R.id.board_detail_menu_close->{
+
+                }
             }
             true
         }
@@ -124,6 +133,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
 
     private fun showOptionMenu(){
+        popupMenu.setLeaveOrClose(viewModel.isOwner)
         popupMenu.show()
     }
 
