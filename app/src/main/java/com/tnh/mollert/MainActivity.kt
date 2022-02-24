@@ -45,7 +45,9 @@ class MainActivity : AppCompatActivity() {
         binding.activityMainBottomNav.setupWithNavController(navController)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when(destination.id){
-                R.id.cardDetailFragment, R.id.splashFragment, R.id.loginFragment, R.id.registerFragment, R.id.forgotPasswordFragment ->{
+                R.id.cardDetailFragment, R.id.splashFragment, R.id.loginFragment, R.id.registerFragment, R.id.forgotPasswordFragment,
+                    R.id.addEditLabelFragment
+                ->{
                     hideBottomNav()
                 }
                 else->{

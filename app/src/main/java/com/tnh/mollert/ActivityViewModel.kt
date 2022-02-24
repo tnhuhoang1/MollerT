@@ -40,9 +40,32 @@ class ActivityViewModel @Inject constructor(
                     registerList(email, map)
                     registerCard(email, map)
                     registerLabel(email, map)
-                    registerDelLabel(email, map)
                     registerAttachment(email, map)
                     registerActivity(email, map)
+                    registerWork(email, map)
+                    registerTask(email, map)
+
+                    registerDelLabel(email, map)
+                    registerDelTask(email, map)
+                }
+            }
+        }
+    }
+
+    private fun registerWork(email: String, map: Map<String, Any>) {
+        (map["works"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Loading work $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        firestore.simpleGetDocumentModel<RemoteWork>(doc)?.let { remoteWork ->
+                            remoteWork.toModel()?.let { work->
+                                repository.workDao.insertOne(work)
+                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "works", ref)
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -67,6 +90,25 @@ class ActivityViewModel @Inject constructor(
         }
     }
 
+    private fun registerTask(email: String, map: Map<String, Any>) {
+        (map["tasks"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Loading task $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        firestore.simpleGetDocumentModel<RemoteTask>(doc)?.let { remoteTask ->
+                            remoteTask.toModel()?.let { task->
+                                repository.taskDao.insertOne(task)
+                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "tasks", ref)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun registerDelLabel(email: String, map: Map<String, Any>) {
         (map["delLabels"] as List<String>?)?.let { listRef->
             if(listRef.isNotEmpty()){
@@ -83,6 +125,26 @@ class ActivityViewModel @Inject constructor(
                                 }
                             }
                             firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delLabels", ref)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun registerDelTask(email: String, map: Map<String, Any>) {
+        (map["delTasks"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Deleting tasks $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        if(firestore.deleteDocument(doc)){
+                            val taskId = doc.id
+                            repository.taskDao.getTaskByTaskId(taskId)?.let { task ->
+                                repository.taskDao.deleteOne(task)
+                            }
+                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delTasks", ref)
                         }
                     }
                 }

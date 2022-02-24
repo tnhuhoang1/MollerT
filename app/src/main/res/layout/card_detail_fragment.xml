@@ -108,6 +108,7 @@
                         android:background="?selectableItemBackground"
                         android:drawableStart="@drawable/vd_clock_24"/>
                     <com.google.android.material.checkbox.MaterialCheckBox
+                        android:visibility="gone"
                         android:id="@+id/card_detail_fragment_date_checkbox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -141,7 +142,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/dimen_16"
-                        android:hint="Add checklist"
+                        android:hint="Add work"
                         android:background="?selectableItemBackground"
                         android:focusable="true"
                         android:clickable="true"
@@ -152,6 +153,16 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         android:drawableStart="@drawable/vd_tick_square"
 
+                        />
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                        android:orientation="vertical"
+                        android:clipToPadding="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:paddingHorizontal="@dimen/dimen_16"
+                        android:id="@+id/card_detail_fragment_work_recycler"
                         />
                     <com.google.android.material.textview.MaterialTextView
                         android:id="@+id/card_detail_fragment_attachment"

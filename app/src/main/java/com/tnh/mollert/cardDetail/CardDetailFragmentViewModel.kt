@@ -1,7 +1,6 @@
 package com.tnh.mollert.cardDetail
 
 import android.content.ContentResolver
-import android.content.SyncStats
 import android.net.Uri
 import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentReference
@@ -10,10 +9,7 @@ import com.tnh.mollert.datasource.local.compound.CardWithLabels
 import com.tnh.mollert.datasource.local.compound.CardWithMembers
 import com.tnh.mollert.datasource.local.compound.MemberAndActivity
 import com.tnh.mollert.datasource.local.model.*
-import com.tnh.mollert.datasource.remote.model.RemoteActivity
-import com.tnh.mollert.datasource.remote.model.RemoteAttachment
-import com.tnh.mollert.datasource.remote.model.RemoteLabelRef
-import com.tnh.mollert.datasource.remote.model.RemoteMemberRef
+import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
@@ -46,6 +42,10 @@ class CardDetailFragmentViewModel @Inject constructor(
         private set
 
     var cardWithLabels: LiveData<CardWithLabels> = MutableLiveData(null)
+    private set
+
+    var works: LiveData<List<Work>> = MutableLiveData(null)
+    private set
 
     var attachments: LiveData<List<Attachment>> = MutableLiveData(null)
     private set
@@ -66,6 +66,7 @@ class CardDetailFragmentViewModel @Inject constructor(
         attachments = repository.attachmentDao.getAllByCardId(cardId).asLiveData()
         memberAndActivity = repository.appDao.getMemberAndActivityByCardIdFlow(cardId).asLiveData()
         cardWithMembers = repository.appDao.getCardWithMembersByCardIdFlow(cardId).asLiveData()
+        works = repository.workDao.getWorksByCardIdFlow(cardId).asLiveData()
     }
 
     fun getLabelById(boardId: String){
@@ -413,4 +414,120 @@ class CardDetailFragmentViewModel @Inject constructor(
     fun deleteThisCard(){
 
     }
+
+    fun addWork(cardId: String, workName: String) {
+        val workId = "${workName}_${System.currentTimeMillis()}"
+        cardDoc?.let { doc->
+            val workDoc = firestore.getWorkDoc(doc, workId)
+            val remoteWork = RemoteWork(workId, workName, workDoc.path, cardId)
+            viewModelScope.launch {
+                if(firestore.addDocument(
+                    workDoc,
+                    remoteWork
+                )){
+                    if(firestore.insertToArrayField(
+                        firestore.getTrackingDoc(email),
+                        "works",
+                        workDoc.path
+                    )){
+                        postMessage("Add work successfully")
+                    }
+                }
+            }
+        }
+    }
+
+    fun addTask(workId: String, taskName: String){
+        val taskId = "${taskName}_${System.currentTimeMillis()}"
+        cardDoc?.let { doc->
+            val taskDoc = firestore.getTaskDoc(doc, workId, taskId)
+            val remoteTask = RemoteTask(taskId, taskName, workId)
+            viewModelScope.launch {
+                if(firestore.addDocument(
+                    taskDoc,
+                    remoteTask
+                )){
+                    if(firestore.insertToArrayField(
+                            firestore.getTrackingDoc(email),
+                            "tasks",
+                            taskDoc.path
+                        )){
+                        postMessage("Add task successfully")
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteTask(task: Task, isShow: Boolean = true){
+        cardDoc?.let { doc->
+            val taskDoc = firestore.getTaskDoc(doc, task.workId, task.taskId)
+            viewModelScope.launch {
+                if(firestore.deleteDocument(
+                        taskDoc,
+                )){
+                    if(repository.taskDao.deleteOne(task) > 0){
+                        if(firestore.insertToArrayField(
+                                firestore.getTrackingDoc(email),
+                                "delTasks",
+                                taskDoc.path
+                        )){
+                            if(isShow){
+                                postMessage("Delete task successfully")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun onTaskChecked(task: Task, newValue: Boolean){
+        if(task.checked != newValue){
+            cardDoc?.let { doc->
+                val taskDoc = firestore.getTaskDoc(doc, task.workId, task.taskId)
+                viewModelScope.launch {
+                    if(firestore.mergeDocument(
+                            taskDoc,
+                            mapOf(
+                                "checked" to newValue
+                            )
+                        )){
+                        if(firestore.insertToArrayField(
+                                firestore.getTrackingDoc(email),
+                                "tasks",
+                                taskDoc.path
+                            )){
+                            "Task checked changed".logAny()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteWork(work: Work) {
+        cardDoc?.let { doc->
+            val workDoc = firestore.getWorkDoc(doc, work.workId)
+            viewModelScope.launch {
+                if(firestore.deleteDocument(
+                        workDoc,
+                )){
+                    if(repository.workDao.deleteOne(work) > 0){
+                        if(firestore.insertToArrayField(
+                            firestore.getTrackingDoc(email),
+                            "delWorks",
+                            workDoc.path
+                        )){
+                            repository.taskDao.getTasksByWorkIdNoFlow(work.workId).forEach { task ->
+                                deleteTask(task, false)
+                            }
+                            postMessage("Delete work successfully")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

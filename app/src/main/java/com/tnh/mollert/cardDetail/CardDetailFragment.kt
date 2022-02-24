@@ -1,6 +1,5 @@
 package com.tnh.mollert.cardDetail
 
-import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -21,13 +20,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.datepicker.RangeDateSelector
 import com.tnh.mollert.R
 import com.tnh.mollert.boardDetail.DescriptionDialog
 import com.tnh.mollert.cardDetail.label.LabelChipAdapter
 import com.tnh.mollert.cardDetail.label.LabelPickerDialog
 import com.tnh.mollert.databinding.CardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
+import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.model.Attachment
 import com.tnh.mollert.datasource.local.model.Card
@@ -35,16 +34,13 @@ import com.tnh.mollert.utils.bindImageUri
 import com.tnh.mollert.utils.dpToPx
 import com.tnh.mollert.utils.getDate
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
-import dagger.hilt.android.AndroidEntryPoint
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.toast.showToast
 import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
-import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import com.tnh.tnhlibrary.view.snackbar.showSnackbar
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layout.card_detail_fragment) {
@@ -62,6 +58,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     }
     private val descriptionDialog by lazy {
         DescriptionDialog(requireContext(), container)
+    }
+    private val workAdapter by lazy {
+        WorkAdapter(AppRepository.getInstance(requireContext()).taskDao)
     }
     private val chipAdapter by lazy {
         LabelChipAdapter()
@@ -151,7 +150,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                     showAttachmentDialog()
                 }
                 R.id.card_detail_menu_add_work->{
-
+                    showCreateWorkDialog()
                 }
                 R.id.card_detail_menu_join_card->{
                     if(optionMenu.isMemberInCard(viewModel.email)){
@@ -197,6 +196,33 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             builder(this, binding)
         }.show()
     }
+
+    private fun showCreateWorkDialog(){
+        showAlertDialog("Add work"){ builder, dialogBinding ->
+            dialogBinding.createBoardLayoutName.hint = "Work name"
+            builder.setPositiveButton("OK") { _, _ ->
+                if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                    viewModel.setMessage("Work name cannot be empty")
+                }else{
+                    viewModel.addWork(args.cardId, dialogBinding.createBoardLayoutName.text.toString())
+                }
+            }
+        }
+    }
+
+    private fun showCreateTaskDialog(workId: String){
+        showAlertDialog("Add task"){ builder, dialogBinding ->
+            dialogBinding.createBoardLayoutName.hint = "Task name"
+            builder.setPositiveButton("OK") { _, _ ->
+                if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                    viewModel.setMessage("Task name cannot be empty")
+                }else{
+                    viewModel.addTask(workId, dialogBinding.createBoardLayoutName.text.toString())
+                }
+            }
+        }
+    }
+
 
     private fun showChangeNameDialog(){
         showAlertDialog("Change card name"){ builder, dialogBinding ->
@@ -249,6 +275,28 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
 
         binding.cardDetailFragmentCommentRecycler.adapter = commentAdapter
         binding.cardDetailFragmentMemberRecycler.adapter = memberAdapter
+        binding.cardDetailFragmentWorkRecycler.adapter = workAdapter
+
+        workAdapter.onAddItemClicked = { workId ->  
+            showCreateTaskDialog(workId)
+        }  
+        
+        workAdapter.onDeleteTaskClicked = { task ->
+            viewModel.deleteTask(task)
+        }
+
+        workAdapter.onDeleteWorkClicked = { work ->
+            AlertDialog.Builder(requireContext()).apply {
+                setTitle("Do you want to delete this work?")
+                setPositiveButton("DELETE"){_, _->
+                    viewModel.deleteWork(work)
+                }
+            }.show()
+        }
+
+        workAdapter.onTaskChecked = { task, isChecked ->
+            viewModel.onTaskChecked(task, isChecked)
+        }
 
         setupListener()
         setupObserver()
@@ -307,6 +355,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         
         binding.cardDetailFragmentDateCheckbox.setOnCheckedChangeListener { _, isChecked ->
             viewModel.saveDateChecked(isChecked)
+        }
+        binding.cardDetailFragmentCheckedList.setOnClickListener {
+            showCreateWorkDialog()
         }
 
     }
@@ -402,6 +453,15 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                 memberAdapter.submitList(it.members)
             }
         }
+
+        safeObserve(viewModel.works){
+            if(it.isEmpty()){
+                binding.cardDetailFragmentWorkRecycler.gone()
+            }else{
+                binding.cardDetailFragmentWorkRecycler.show()
+                workAdapter.submitList(it)
+            }
+        }
     }
 
     private fun bindData(card: Card){
@@ -432,6 +492,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             }
             binding.cardDetailFragmentDateCheckbox.isChecked = card.checked
             binding.cardDetailFragmentDateCheckbox.text = spanString
+            binding.cardDetailFragmentDateCheckbox.show()
+        }else{
+            binding.cardDetailFragmentDateCheckbox.gone()
         }
     }
 
