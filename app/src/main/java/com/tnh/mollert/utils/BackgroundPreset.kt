@@ -10,6 +10,7 @@ object BackgroundPreset {
         "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2Fphoto-1645611041935-d3450e58a64a.jpg?alt=media&token=03ad4f88-1cd8-492c-89b2-38a0cda420ef",
         "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2Fphoto-1645611868479-c5aa51b8e77f.jpg?alt=media&token=1e89af01-6ebe-4653-af9f-c1a7369e6a1b",
         "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2Fphoto-1645645271595-c40a86fd1cb4.jpg?alt=media&token=df2bae06-2832-4afd-b0ef-0bfb72360da3",
-        "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2Fphoto-1645747103867-0669a7eff310.jpg?alt=media&token=b3a5f745-4e40-45c6-a0c0-f3c51f7d6fae"
+        "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2Fphoto-1645747103867-0669a7eff310.jpg?alt=media&token=b3a5f745-4e40-45c6-a0c0-f3c51f7d6fae",
+        "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2Fphoto-1645181196184-3ae5bf3fc91d.jpg?alt=media&token=739c269e-70b7-4a72-8ecc-2e509795f8df"
     )
 }

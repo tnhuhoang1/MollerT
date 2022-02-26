@@ -4,9 +4,9 @@
         android:icon="@drawable/vd_elements"
         android:title="@string/boards"
         />
-    <item android:id="@id/timelineFragment"
+    <item android:id="@id/calendarFragment"
         android:icon="@drawable/vd_calendar"
-        android:title="@string/timeline"/>
+        android:title="@string/calendar"/>
     <item android:id="@id/notificationFragment"
         android:icon="@drawable/vd_notification"
         android:title="@string/notifications"

@@ -21,6 +21,8 @@ import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.toast.showToast
+import com.tnh.tnhlibrary.view.gone
+import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -71,6 +73,11 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     private fun observeData() {
         safeObserve(viewModel.memberWithWorkspaces){
             homeAdapter.submitList(it.workspaces)
+            if(it.workspaces.isEmpty()){
+                binding.homeFragmentNoWorkspace.show()
+            }else{
+                binding.homeFragmentNoWorkspace.gone()
+            }
             submitBoardList(it.workspaces)
         }
 

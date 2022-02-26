@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+    </data>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        app:cardElevation="@dimen/dimen_0"
+        app:cardBackgroundColor="@android:color/transparent"
+        android:focusable="true"
+        android:foreground="?selectableItemBackground"
+        android:layout_marginVertical="@dimen/dimen_2"
+        android:clickable="true"
+        app:cardCornerRadius="@dimen/dimen_4"
+        android:layout_height="wrap_content">
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/blue_stroke_shape"
+            android:padding="@dimen/dimen_8"
+            android:layout_height="wrap_content">
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/deadline_item_card_name"
+                android:layout_width="match_parent"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
+                android:textSize="@dimen/text_size_18"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_height="wrap_content"
+                />
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/deadline_item_timestamp"
+                android:layout_width="match_parent"
+                android:textSize="@dimen/text_size_12"
+                android:layout_height="wrap_content"
+                />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.cardview.widget.CardView>
+</layout>
