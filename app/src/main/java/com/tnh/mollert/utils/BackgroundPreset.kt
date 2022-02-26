@@ -22,7 +22,7 @@ object BackgroundPreset {
         "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2F9.jpg?alt=media&token=7539c860-f079-434b-b189-d25fd8ca76b7",
         "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2F10.jpg?alt=media&token=04713974-9f30-427f-8187-6cfe37d497bb",
         "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2F11.jpg?alt=media&token=440deb0c-a33b-49cc-852a-d74ee9b581cc",
-        "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2F12.jpg?alt=media&token=0ce4938e-880a-4305-898e-4829d32c8846"
+        "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2F12.jpg?alt=media&token=0ce4938e-880a-4305-898e-4829d32c8846",
         "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2Fphoto-1645181196184-3ae5bf3fc91d.jpg?alt=media&token=739c269e-70b7-4a72-8ecc-2e509795f8df"
     )
 }
