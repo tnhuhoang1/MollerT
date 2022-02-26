@@ -43,4 +43,5 @@
     <string name="name_place_holder">Tran Quang Duyet</string>
     <string name="old_pass_label">Old Password</string>
     <string name="new_pass_label">New Password</string>
+    <string name="calendar">Calendar</string>
 </resources>

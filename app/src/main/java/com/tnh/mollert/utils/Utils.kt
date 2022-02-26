@@ -14,7 +14,7 @@ val Int.pxToDp
 val Int.dpToPx
     get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
-fun Long.getDate(format: String = "dd/MM/yy"): String{
+fun Long.getDate(format: String = "dd/MM/yyyy"): String{
     return SimpleDateFormat(format, Locale.getDefault()).format(this)
 }
 

@@ -46,6 +46,8 @@
                 android:id="@+id/home_fragment_search_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:inputType="text"
                 android:hint="Search board"
                 android:textColorHint="@color/highlightStrokeColor"
                 />
@@ -63,5 +65,17 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/home_fragment_no_workspace"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:text="No workspace created yet"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/home_fragment_search_box"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.tnh.mollert.R
@@ -14,6 +15,7 @@ import com.tnh.mollert.cardDetail.ActivityDialog
 import com.tnh.mollert.databinding.BoardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.home.SearchDialog
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.mollert.utils.bindImageUriOrHide
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
@@ -37,6 +39,13 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     private var viewGroup: ViewGroup? = null
     private val descriptionDialog by lazy {
         DescriptionDialog(requireContext(), viewGroup)
+    }
+    private val searchDialog by lazy {
+        SearchDialog(requireContext(), viewGroup)
+    }
+
+    private val searchCardAdapter by lazy {
+        SearchCardAdapter()
     }
     @Inject lateinit var prefManager: PrefManager
 
@@ -125,8 +134,6 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     }
 
     private fun showAchievedDialog(){
-
-
         achievedCardDialog.showFullscreen()
     }
 
@@ -148,8 +155,19 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         boardDetailAdapter.onCardClicked = {listId, cardId ->
             navigateToCard(args.workspaceId, args.boardId, listId, cardId)
         }
-
         binding.boardDetailFragmentRecyclerview.adapter = boardDetailAdapter
+        binding.boardDetailFragmentSearchBox.setEndIconOnClickListener {
+            if(binding.boardDetailFragmentSearchInput.text.isNullOrEmpty().not()){
+                lifecycleScope.launchWhenResumed {
+                    viewModel.searchCard(binding.boardDetailFragmentSearchInput.text.toString()).let { listCard ->
+                        searchDialog.setCardAdapter(searchCardAdapter)
+                        searchCardAdapter.submitList(listCard)
+                        searchDialog.show()
+                    }
+                }
+            }
+        }
+
         setupObserver()
     }
 

@@ -131,11 +131,22 @@
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.tnh.mollert.notification.NotificationFragment"
-        android:label="NotificationFragment" />
+        android:label="NotificationFragment" >
+        <action
+            android:id="@+id/action_notificationFragment_to_cardDetailFragment"
+            app:destination="@id/cardDetailFragment" />
+        <action
+            android:id="@+id/action_notificationFragment_to_boardDetailFragment"
+            app:destination="@id/boardDetailFragment" />
+    </fragment>
     <fragment
-        android:id="@+id/timelineFragment"
-        android:name="com.tnh.mollert.timeline.TimelineFragment"
-        android:label="TimelineFragment" />
+        android:id="@+id/calendarFragment"
+        android:name="com.tnh.mollert.calendar.CalendarFragment"
+        android:label="CalendarFragment" >
+        <action
+            android:id="@+id/action_calendarFragment_to_cardDetailFragment"
+            app:destination="@id/cardDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.tnh.mollert.profile.ProfileFragment"

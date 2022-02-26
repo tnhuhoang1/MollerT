@@ -12,4 +12,5 @@ interface ActivityDao: BaseDao<Activity> {
 
     @Query("select * from activity where cardId = :cardId")
     suspend fun getActivityByCardId(cardId: String): List<Activity>
+
 }

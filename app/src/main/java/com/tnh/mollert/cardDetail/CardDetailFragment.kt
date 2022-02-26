@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
+import android.text.style.StrikethroughSpan
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
@@ -511,12 +512,13 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         }
         if(card.startDate != 0L && card.dueDate != 0L){
             val spanString = SpannableString("${card.startDate.getDate()} - ${card.dueDate.getDate()}")
-            if(System.currentTimeMillis() > card.dueDate){
+            if(card.checked){
+                spanString.setSpan(ForegroundColorSpan(Color.GREEN), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spanString.setSpan(StrikethroughSpan(), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }else if(System.currentTimeMillis() > card.dueDate){
                 spanString.setSpan(ForegroundColorSpan(Color.RED), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }else if(card.dueDate - System.currentTimeMillis() <= 86400000){
-                spanString.setSpan(ForegroundColorSpan(Color.YELLOW), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-            }else if(card.checked){
-                spanString.setSpan(ForegroundColorSpan(Color.GREEN), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                spanString.setSpan(ForegroundColorSpan(Color.parseColor("#FFA500")), 0, spanString.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
             }
             binding.cardDetailFragmentDateCheckbox.isChecked = card.checked
             binding.cardDetailFragmentDateCheckbox.text = spanString

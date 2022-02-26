@@ -21,7 +21,7 @@ class CommentAdapter: SimpleDataBindingListAdapter<MemberAndActivity, CommentIte
             commentItemAvatar.bindImageUri(item.member.avatar)
             commentItemName.text = item.member.name
             commentItemTextComment.text = MessageMaker.getCommentContent(item.activity.message)
-            commentItemTimestamp.text = item.activity.timestamp.getDate("dd/MM/yy HH:mm")
+            commentItemTimestamp.text = item.activity.timestamp.getDate("dd/MM/yyyy HH:mm")
             root.setOnLongClickListener {
                 onLongClicked(item.activity)
                 true

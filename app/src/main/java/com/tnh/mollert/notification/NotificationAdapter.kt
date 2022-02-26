@@ -22,7 +22,7 @@ class NotificationAdapter: SimpleDataBindingListAdapter<MemberAndActivity, Notif
         holder.binding.apply {
             notificationItemMessage.text = MessageMaker.getDecodedSpannable(item.activity.message)
             notificationItemAvatar.bindImageUri(item.member.avatar)
-            notificationItemTimestamp.text = item.activity.timestamp.getDate("dd/MM/YY HH:mm")
+            notificationItemTimestamp.text = item.activity.timestamp.getDate("dd/MM/yyyy HH:mm")
             root.setOnClickListener {
                 onItemClicked?.invoke(item)
             }

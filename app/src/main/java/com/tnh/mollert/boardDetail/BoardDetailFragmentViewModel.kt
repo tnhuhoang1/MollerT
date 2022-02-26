@@ -55,6 +55,10 @@ class BoardDetailFragmentViewModel @Inject constructor(
         }
     }
 
+    suspend fun searchCard(search: String): kotlin.collections.List<Card>{
+        return repository.cardDao.searchCard("%$search%")
+    }
+
     fun getConcatList(list: kotlin.collections.List<List>): kotlin.collections.List<List>{
         return list + List("null",
             "",
