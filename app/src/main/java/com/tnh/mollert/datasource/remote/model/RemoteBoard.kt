@@ -8,6 +8,7 @@ data class RemoteBoard(
     val boardDesc: String? = null,
     val boardBackground: String? = null,
     val boardStatus: String? = Board.STATUS_OPEN,
+    var boardVisibility: String = Board.VISIBILITY_PUBLIC,
     val members: List<RemoteMemberRef>? = listOf(),
     val positions: List<RemoteListPositionRef>? = listOf()
 ): RemoteModel {
@@ -19,7 +20,8 @@ data class RemoteBoard(
                 workspaceId,
                 boardDesc,
                 boardBackground,
-                boardStatus!!
+                boardStatus!!,
+                boardVisibility
             )
         }
     }

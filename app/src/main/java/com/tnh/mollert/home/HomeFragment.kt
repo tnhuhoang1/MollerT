@@ -1,11 +1,10 @@
 package com.tnh.mollert.home
 
-import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -19,8 +18,10 @@ import com.tnh.mollert.utils.LoadingModal
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
-import com.tnh.tnhlibrary.view.snackbar.showSnackBar
+import com.tnh.tnhlibrary.toast.showToast
+import com.tnh.tnhlibrary.view.snackbar.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -29,8 +30,12 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     private val viewModel by viewModels<HomeViewModel>()
     private lateinit var homeAdapter: HomeWorkSpaceAdapter
     @Inject lateinit var prefManager: PrefManager
+    private var container: ViewGroup? = null
     private val loading by lazy {
         LoadingModal(requireContext())
+    }
+    private val createBoardDialog by lazy {
+        CreateBoardDialog(requireContext(), container)
     }
     override fun doOnCreateView() {
         (activity as MainActivity?)?.showBottomNav()
@@ -38,6 +43,15 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         binding.lifecycleOwner = this
         viewModel.syncWorkspacesAndBoardsDataFirstTime(prefManager)
         viewModel.loadMemberWithWorkspaces()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        this.container = container
+        return super.onCreateView(inflater, container, savedInstanceState)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,7 +81,7 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         }
 
         eventObserve(viewModel.message){
-            binding.root.showSnackBar(it)
+            showToast(it)
         }
 
         safeObserve(viewModel.loading){
@@ -118,15 +132,32 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     }
 
     private fun showCreateDialog(ws: Workspace){
-        showAlertDialog("Add new board"){ builder, createBoardLayoutBinding ->
-            builder.setPositiveButton("Create") { _, _ ->
-                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrEmpty()){
-                    viewModel.setMessage("Board name cannot be empty")
+        createBoardDialog.refresh()
+        createBoardDialog.onConfirmClicked = { name, vis, url ->
+            if(name.isEmpty()){
+                viewModel.setMessage("Board name cannot be empty")
+            }else{
+                if(vis == "null"){
+                    viewModel.setMessage("Please select visibility")
                 }else{
-                    viewModel.createBoard(ws, createBoardLayoutBinding.createBoardLayoutName.text.toString())
+                    url?.let {
+                        viewModel.createBoard(ws, name, vis!!, url){
+                            createBoardDialog.dismiss()
+                        }
+                    }
                 }
             }
         }
+        createBoardDialog.show()
+//        showAlertDialog("Add new board"){ builder, createBoardLayoutBinding ->
+//            builder.setPositiveButton("Create") { _, _ ->
+//                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrEmpty()){
+//                    viewModel.setMessage("Board name cannot be empty")
+//                }else{
+//                    viewModel.createBoard(ws, createBoardLayoutBinding.createBoardLayoutName.text.toString())
+//                }
+//            }
+//        }
     }
 
     private fun showInviteDialog(ws: Workspace){

@@ -204,7 +204,13 @@ class HomeViewModel @Inject constructor(
         return listBoard
     }
 
-    fun createBoard(workspace: Workspace, boardName: String){
+    fun createBoard(
+        workspace: Workspace,
+        boardName: String,
+        visibility: String,
+        background: String,
+        onSuccess: ()-> Unit
+    ){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
             showProgress()
             val boardId = "${boardName}_${System.currentTimeMillis()}"
@@ -212,8 +218,9 @@ class HomeViewModel @Inject constructor(
                 boardId,
                 boardName,
                 "",
-                "https://firebasestorage.googleapis.com/v0/b/mollert-fb39e.appspot.com/o/default%2Fphoto-1576502200916-3808e07386a5.jpg?alt=media&token=48950ff8-f59c-4036-9082-9e463fbb2932",
+                background,
                 Board.STATUS_OPEN,
+                visibility,
                 listOf(RemoteMemberRef(email, firestore.getMemberDoc(email).path)),
                 listOf()
             )
@@ -233,13 +240,21 @@ class HomeViewModel @Inject constructor(
                             )
                         }
                     }
-                    repository.appDao.getWorkspaceWithMembersNoFlow(workspace.workspaceId)?.members?.let { members->
-                        "Notify to other members about new board inserted".logAny()
-                        members.forEach {
-                            val trackingLoc = firestore.getTrackingDoc(it.email)
-                            firestore.insertToArrayField(trackingLoc, "boards", boardDoc.path)
+                    if(visibility != Board.VISIBILITY_PRIVATE){
+                        repository.appDao.getWorkspaceWithMembersNoFlow(workspace.workspaceId)?.members?.let { members->
+                            "Notify to other members about new board inserted".logAny()
+                            members.forEach {
+                                val trackingLoc = firestore.getTrackingDoc(it.email)
+                                firestore.insertToArrayField(trackingLoc, "boards", boardDoc.path)
+                            }
                             postMessage("Board added")
+                            onSuccess()
                         }
+                    }else{
+                        val trackingLoc = firestore.getTrackingDoc(email)
+                        firestore.insertToArrayField(trackingLoc, "boards", boardDoc.path)
+                        postMessage("Board added")
+                        onSuccess()
                     }
                     hideProgress()
                 }else{
