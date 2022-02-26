@@ -47,6 +47,9 @@ class HomeViewModel @Inject constructor(
         _loading.postValue(false)
     }
 
+    suspend fun searchBoard(text: String): List<Board>{
+        return repository.boardDao.searchBoard("%$text%")
+    }
 
     fun loadMemberWithWorkspaces(){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->

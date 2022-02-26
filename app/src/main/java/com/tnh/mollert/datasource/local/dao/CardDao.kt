@@ -2,6 +2,7 @@ package com.tnh.mollert.datasource.local.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.tnhlibrary.room.BaseDao
 import kotlinx.coroutines.flow.Flow
@@ -26,4 +27,7 @@ interface CardDao: BaseDao<Card> {
             " order by c.startDate asc"
     )
     fun getCardHasDateFlow(email: String, date: Long = System.currentTimeMillis()): Flow<List<Card>>
+
+    @Query("select * from card where cardName like :search and status = 'active'")
+    suspend fun searchCard(search: String): List<Card>
 }

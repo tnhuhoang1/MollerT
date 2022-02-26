@@ -13,9 +13,12 @@ import com.tnh.mollert.MainActivity
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.databinding.HomeFragmentBinding
+import com.tnh.mollert.databinding.SearchBoardItemBinding
+import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.mollert.utils.LoadingModal
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
+import com.tnh.tnhlibrary.dataBinding.recycler.DataBindingItemClickListener
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.logAny
@@ -38,6 +41,12 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     }
     private val createBoardDialog by lazy {
         CreateBoardDialog(requireContext(), container)
+    }
+    private val searchBoardAdapter by lazy {
+        SearchBoardAdapter()
+    }
+    private val searchDialog by lazy {
+        SearchDialog(requireContext(), container)
     }
     override fun doOnCreateView() {
         (activity as MainActivity?)?.showBottomNav()
@@ -135,6 +144,20 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         binding.homeFragmentRecycleView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = homeAdapter
+        }
+
+        binding.homeFragmentSearchBox.setEndIconOnClickListener {
+            val search = binding.homeFragmentSearchInput.text.toString()
+            if(search.isEmpty().not()){
+                searchBoardAdapter.setRootClickListener { data, binding, position ->
+                    "hello world".logAny()
+                }
+                lifecycleScope.launchWhenResumed {
+                    searchBoardAdapter.submitList(viewModel.searchBoard(search))
+                    searchDialog.setBoardAdapter(searchBoardAdapter)
+                    searchDialog.show()
+                }
+            }
         }
     }
 

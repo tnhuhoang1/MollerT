@@ -18,4 +18,6 @@ interface BoardDao: BaseDao<Board> {
     @Query("select * from board where boardId = :boardId")
     fun getBoardById(boardId: String): Flow<Board>
 
+    @Query("select * from board where boardName like :search and status = 'open'")
+    suspend fun searchBoard(search: String): List<Board>
 }
