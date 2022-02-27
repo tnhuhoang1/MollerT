@@ -358,7 +358,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun leaveBoard(workspaceId: String, boardId: String, onSuccess: ()-> Unit){
+    fun leaveBoard(workspaceId: String, boardId: String, prefManager: PrefManager, onSuccess: ()-> Unit){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
             val memberDoc = firestore.getMemberDoc(email)
             viewModelScope.launch {
@@ -404,6 +404,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                                 )
                             }
                         }
+                        prefManager.putString("$email+$workspaceId+$boardId", "")
                         onSuccess()
                     }
                 }
@@ -411,7 +412,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun closeBoard(workspaceId: String, boardId: String){
+    fun closeBoard(workspaceId: String, boardId: String, prefManager: PrefManager){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
             val boardDoc = firestore.getBoardDoc(workspaceId, boardId)
             viewModelScope.launch {
@@ -419,6 +420,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                         boardDoc,
                         mapOf("boardStatus" to Board.STATUS_CLOSED)
                 )){
+                    prefManager.putString("$email+$workspaceId+$boardId", "")
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                         listMember.forEach { mem->
                             val tracking = firestore.getTrackingDoc(mem.email)

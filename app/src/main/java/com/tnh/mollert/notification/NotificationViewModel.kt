@@ -46,11 +46,20 @@ class NotificationViewModel @Inject constructor(
                     val remoteWorkspaceRef = RemoteWorkspaceRef(
                         workspaceId, workspaceDoc.path, RemoteWorkspaceRef.ROLE_MEMBER
                     )
-                    val remoteMemberRef = RemoteMemberRef(currentEmail, currentUserDoc.path)
+                    val remoteMemberRef = RemoteMemberRef(currentEmail, currentUserDoc.path, RemoteMemberRef.ROLE_MEMBER)
 
                     if(firestore.insertToArrayField(currentUserDoc, "workspaces", remoteWorkspaceRef)){
                         if(firestore.insertToArrayField(workspaceDoc, "members", remoteMemberRef)){
                             "Notify to fetch new data from remote".logAny()
+                            repository.appDao.getWorkspaceWithMembersNoFlow(workspaceId)?.members?.let { members->
+                                members.forEach { members->
+                                    firestore.insertToArrayField(
+                                        firestore.getTrackingDoc(members.email),
+                                        "workspaces",
+                                        workspaceDoc.path
+                                    )
+                                }
+                            }
                             if(firestore.insertToArrayField(
                                 firestore.getTrackingDoc(currentEmail),
                                 "workspaces",
@@ -62,8 +71,6 @@ class NotificationViewModel @Inject constructor(
                     }else{
                         // failed
                     }
-
-                    RemoteMember()
                 }
             }
         }

@@ -268,7 +268,7 @@ class HomeViewModel @Inject constructor(
                     }
                     if(visibility != Board.VISIBILITY_PRIVATE){
                         repository.appDao.getWorkspaceWithMembersNoFlow(workspace.workspaceId)?.members?.let { members->
-                            "Notify to other members about new board inserted".logAny()
+                            "Notify to other members (${members.size}) about new board inserted".logAny()
                             members.forEach {
                                 val trackingLoc = firestore.getTrackingDoc(it.email)
                                 firestore.insertToArrayField(trackingLoc, "boards", boardDoc.path)
@@ -313,13 +313,22 @@ class HomeViewModel @Inject constructor(
                     "members",
                     RemoteMemberRef(email, firestore.getMemberDoc(email).path, RemoteMemberRef.ROLE_MEMBER)
                 )){
-                    if(firestore.insertToArrayField(
-                            firestore.getTrackingDoc(email),
-                            "boards",
-                            boardRef.path
-                        )){
-                        postMessage("Join board successfully")
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            val tracking = firestore.getTrackingDoc(mem.email)
+                            firestore.insertToArrayField(
+                                tracking,
+                                "boards",
+                                boardRef.path
+                            )
+                        }
                     }
+                    firestore.insertToArrayField(
+                        firestore.getTrackingDoc(email),
+                        "boards",
+                        boardRef.path
+                    )
+                    postMessage("Join board successfully")
                 }
             }
         }

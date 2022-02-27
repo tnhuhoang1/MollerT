@@ -17,12 +17,10 @@ import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.home.SearchDialog
-import com.tnh.mollert.utils.UserWrapper
 import com.tnh.mollert.utils.bindImageUriOrHide
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.toast.showToast
 import com.tnh.tnhlibrary.view.show
@@ -124,12 +122,12 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                     showAchievedDialog()
                 }
                 R.id.board_detail_menu_leave->{
-                    viewModel.leaveBoard(args.workspaceId, args.boardId){
+                    viewModel.leaveBoard(args.workspaceId, args.boardId, prefManager){
                         findNavController().navigateUp()
                     }
                 }
                 R.id.board_detail_menu_close->{
-                    viewModel.closeBoard(args.workspaceId, args.boardId)
+                    viewModel.closeBoard(args.workspaceId, args.boardId, prefManager)
                 }
             }
             true
@@ -165,6 +163,10 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                     viewModel.searchCard(binding.boardDetailFragmentSearchInput.text.toString()).let { listCard ->
                         searchDialog.setCardAdapter(searchCardAdapter)
                         searchCardAdapter.submitList(listCard)
+                        searchCardAdapter.setRootClickListener{ card, _, _ ->
+                            navigateToCard(args.workspaceId, args.boardId, card.listId, card.cardId)
+                            searchDialog.dismiss()
+                        }
                         searchDialog.show()
                     }
                 }

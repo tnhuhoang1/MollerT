@@ -71,11 +71,10 @@ class ActivityViewModel @Inject constructor(
                         val doc = firestore.getDocRef(ref)
                         firestore.simpleGetDocumentModel<RemoteBoard>(doc)?.let { remoteBoard->
                             remoteBoard.toModel()?.let { model->
-                                model.logAny()
-//                                repository.boardDao.insertOne(model)
+                                repository.boardDao.insertOne(model)
                             }
                         }
-//                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "closeBoards", ref)
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "closeBoards", ref)
                     }
                 }
             }

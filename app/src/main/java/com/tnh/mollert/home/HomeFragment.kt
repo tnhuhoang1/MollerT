@@ -149,8 +149,8 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         binding.homeFragmentSearchBox.setEndIconOnClickListener {
             val search = binding.homeFragmentSearchInput.text.toString()
             if(search.isEmpty().not()){
-                searchBoardAdapter.setRootClickListener { data, binding, position ->
-                    "hello world".logAny()
+                searchBoardAdapter.setRootClickListener { data, _, _ ->
+                    navigateToBoardDetail(data.workspaceId, data.boardId, data.boardName)
                 }
                 lifecycleScope.launchWhenResumed {
                     searchBoardAdapter.submitList(viewModel.searchBoard(search))
