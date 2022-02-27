@@ -11,6 +11,8 @@ import com.tnh.mollert.utils.getDate
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.logAny
+import com.tnh.tnhlibrary.view.gone
+import com.tnh.tnhlibrary.view.show
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -43,35 +45,40 @@ class CalendarFragment: DataBindingFragment<CalendarFragmentBinding>(R.layout.ca
 
     private fun setupObserver() {
         safeObserve(viewModel.cardHasDate){ listCard->
-            val listDayWithDeadline = mutableListOf<DayWithDeadline>()
-            if(listCard.size == 1){
-                val dayWithDeadline = DayWithDeadline(
-                    listCard.first().startDate.getDate("E"),
-                    listCard.first().startDate.getDate("dd"),
-                    listCard
-                )
-                listDayWithDeadline.add(dayWithDeadline)
+            if(listCard.isEmpty()){
+                binding.calendarFragmentNoContent.show()
             }else{
-                var i = 0
-                while (i < listCard.size){
-                    val dayWithDeadline = DayWithDeadline("", "")
-                    dayWithDeadline.day = listCard[i].startDate.getDate("E")
-                    dayWithDeadline.dayNumber = listCard[i].startDate.getDate("dd")
-                    val cards = mutableListOf(listCard[i])
-                    for(j in i + 1 until listCard.size){
-                        if(listCard[i].startDate.getDate() == listCard[j].startDate.getDate()){
-                            cards.add(listCard[j])
-                        }else{
-                            i = j - 1
-                            break
-                        }
-                    }
-                    dayWithDeadline.listCard = cards
+                binding.calendarFragmentNoContent.gone()
+                val listDayWithDeadline = mutableListOf<DayWithDeadline>()
+                if(listCard.size == 1){
+                    val dayWithDeadline = DayWithDeadline(
+                        listCard.first().startDate.getDate("E"),
+                        listCard.first().startDate.getDate("dd"),
+                        listCard
+                    )
                     listDayWithDeadline.add(dayWithDeadline)
-                    i++
+                }else{
+                    var i = 0
+                    while (i < listCard.size){
+                        val dayWithDeadline = DayWithDeadline("", "")
+                        dayWithDeadline.day = listCard[i].startDate.getDate("E")
+                        dayWithDeadline.dayNumber = listCard[i].startDate.getDate("dd")
+                        val cards = mutableListOf(listCard[i])
+                        for(j in i + 1 until listCard.size){
+                            if(listCard[i].startDate.getDate() == listCard[j].startDate.getDate()){
+                                cards.add(listCard[j])
+                            }else{
+                                i = j - 1
+                                break
+                            }
+                        }
+                        dayWithDeadline.listCard = cards
+                        listDayWithDeadline.add(dayWithDeadline)
+                        i++
+                    }
                 }
+                adapter.submitList(listDayWithDeadline)
             }
-            adapter.submitList(listDayWithDeadline)
         }
     }
 

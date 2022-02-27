@@ -34,8 +34,11 @@ import kotlinx.coroutines.channels.ActorScope
 @AndroidEntryPoint
 class EditProfileFragment :
     DataBindingFragment<EditProfileFragmentBinding>(R.layout.edit_profile_fragment) {
-    private val viewModel by activityViewModels<ProfileViewModel>()
+    private val viewModel by viewModels<ProfileViewModel>()
     private var isChangeImageProfile : Boolean = false
+    private val loadingModal by lazy {
+        LoadingModal(requireContext())
+    }
 
     override fun doOnCreateView() {
         binding.editProfileFragmentToolbar.apply {
@@ -62,6 +65,7 @@ class EditProfileFragment :
                 }
 
                 ProfileViewModel.EVENT_SUCCESS -> {
+                    loadingModal.dismiss()
                     navigateToProfile()
                 }
 
@@ -79,7 +83,9 @@ class EditProfileFragment :
     }
 
     private fun onSaveButtonClicked() {
+        loadingModal.show()
         if (!this.isValidInput()) {
+            loadingModal.dismiss()
             return
         }
 
@@ -90,13 +96,16 @@ class EditProfileFragment :
 
         // Change password
         if (newPassword.isNotEmpty() && oldPassword.isNotEmpty()) {
-            viewModel.changePassword(oldPassword, newPassword)
+            lifecycleScope.launchWhenResumed {
+                if(viewModel.changePassword(oldPassword, newPassword)){
+                    viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
+                }
+                loadingModal.dismiss()
+            }
+        }else{
+            // Save user info
+            viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
         }
-
-        // Save user info
-        viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
-
-        this.navigateToProfile()
     }
 
     private fun onChangeImageClicked() {

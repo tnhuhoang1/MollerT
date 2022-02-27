@@ -1,20 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/board_detail_menu_desc"
-        android:title="Board description"
-        />
-    <item android:id="@+id/board_detail_menu_background"
-        android:title="Change background"/>
-    <item android:id="@+id/board_detail_menu_activity"
-        android:title="Activities"/>
-    <item android:id="@+id/board_detail_menu_achieved_cards"
-        android:title="Achieved cards"/>
-    <item android:id="@+id/board_detail_menu_leave"
+    <item
+        android:id="@+id/board_detail_menu_invite"
+        android:title="Invite member" />
+    <item android:title="Visibility"
+        android:id="@+id/board_detail_menu_visibility"
         android:visible="false"
+        >
+        <menu>
+            <item
+                android:id="@+id/board_detail_menu_private"
+                android:icon="@drawable/vd_invisible"
+                android:title="Private" />
+            <item
+                android:id="@+id/board_detail_menu_workspace"
+                android:icon="@drawable/vd_invisible"
+                android:title="Workspace" />
+            <item
+                android:id="@+id/board_detail_menu_public"
+                android:icon="@drawable/vd_tick"
+                android:title="Public" />
+        </menu>
+    </item>
+    <item
+        android:id="@+id/board_detail_menu_desc"
+        android:title="Board description" />
+    <item
+        android:id="@+id/board_detail_menu_background"
+        android:title="Change background" />
+    <item
+        android:id="@+id/board_detail_menu_activity"
+        android:title="Activities" />
+    <item
+        android:id="@+id/board_detail_menu_achieved_cards"
+        android:title="Achieved cards" />
+    <item
+        android:id="@+id/board_detail_menu_leave"
         android:title="Leave board"
-        />
-    <item android:id="@+id/board_detail_menu_close"
-        android:visible="false"
+        android:visible="false" />
+    <item
+        android:id="@+id/board_detail_menu_close"
         android:title="Close board"
-        />
+        android:visible="false" />
 </menu>

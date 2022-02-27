@@ -23,8 +23,6 @@ class NotificationViewModel @Inject constructor(
 
     val memberAndActivity = repository.appDao.getActivityAssocWithEmail(UserWrapper.getInstance()?.currentUserEmail ?: "").asLiveData()
 
-
-
     fun joinWorkspace(
         ownerWorkspace: String,
         workspaceId: String,

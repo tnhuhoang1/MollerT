@@ -54,5 +54,17 @@
             android:id="@+id/notification_fragment_recycler"
             app:layout_constraintBottom_toBottomOf="parent"
             />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/notification_fragment_no_content"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/notification_fragment_toolbar"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            android:text="There is no notification yet!"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

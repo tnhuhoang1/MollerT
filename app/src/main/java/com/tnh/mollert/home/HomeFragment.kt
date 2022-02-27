@@ -24,7 +24,9 @@ import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.toast.showToast
+import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.gone
+import com.tnh.tnhlibrary.view.hideKeyboard
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -67,6 +69,7 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.hideKeyboard()
         setupPreset()
         initControl()
         observeData()
@@ -150,7 +153,12 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
             val search = binding.homeFragmentSearchInput.text.toString()
             if(search.isEmpty().not()){
                 searchBoardAdapter.setRootClickListener { data, _, _ ->
-                    navigateToBoardDetail(data.workspaceId, data.boardId, data.boardName)
+                    try {
+                        searchDialog.dismiss()
+                        navigateToBoardDetail(data.workspaceId, data.boardId, data.boardName)
+                    }catch (e:Exception){
+                        trace(e)
+                    }
                 }
                 lifecycleScope.launchWhenResumed {
                     searchBoardAdapter.submitList(viewModel.searchBoard(search))

@@ -42,6 +42,12 @@ class UserWrapper private constructor(
         return null
     }
 
+    suspend fun reloadMember(){
+        firebaseAuth.currentUser?.email?.let { email->
+            currentLocalUser = repository.memberDao.getByEmail(email)
+        }
+    }
+
     fun listenForUser(
         whenNoUser: () -> Unit = {},
         whenHasUser: () -> Unit

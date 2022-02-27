@@ -154,6 +154,10 @@ object MessageMaker{
         return "${getEncodedMember(userEmail, userName)} left board ${getEncodedBoard(boardId, boardName)}"
     }
 
+    fun getChangeBoardVisMessage(userEmail: String, userName: String, boardId: String, boardName: String, vis: String): String{
+        return "${getEncodedMember(userEmail, userName)} changed board ${getEncodedBoard(boardId, boardName)} visibility to $vis"
+    }
+
     fun getCreateListMessage(userEmail: String, userName: String, boardId: String, boardName: String, listName: String): String{
         return "${getEncodedMember(userEmail, userName)} added list \"$listName\" to board ${getEncodedBoard(boardId, boardName)}"
     }

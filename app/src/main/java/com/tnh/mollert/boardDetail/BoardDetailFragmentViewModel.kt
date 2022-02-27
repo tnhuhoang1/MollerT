@@ -436,4 +436,51 @@ class BoardDetailFragmentViewModel @Inject constructor(
         }
     }
 
+    fun changeVisibility(boardId: String, newVisibility: String){
+        boardDoc?.let { doc->
+            if(boardWithLists.value?.board?.boardVisibility != newVisibility){
+                viewModelScope.launch {
+                    if(firestore.mergeDocument(
+                            doc,
+                            mapOf("boardVisibility" to Board.STATUS_CLOSED)
+                        )){
+                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            val activityId = "activity_${System.currentTimeMillis()}"
+                            val activityDoc = firestore.getActivityDoc(boardDoc!!, activityId)
+                            UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                                val message = MessageMaker.getChangeBoardVisMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "", newVisibility)
+                                val remoteActivity = RemoteActivity(
+                                    activityId,
+                                    member.email,
+                                    boardId,
+                                    null,
+                                    message,
+                                    false,
+                                    Activity.TYPE_ACTION,
+                                    System.currentTimeMillis()
+                                )
+                                firestore.addDocument(activityDoc, remoteActivity)
+                            }
+
+                            listMember.forEach { mem->
+                                val tracking = firestore.getTrackingDoc(mem.email)
+                                firestore.insertToArrayField(
+                                    tracking,
+                                    "boards",
+                                    doc.path
+                                )
+                                firestore.insertToArrayField(
+                                    tracking,
+                                    "activities",
+                                    activityDoc.path
+                                )
+                            }
+                            postMessage("Changed to $newVisibility")
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

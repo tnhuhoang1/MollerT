@@ -417,6 +417,7 @@ class ActivityViewModel @Inject constructor(
                     viewModelScope.launch {
                         UserWrapper.getInstance()?.fetchMember(email)?.let { member ->
                             "Updated user info: $member".logAny()
+                            UserWrapper.getInstance()?.reloadMember()
                             firestore.removeFromArrayField(firestore.getTrackingDoc(email), "info", it)
                         }
                     }

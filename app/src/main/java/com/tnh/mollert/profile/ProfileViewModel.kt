@@ -11,12 +11,14 @@ import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
+import com.tnh.mollert.utils.safeResume
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,10 +36,7 @@ class ProfileViewModel @Inject constructor(
     val memberEmail = Transformations.map(member){ m-> m?.email ?: ""}
     val bio = Transformations.map(member){m-> m?.biography ?: ""}
 
-    // Sử dụng shared view model sẽ khiến mất thông tin của người dùng nếu người dùng xoay màn hình
-//    private val _editName = MutableLiveData("")
     private val _editAvatar = MutableLiveData("")
-//    private val _editBio = MutableLiveData("")
 
 
     val editAvatar = _editAvatar.toLiveData()
@@ -48,7 +47,6 @@ class ProfileViewModel @Inject constructor(
 
     fun saveMemberInfoToFirestore(name: String, bio: String, contentResolver: ContentResolver) {
         if(email.isNotEmpty()){
-
             viewModelScope.launch {
                 val avatarUri = editAvatar.value ?: ""
                 var avatar = ""
@@ -59,6 +57,7 @@ class ProfileViewModel @Inject constructor(
                         avatarUri.toUri()
                     )?.toString() ?: ""
                 }
+                avatar.logAny()
                 val remoteMember =  RemoteMember(email, name, avatar, bio).info()
 
                 val doc = firestore.getMemberDoc(email)
@@ -75,29 +74,27 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun changePassword(oldPassword: String, newPassword: String) {
+    suspend fun changePassword(oldPassword: String, newPassword: String) = suspendCancellableCoroutine<Boolean> { cont->
         val firebaseUser = FirebaseAuth.getInstance().currentUser
         val credential = EmailAuthProvider.getCredential(memberEmail.value!!, oldPassword)
-
         viewModelScope.launch {
             firebaseUser?.let { user ->
                 user.reauthenticate(credential)
                     .addOnSuccessListener {
                         firebaseUser.updatePassword(newPassword)
                             .addOnSuccessListener {
-                                dispatchClickEvent(CHANGE_PASSWORD_SUCCESS)
-                                postMessage("Change password successfully")
+                                cont.safeResume { true }
                             }
                             .addOnFailureListener { error ->
                                 trace(error)
-                                dispatchClickEvent(CHANGE_PASSWORD_FAILURE)
                                 postMessage("Change password failure")
+                                cont.safeResume { false }
                             }
                     }
                     .addOnFailureListener { e ->
                         trace(e)
                         postMessage("Old password invalid, please try again")
-                        dispatchClickEvent(CHANGE_PASSWORD_FAILURE)
+                        cont.safeResume { false }
                     }
             }
         }

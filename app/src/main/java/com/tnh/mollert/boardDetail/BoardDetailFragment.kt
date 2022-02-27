@@ -129,9 +129,32 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                 R.id.board_detail_menu_close->{
                     viewModel.closeBoard(args.workspaceId, args.boardId, prefManager)
                 }
+
+                R.id.board_detail_menu_invite->{
+                    showInviteDialog()
+                }
+
+                R.id.board_detail_menu_private->{
+                    popupMenu.setNewVisibility(R.id.board_detail_menu_private)
+                    viewModel.changeVisibility(args.boardId, Board.VISIBILITY_PRIVATE)
+                }
+
+                R.id.board_detail_menu_workspace->{
+                    popupMenu.setNewVisibility(R.id.board_detail_menu_workspace)
+                    viewModel.changeVisibility(args.boardId, Board.VISIBILITY_WORKSPACE)
+                }
+
+                R.id.board_detail_menu_public->{
+                    popupMenu.setNewVisibility(R.id.board_detail_menu_public)
+                    viewModel.changeVisibility(args.boardId, Board.VISIBILITY_PUBLIC)
+                }
             }
             true
         }
+    }
+
+    private fun showInviteDialog() {
+
     }
 
     private fun showAchievedDialog(){
@@ -142,6 +165,9 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
     private fun showOptionMenu(){
         popupMenu.setLeaveOrClose(viewModel.isOwner)
+        viewModel.boardWithLists.value?.board?.boardVisibility?.let {
+            popupMenu.setVisibility(it)
+        }
         popupMenu.show()
     }
 
