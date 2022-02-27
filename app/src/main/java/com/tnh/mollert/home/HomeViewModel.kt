@@ -1,10 +1,12 @@
 package com.tnh.mollert.home
 
 import android.util.Patterns
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.local.compound.MemberAndBoard
 import com.tnh.mollert.datasource.local.compound.MemberWithWorkspaces
 import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.model.Board
@@ -18,15 +20,12 @@ import com.tnh.mollert.utils.LabelPreset
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.mollert.utils.notifyBoardMember
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
-import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
-import java.util.regex.Pattern
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,6 +36,7 @@ class HomeViewModel @Inject constructor(
 
     var memberWithWorkspaces = MutableLiveData<MemberWithWorkspaces>(null).toLiveData()
     val boards = repository.boardDao.countOneFlow().asLiveData()
+
     private var _loading = MutableLiveData(false)
     val loading = _loading.toLiveData()
 
@@ -46,6 +46,10 @@ class HomeViewModel @Inject constructor(
 
     fun hideProgress(){
         _loading.postValue(false)
+    }
+
+    suspend fun getBoardById(boardId: String): Board?{
+        return repository.boardDao.getBoardByIdNoFlow(boardId)
     }
 
     suspend fun searchBoard(text: String): List<Board>{
@@ -173,7 +177,7 @@ class HomeViewModel @Inject constructor(
                     sendNotification(email, remoteActivity)
                     remoteActivity.activityId = id + System.currentTimeMillis()
                     remoteActivity.actor = otherEmail
-                    remoteActivity.activityType = Activity.TYPE_INVITATION
+                    remoteActivity.activityType = Activity.TYPE_INVITATION_WORKSPACE
                     remoteActivity.message = MessageMaker.getWorkspaceInvitationReceiverMessage(
                         workspace.workspaceId,
                         workspace.workspaceName,
@@ -246,7 +250,7 @@ class HomeViewModel @Inject constructor(
                         }
                     }
                     UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
-                        val message = MessageMaker.getCreateBoardMessage(member.email, member.name, boardId, boardName)
+                        val message = MessageMaker.getCreateBoardMessage(boardId, boardName)
                         val activityId = "created_${System.currentTimeMillis()}"
                         val activityDoc = firestore.getActivityDoc(workspace.workspaceId, boardId, activityId)
                         val remoteActivity = RemoteActivity(
@@ -266,22 +270,16 @@ class HomeViewModel @Inject constructor(
                             notifyBoardMember(repository, firestore, boardId, "activities", activityDoc.path)
                         }
                     }
-                    if(visibility != Board.VISIBILITY_PRIVATE){
-                        repository.appDao.getWorkspaceWithMembersNoFlow(workspace.workspaceId)?.members?.let { members->
-                            "Notify to other members (${members.size}) about new board inserted".logAny()
-                            members.forEach {
-                                val trackingLoc = firestore.getTrackingDoc(it.email)
-                                firestore.insertToArrayField(trackingLoc, "boards", boardDoc.path)
-                            }
-                            postMessage("Board added")
-                            onSuccess()
+                    repository.appDao.getWorkspaceWithMembersNoFlow(workspace.workspaceId)?.members?.let { members->
+                        "Notify to other members (${members.size}) about new board inserted".logAny()
+                        members.forEach {
+                            val trackingLoc = firestore.getTrackingDoc(it.email)
+                            firestore.insertToArrayField(trackingLoc, "boards", boardDoc.path)
                         }
-                    }else{
-                        val trackingLoc = firestore.getTrackingDoc(email)
-                        firestore.insertToArrayField(trackingLoc, "boards", boardDoc.path)
                         postMessage("Board added")
                         onSuccess()
                     }
+
                     hideProgress()
                 }else{
                     postMessage("ERROR")
@@ -304,7 +302,18 @@ class HomeViewModel @Inject constructor(
         return false
     }
 
-    fun joinBoard(workspaceId: String, boardId: String){
+    suspend fun isOwnerOfThisBoard(boardId: String): Boolean{
+        UserWrapper.getInstance()?.currentUserEmail?.let { email->
+            repository.memberBoardDao.getRelByEmailAndBoardId(email, boardId)?.let {
+                if(it.role == MemberBoardRel.ROLE_OWNER){
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
+    fun joinBoard(workspaceId: String, boardId: String, onSuccess: () -> Unit){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
             val boardRef = firestore.getBoardDoc(workspaceId, boardId)
             viewModelScope.launch {
@@ -313,14 +322,37 @@ class HomeViewModel @Inject constructor(
                     "members",
                     RemoteMemberRef(email, firestore.getMemberDoc(email).path, RemoteMemberRef.ROLE_MEMBER)
                 )){
-                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
-                        listMember.forEach { mem->
-                            val tracking = firestore.getTrackingDoc(mem.email)
-                            firestore.insertToArrayField(
-                                tracking,
-                                "boards",
-                                boardRef.path
+                    repository.appDao.getBoardWithMembers(boardId)?.let { boardWithMember->
+                        val activityId = "activity_${System.currentTimeMillis()}"
+                        val activityDoc = firestore.getActivityDoc(boardRef, activityId)
+                        UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                            val message = MessageMaker.getJoinBoardMessage(boardId, boardWithMember.board.boardName)
+                            val remoteActivity = RemoteActivity(
+                                activityId,
+                                member.email,
+                                boardId,
+                                null,
+                                message,
+                                false,
+                                Activity.TYPE_ACTION,
+                                System.currentTimeMillis()
                             )
+                            firestore.addDocument(activityDoc, remoteActivity)
+                        }
+                        boardWithMember.members.let { listMember->
+                            listMember.forEach { mem->
+                                val tracking = firestore.getTrackingDoc(mem.email)
+                                firestore.insertToArrayField(
+                                    tracking,
+                                    "boards",
+                                    boardRef.path
+                                )
+                                firestore.insertToArrayField(
+                                    tracking,
+                                    "activities",
+                                    activityDoc.path
+                                )
+                            }
                         }
                     }
                     firestore.insertToArrayField(
@@ -328,7 +360,13 @@ class HomeViewModel @Inject constructor(
                         "boards",
                         boardRef.path
                     )
+                    firestore.insertToArrayField(
+                        firestore.getTrackingDoc(email),
+                        "activities",
+                        boardRef.path
+                    )
                     postMessage("Join board successfully")
+                    onSuccess()
                 }
             }
         }

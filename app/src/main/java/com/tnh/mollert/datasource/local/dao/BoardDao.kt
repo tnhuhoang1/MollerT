@@ -2,6 +2,7 @@ package com.tnh.mollert.datasource.local.dao
 
 import androidx.room.Dao
 import androidx.room.Query
+import com.tnh.mollert.datasource.local.compound.MemberAndBoard
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.tnhlibrary.room.BaseDao
 import kotlinx.coroutines.flow.Flow
@@ -23,4 +24,8 @@ interface BoardDao: BaseDao<Board> {
 
     @Query("select * from board where boardName like :search and status = 'open'")
     suspend fun searchBoard(search: String): List<Board>
+
+    @Query("select * from member as m, board as b, workspace as w, memberboardrel as mb " +
+            "where b.workspaceId = w.workspaceId and mb.boardId = b.boardId and mb.email = m.email and m.email = :email")
+    fun getAllBoardByEmail(email: String): Flow<List<MemberAndBoard>>
 }

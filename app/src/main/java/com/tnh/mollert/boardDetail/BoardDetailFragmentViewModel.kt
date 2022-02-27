@@ -2,6 +2,7 @@ package com.tnh.mollert.boardDetail
 
 import android.content.ContentResolver
 import android.net.Uri
+import android.util.Patterns
 import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentReference
 import com.tnh.mollert.datasource.AppRepository
@@ -16,11 +17,11 @@ import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
-import com.tnh.mollert.utils.notifyBoardMember
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -90,7 +91,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                     val activityId = "activity_${System.currentTimeMillis()}"
                     val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
                     UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
-                        val message = MessageMaker.getChangeBoardBackgroundMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "")
+                        val message = MessageMaker.getChangeBoardBackgroundMessage(boardId, boardWithLists.value?.board?.boardName ?: "")
                         val remoteActivity = RemoteActivity(
                             activityId,
                             member.email,
@@ -128,7 +129,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                 val activityId = "activity_${System.currentTimeMillis()}"
                 val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
                 UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
-                    val message = MessageMaker.getChangeBoardDescMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "")
+                    val message = MessageMaker.getChangeBoardDescMessage(boardId, boardWithLists.value?.board?.boardName ?: "")
                     val remoteActivity = RemoteActivity(
                         activityId,
                         member.email,
@@ -170,7 +171,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                     val activityId = "activity_${System.currentTimeMillis()}"
                     val activityDoc = firestore.getActivityDoc(boardDoc!!, activityId)
                     UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
-                        val message = MessageMaker.getCreateListMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "", listName)
+                        val message = MessageMaker.getCreateListMessage(boardId,boardWithLists.value?.board?.boardName ?: "", listName)
                         val remoteActivity = RemoteActivity(
                             activityId,
                             member.email,
@@ -216,7 +217,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                     val activityId = "activity_${System.currentTimeMillis()}"
                     val activityDoc = firestore.getActivityDoc(boardDoc!!, activityId)
                     UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
-                        val message = MessageMaker.getCreateCardMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "", cardId, cardName)
+                        val message = MessageMaker.getCreateCardMessage(boardId, boardWithLists.value?.board?.boardName ?: "", cardId, cardName)
                         val remoteActivity = RemoteActivity(
                             activityId,
                             member.email,
@@ -374,7 +375,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                     val activityId = "activity_${System.currentTimeMillis()}"
                     val activityDoc = firestore.getActivityDoc(boardDoc!!, activityId)
                     UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
-                        val message = MessageMaker.getLeaveBoardMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "")
+                        val message = MessageMaker.getLeaveBoardMessage(boardId, boardWithLists.value?.board?.boardName ?: "")
                         val remoteActivity = RemoteActivity(
                             activityId,
                             member.email,
@@ -448,7 +449,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                             val activityId = "activity_${System.currentTimeMillis()}"
                             val activityDoc = firestore.getActivityDoc(boardDoc!!, activityId)
                             UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
-                                val message = MessageMaker.getChangeBoardVisMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "", newVisibility)
+                                val message = MessageMaker.getChangeBoardVisMessage(boardId, boardWithLists.value?.board?.boardName ?: "", newVisibility)
                                 val remoteActivity = RemoteActivity(
                                     activityId,
                                     member.email,
@@ -481,6 +482,65 @@ class BoardDetailFragmentViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun inviteMemberToBoard(otherEmail: String, workspaceId: String){
+        viewModelScope.launch {
+            UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                val email = member.email
+                if (email == otherEmail) {
+                    postMessage("You can not invite yourself")
+                    cancel()
+                }
+                if (!Patterns.EMAIL_ADDRESS.matcher(otherEmail).matches()) {
+                    postMessage("Invalid email address")
+                    cancel()
+                }
+                boardWithLists.value?.board?.let { b->
+                    firestore.simpleGetDocumentModel<RemoteMember>(firestore.getMemberDoc(otherEmail))?.toMember()?.let { m ->
+                        val id = "invitation_${b.boardId}_"
+                        val remoteActivity = RemoteActivity(
+                            id + System.currentTimeMillis(),
+                            email,
+                            null,
+                            null,
+                            "",
+                            false,
+                            Activity.TYPE_INFO,
+                            System.currentTimeMillis()
+                        )
+                        remoteActivity.message = MessageMaker.getBoardInvitationSenderMessage(
+                            b.boardId,
+                            b.boardName,
+                            m.email,
+                            m.name
+                        )
+                        sendNotification(email, remoteActivity)
+                        remoteActivity.activityId = id + System.currentTimeMillis()
+                        remoteActivity.actor = otherEmail
+                        remoteActivity.activityType = Activity.TYPE_INVITATION_BOARD
+                        remoteActivity.message = MessageMaker.getBoardInvitationReceiverMessage(
+                            b.boardId,
+                            b.boardName,
+                            workspaceId,
+                            "",
+                            member.email,
+                            member.name
+                        )
+                        sendNotification(otherEmail, remoteActivity)
+                        postMessage("Sent invitation successfully")
+                    } ?: postMessage("No such member exist")
+                }
+            }
+        }
+    }
+
+    private suspend fun sendNotification(email: String, remoteActivity: RemoteActivity){
+        firestore.insertToArrayField(
+            firestore.getTrackingDoc(email),
+            "invitations",
+            remoteActivity
+        )
     }
 
 }

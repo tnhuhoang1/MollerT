@@ -213,12 +213,14 @@ class ActivityViewModel @Inject constructor(
                                     notificationHelper.simpleShowNotification(
                                         NotificationHelper.CHANNEL_DEFAULT_ID,
                                         NotificationHelper.CHANNEL_DEFAULT_NAME,
-                                        MessageMaker.getDecodedMessage(activity.message),
+                                        MessageMaker.getDecodedMessageWithMemberName(
+                                            UserWrapper.getInstance()?.getCurrentUser()?.name ?: email,
+                                            activity.message
+                                        ),
                                         "MollerT",
                                         1111
                                     )
                                 }
-
                                 repository.activityDao.insertOne(activity)
                                 firestore.removeFromArrayField(firestore.getTrackingDoc(email), "activities", ref)
                             }
@@ -491,7 +493,7 @@ class ActivityViewModel @Inject constructor(
                         viewModelScope.launch {
                             remoteActivity.toModel()?.let {
                                 repository.activityDao.insertOne(it)
-                                if(it.activityType == Activity.TYPE_INVITATION){
+                                if(it.activityType == Activity.TYPE_INVITATION_WORKSPACE){
                                     notificationHelper.simpleShowNotification(
                                         NotificationHelper.CHANNEL_INVITATION_ID,
                                         NotificationHelper.CHANNEL_INVITATION_NAME,

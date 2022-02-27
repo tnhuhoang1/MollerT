@@ -20,7 +20,7 @@ class NotificationAdapter: SimpleDataBindingListAdapter<MemberAndActivity, Notif
     ) {
         val item = getItem(position)
         holder.binding.apply {
-            notificationItemMessage.text = MessageMaker.getDecodedSpannable(item.activity.message)
+            notificationItemMessage.text = MessageMaker.getDecodedSpannableWithMemberName(item.member.name, item.activity.message)
             notificationItemAvatar.bindImageUri(item.member.avatar)
             notificationItemTimestamp.text = item.activity.timestamp.getDate("dd/MM/yyyy HH:mm")
             root.setOnClickListener {

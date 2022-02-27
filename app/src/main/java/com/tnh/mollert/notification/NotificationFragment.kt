@@ -51,8 +51,14 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
         binding.notificationFragmentRecycler.adapter = adapter
         adapter.onItemClicked = { memberAndActivity ->
             when(memberAndActivity.activity.activityType){
-                Activity.TYPE_INVITATION->{
+                Activity.TYPE_INVITATION_WORKSPACE->{
                     onInvitationClicked(memberAndActivity.activity)
+                }
+                Activity.TYPE_INVITATION_BOARD->{
+                    onBoardInvitationClicked(memberAndActivity.activity)
+                }
+                Activity.TYPE_ACTION->{
+
                 }
             }
         }
@@ -70,6 +76,22 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
                         }
                     }.show()
 
+                }
+            }
+        }
+    }
+
+    private fun onBoardInvitationClicked(activity: Activity){
+        UserWrapper.getInstance()?.currentUserEmail?.let { currentEmail->
+            val pair = MessageMaker.getBoardInvitationParams(activity.message)
+            if(pair.first.isNotEmpty() && pair.first != currentEmail){
+                if(pair.second.isNotEmpty()){
+                    AlertDialog.Builder(requireContext()).apply {
+                        setTitle("Join this board?")
+                        setPositiveButton("Join"){_,_->
+                            viewModel.joinBoard(pair.second, pair.first, currentEmail)
+                        }
+                    }.show()
                 }
             }
         }

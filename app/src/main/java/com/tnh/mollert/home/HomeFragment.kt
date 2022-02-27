@@ -13,14 +13,13 @@ import com.tnh.mollert.MainActivity
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.databinding.HomeFragmentBinding
-import com.tnh.mollert.databinding.SearchBoardItemBinding
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.mollert.utils.LoadingModal
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
-import com.tnh.tnhlibrary.dataBinding.recycler.DataBindingItemClickListener
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.toast.showToast
@@ -28,7 +27,6 @@ import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.hideKeyboard
 import com.tnh.tnhlibrary.view.show
-import com.tnh.tnhlibrary.view.snackbar.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -155,7 +153,7 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
                 searchBoardAdapter.setRootClickListener { data, _, _ ->
                     try {
                         searchDialog.dismiss()
-                        navigateToBoardDetail(data.workspaceId, data.boardId, data.boardName)
+                        onClick(data.workspaceId, data.boardId, data.boardName)
                     }catch (e:Exception){
                         trace(e)
                     }
@@ -225,14 +223,46 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     private val onClick: (workspaceId: String, boardId: String, boardName: String) -> Unit = { workspaceId, boardId, boardName->
         lifecycleScope.launchWhenResumed {
             if(viewModel.isJoinedThisBoard(boardId)){
-                navigateToBoardDetail(workspaceId, boardId, boardName)
-            }else{
-                AlertDialog.Builder(requireContext()).apply {
-                    setTitle("Join this board?")
-                    setPositiveButton("Join"){_,_->
-                        viewModel.joinBoard(workspaceId, boardId)
+                viewModel.getBoardById(boardId)?.let {
+                    "Navigate to $it".logAny()
+                    if(it.status == Board.STATUS_CLOSED){
+                        if(viewModel.isOwnerOfThisBoard(boardId)){
+                            AlertDialog.Builder(requireContext()).apply {
+                                setTitle("This board is closed!")
+                                setPositiveButton("OK"){_,_->
+                                }
+                                setNegativeButton("REOPEN"){_,_->
+
+                                }
+                            }.show()
+                        }else{
+                            viewModel.postMessage("This board is closed")
+                        }
+                    }else{
+                        navigateToBoardDetail(workspaceId, boardId, boardName)
                     }
-                }.show()
+                }
+            }else{
+                lifecycleScope.launchWhenResumed {
+                    viewModel.getBoardById(boardId)?.let { board->
+                        if(board.boardVisibility == Board.VISIBILITY_PRIVATE){
+                            AlertDialog.Builder(requireContext()).apply {
+                                setTitle("This board is private")
+                                setPositiveButton("OK"){_,_->
+                                }
+                            }.show()
+                        }else{
+                            AlertDialog.Builder(requireContext()).apply {
+                                setTitle("Join this board?")
+                                setPositiveButton("Join"){_,_->
+                                    viewModel.joinBoard(workspaceId, boardId){
+                                        navigateToBoardDetail(workspaceId, boardId, boardName)
+                                    }
+                                }
+                            }.show()
+                        }
+                    }
+                }
             }
         }
 

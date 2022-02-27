@@ -154,7 +154,16 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     }
 
     private fun showInviteDialog() {
-
+        showAlertDialog("Invite to board"){ builder, createBoardLayoutBinding ->
+            createBoardLayoutBinding.createBoardLayoutName.hint = "Email"
+            builder.setPositiveButton("Invite") { _, _ ->
+                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                    viewModel.setMessage("Email address cannot be empty")
+                }else{
+                    viewModel.inviteMemberToBoard(createBoardLayoutBinding.createBoardLayoutName.text.toString(), args.workspaceId)
+                }
+            }
+        }
     }
 
     private fun showAchievedDialog(){
