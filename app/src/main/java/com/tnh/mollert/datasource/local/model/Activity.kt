@@ -5,7 +5,6 @@ import android.text.SpannableStringBuilder
 import android.text.style.StyleSpan
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.tnh.mollert.utils.UserWrapper
 
 @Entity
 data class Activity(
@@ -71,7 +70,7 @@ object MessageMaker{
      *
      *
      */
-    fun getInvitationParams(eMessage: String): Pair<String, String>{
+    fun getWorkspaceInvitationParams(eMessage: String): Pair<String, String>{
         var first: String = ""
         var second: String = ""
         eMessage.split("***").forEach { s->
@@ -96,6 +95,19 @@ object MessageMaker{
                 s
             }
         }
+    }
+
+    fun getEncodedContent(header: String, eMessage: String): String{
+        eMessage.split("***").forEach { s->
+            if(s.startsWith("[*") && s.endsWith("*]")){
+                val l = s.removePrefix("[*").removeSuffix("*]").split("/*")
+                if(l.getOrNull(0) == header){
+                    return l.getOrElse(2){""}
+                }
+            }
+        }
+
+        return ""
     }
 
     fun getDecodedSpannable(encodedMessage: String): Spannable{
@@ -128,6 +140,110 @@ object MessageMaker{
 
     fun getCommentMessage(userEmail: String, userName: String, cardId: String, cardName: String, comment: String): String{
         return "${getEncodedMember(userEmail, userName)} comments ${getEncodedComment(comment)} on card ${getEncodedCard(cardId, cardName)}"
+    }
+
+    fun getCreateBoardMessage(userEmail: String, userName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} created board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getChangeBoardDescMessage(userEmail: String, userName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} changed description of board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getLeaveBoardMessage(userEmail: String, userName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} left board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getCreateListMessage(userEmail: String, userName: String, boardId: String, boardName: String, listName: String): String{
+        return "${getEncodedMember(userEmail, userName)} added list \"$listName\" to board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getCreateCardMessage(userEmail: String, userName: String, boardId: String, boardName: String, cardId: String, cardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} added card ${getEncodedCard(cardId, cardName)} to board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getChangedLabelMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} changed label on card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getChangedCardDescMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} changed card description on card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getChangedCardNameMessage(userEmail: String, userName: String,  cardId: String, cardName: String, newName: String,  boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} rename card ${getEncodedCard(cardId, cardName)} to ${getEncodedCard(cardId, newName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getChangedCardCoverMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} changed cover on card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getAttachedImageMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} attached an image on card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getAttachedLinkMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} attached a link on card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getCardAddDateMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} set date on card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getCardAchievedMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} achieved card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getActiveCardMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} activate card ${getEncodedCard(cardId, cardName)} to board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getJoinedCardMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} joined card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getLeftCardMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} left card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getDelCommendMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} deleted comment from card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getDelAttachmentMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} deleted attachment from card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getDelCardMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} deleted card ${getEncodedCard(cardId, cardName)} from board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getAddWorkMessage(userEmail: String, userName: String, workName: String, cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} added work \"$workName\" to card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getDelTaskMessage(userEmail: String, userName: String, taskName: String, cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} deleted task \"$taskName\" from card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getDelWorkMessage(userEmail: String, userName: String, workName: String, cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} deleted work \"$workName\" from card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getAddTaskMessage(userEmail: String, userName: String, taskName: String, cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} added task \"$taskName\" to card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getMarkCheckedDateMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} marked due date on card ${getEncodedCard(cardId, cardName)} complete in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getMarkUncheckedDateMessage(userEmail: String, userName: String,  cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} set due date on card ${getEncodedCard(cardId, cardName)} incomplete in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+    fun getChangeBoardBackgroundMessage(userEmail: String, userName: String, boardId: String, boardName: String): String{
+        return "${getEncodedMember(userEmail, userName)} changed background of board ${getEncodedBoard(boardId, boardName)}"
     }
 
     fun getCommentContent(encodedMessage: String): String{

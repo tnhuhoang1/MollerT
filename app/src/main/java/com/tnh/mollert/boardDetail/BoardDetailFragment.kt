@@ -15,6 +15,7 @@ import com.tnh.mollert.cardDetail.ActivityDialog
 import com.tnh.mollert.databinding.BoardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.home.SearchDialog
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.mollert.utils.bindImageUriOrHide
@@ -23,6 +24,7 @@ import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
+import com.tnh.tnhlibrary.toast.showToast
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -74,6 +76,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.setBoardDoc(args.workspaceId, args.boardId)
         viewModel.checkAndFetchList(prefManager, args.workspaceId, args.boardId)
         viewModel.getAllList(args.boardId)
     }
@@ -126,7 +129,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                     }
                 }
                 R.id.board_detail_menu_close->{
-
+                    viewModel.closeBoard(args.workspaceId, args.boardId)
                 }
             }
             true
@@ -225,6 +228,10 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             }
         }
         safeObserve(viewModel.boardWithLists){
+            if(it.board.status == Board.STATUS_CLOSED){
+                showToast("The board was closed")
+                findNavController().popBackStack(R.id.homeFragment, false)
+            }
             binding.boardDetailFragmentBackground.bindImageUriOrHide(it.board.background)
         }
         eventObserve(viewModel.message){

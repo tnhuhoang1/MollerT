@@ -3,12 +3,15 @@ package com.tnh.mollert
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.local.model.Activity
+import com.tnh.mollert.datasource.local.model.MessageMaker
 import com.tnh.mollert.datasource.local.relation.CardLabelRel
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberCardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
+import com.tnh.mollert.utils.NotificationHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.trace
@@ -20,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ActivityViewModel @Inject constructor(
     private val repository: AppRepository,
-    private val firestore: FirestoreHelper
+    private val firestore: FirestoreHelper,
+    private val notificationHelper: NotificationHelper
 ): BaseViewModel() {
     private var eventChangedListener: ListenerRegistration? = null
 
@@ -52,6 +56,27 @@ class ActivityViewModel @Inject constructor(
                     registerDelAttachment(email, map)
                     registerDelCard(email, map)
                     registerLeaveBoard(email, map)
+                    registerCloseBoard(email, map)
+                }
+            }
+        }
+    }
+
+    private fun registerCloseBoard(email: String, map: Map<String, Any>) {
+        (map["closeBoards"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Closing board $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        firestore.simpleGetDocumentModel<RemoteBoard>(doc)?.let { remoteBoard->
+                            remoteBoard.toModel()?.let { model->
+                                model.logAny()
+//                                repository.boardDao.insertOne(model)
+                            }
+                        }
+//                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "closeBoards", ref)
+                    }
                 }
             }
         }
@@ -185,6 +210,16 @@ class ActivityViewModel @Inject constructor(
                         val doc = firestore.getDocRef(ref)
                         firestore.simpleGetDocumentModel<RemoteActivity>(doc)?.let { remoteActivity ->
                             remoteActivity.toModel()?.let { activity->
+                                if(activity.actor != email){
+                                    notificationHelper.simpleShowNotification(
+                                        NotificationHelper.CHANNEL_DEFAULT_ID,
+                                        NotificationHelper.CHANNEL_DEFAULT_NAME,
+                                        MessageMaker.getDecodedMessage(activity.message),
+                                        "MollerT",
+                                        1111
+                                    )
+                                }
+
                                 repository.activityDao.insertOne(activity)
                                 firestore.removeFromArrayField(firestore.getTrackingDoc(email), "activities", ref)
                             }
@@ -419,10 +454,8 @@ class ActivityViewModel @Inject constructor(
             if(listRef.isNotEmpty()){
                 listRef.forEach {
                     viewModelScope.launch {
-                        firestore.getDocRef(it).parent.parent?.id?.let { wsId->
-                            saveBoardFromRemote(it, wsId)
-                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "boards", it)
-                        }
+                        saveBoardFromRemote(it)
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "boards", it)
                     }
                 }
             }else{
@@ -457,8 +490,14 @@ class ActivityViewModel @Inject constructor(
                         )
                         viewModelScope.launch {
                             remoteActivity.toModel()?.let {
-                                it.logAny()
                                 repository.activityDao.insertOne(it)
+                                if(it.activityType == Activity.TYPE_INVITATION){
+                                    notificationHelper.simpleShowNotification(
+                                        NotificationHelper.CHANNEL_INVITATION_ID,
+                                        NotificationHelper.CHANNEL_INVITATION_NAME,
+                                        "You have an invitation"
+                                    )
+                                }
                                 firestore.removeFromArrayField(firestore.getTrackingDoc(email), "invitations", remoteActivity)
                             }
                         }
@@ -470,11 +509,12 @@ class ActivityViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveBoardFromRemote(ref: String, workspaceId: String){
+    private suspend fun saveBoardFromRemote(ref: String){
+        "Saving board $ref".logAny()
         firestore.simpleGetDocumentModel<RemoteBoard>(
             firestore.getDocRef(ref)
         )?.let {
-            it.toModel(workspaceId)?.let { model->
+            it.toModel()?.let { model->
                 repository.boardDao.insertOne(model)
                 it.members?.let { listMember->
                     listMember.forEach { rmr->
@@ -521,7 +561,7 @@ class ActivityViewModel @Inject constructor(
     private suspend fun saveAllBoardFromRemote(workspaceId: String){
         firestore.getCol(firestore.getBoardCol(workspaceId))?.documentChanges?.forEach { docChange->
             val rb = docChange.document.toObject(RemoteBoard::class.java)
-            rb.toModel(workspaceId)?.let { board->
+            rb.toModel()?.let { board->
                 repository.boardDao.insertOne(board)
                 rb.members?.let { listMember->
                     listMember.forEach { rmr->

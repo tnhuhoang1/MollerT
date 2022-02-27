@@ -12,7 +12,6 @@ import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -54,7 +53,7 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
 
     private fun onInvitationClicked(activity: Activity){
         UserWrapper.getInstance()?.currentUserEmail?.let { currentEmail->
-            val pair = MessageMaker.getInvitationParams(activity.message)
+            val pair = MessageMaker.getWorkspaceInvitationParams(activity.message)
             if(pair.first.isNotEmpty() && pair.first != currentEmail){
                 if(pair.second.isNotEmpty()){
                     AlertDialog.Builder(requireContext()).apply {

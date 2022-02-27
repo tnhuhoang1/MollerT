@@ -13,7 +13,7 @@ class BoardPopupMenu(context: Context, anchorView: View): PopupMenu(context, anc
     fun setLeaveOrClose(isOwner: Boolean){
         if(isOwner){
             menu?.findItem(R.id.board_detail_menu_close)?.let {
-                it.isVisible = false
+                it.isVisible = true
             }
             menu?.findItem(R.id.board_detail_menu_leave)?.let {
                 it.isVisible = false

@@ -3,6 +3,7 @@ package com.tnh.mollert.components
 import android.content.Context
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.utils.FirestoreHelper
+import com.tnh.mollert.utils.NotificationHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.tnhlibrary.preference.PrefManager
 import dagger.Module
@@ -32,6 +33,11 @@ class AppComponent {
     @Provides
     fun psh(): StorageHelper{
         return StorageHelper.getInstance()
+    }
+
+    @Provides
+    fun pnh(@ApplicationContext context: Context): NotificationHelper{
+        return NotificationHelper.get(context)
     }
 
 }

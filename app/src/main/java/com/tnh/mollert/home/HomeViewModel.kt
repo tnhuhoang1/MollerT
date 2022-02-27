@@ -16,6 +16,7 @@ import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.LabelPreset
 import com.tnh.mollert.utils.UserWrapper
+import com.tnh.mollert.utils.notifyBoardMember
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
@@ -114,7 +115,7 @@ class HomeViewModel @Inject constructor(
     private suspend fun saveAllBoardFromRemote(workspaceId: String){
         firestore.getCol(firestore.getBoardCol(workspaceId))?.documentChanges?.forEach { docChange->
             val rb = docChange.document.toObject(RemoteBoard::class.java)
-            rb.toModel(workspaceId)?.let { board->
+            rb.toModel()?.let { board->
                 repository.boardDao.insertOne(board)
                 rb.members?.let { listMember->
                     listMember.forEach { rmr->
@@ -219,6 +220,7 @@ class HomeViewModel @Inject constructor(
             val boardId = "${boardName}_${System.currentTimeMillis()}"
             val remoteBoard = RemoteBoard(
                 boardId,
+                workspace.workspaceId,
                 boardName,
                 "",
                 background,
@@ -241,6 +243,27 @@ class HomeViewModel @Inject constructor(
                                 "labels",
                                 labelDoc.path
                             )
+                        }
+                    }
+                    UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                        val message = MessageMaker.getCreateBoardMessage(member.email, member.name, boardId, boardName)
+                        val activityId = "created_${System.currentTimeMillis()}"
+                        val activityDoc = firestore.getActivityDoc(workspace.workspaceId, boardId, activityId)
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            email,
+                            boardId,
+                            null,
+                            message,
+                            false,
+                            Activity.TYPE_INFO,
+                            System.currentTimeMillis()
+                        )
+                        if(firestore.addDocument(
+                            activityDoc,
+                            remoteActivity
+                        )){
+                            notifyBoardMember(repository, firestore, boardId, "activities", activityDoc.path)
                         }
                     }
                     if(visibility != Board.VISIBILITY_PRIVATE){

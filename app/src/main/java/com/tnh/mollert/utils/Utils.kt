@@ -2,6 +2,8 @@ package com.tnh.mollert.utils
 
 import android.content.res.Resources
 import android.util.DisplayMetrics
+import com.tnh.mollert.datasource.AppRepository
+import com.tnh.tnhlibrary.logAny
 import kotlinx.coroutines.CancellableContinuation
 import java.text.SimpleDateFormat
 import java.util.*
@@ -21,5 +23,17 @@ fun Long.getDate(format: String = "dd/MM/yyyy"): String{
 inline fun<T> CancellableContinuation<T>.safeResume(block: () -> T){
     if(isActive){
         resume(block())
+    }
+}
+
+suspend fun notifyBoardMember(repository: AppRepository, firestore: FirestoreHelper, boardId: String, field: String, data: Any){
+    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+        listMember.forEach { mem->
+            firestore.insertToArrayField(
+                firestore.getTrackingDoc(mem.email),
+                field,
+                data
+            )
+        }
     }
 }

@@ -32,6 +32,9 @@ class CardDetailFragmentViewModel @Inject constructor(
     var email = UserWrapper.getInstance()?.currentUserEmail ?: ""
     private set
 
+    var user: Member? = null
+    private set
+
     var card: LiveData<Card> = MutableLiveData(null)
     private set
 
@@ -58,9 +61,17 @@ class CardDetailFragmentViewModel @Inject constructor(
     }
 
     private var cardDoc: DocumentReference? = null
-
+    private var boardDoc: DocumentReference = firestore.getBoardDoc("stub", "stub")
+    private var board: Board? = null
+    private var _cardId: String = ""
     fun setCardDoc(workspaceId: String, boardId: String, listId: String, cardId: String){
+        _cardId = cardId
         cardDoc = firestore.getCardDoc(workspaceId, boardId, listId, cardId)
+        boardDoc = firestore.getBoardDoc(workspaceId, boardId)
+        viewModelScope.launch {
+            board = repository.boardDao.getBoardByIdNoFlow(boardId)
+            user = UserWrapper.getInstance()?.getCurrentUser()
+        }
     }
 
     fun getCardById(cardId: String){
@@ -88,6 +99,21 @@ class CardDetailFragmentViewModel @Inject constructor(
         viewModelScope.launch {
             cardDoc?.let { doc->
                 if(firestore.mergeDocument(doc, mapOf("labels" to list))){
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                    val message = MessageMaker.getChangedLabelMessage(user?.email.toString(), user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                    val remoteActivity = RemoteActivity(
+                        activityId,
+                        user?.email,
+                        boardId,
+                        _cardId,
+                        message,
+                        false,
+                        Activity.TYPE_ACTION,
+                        System.currentTimeMillis()
+                    )
+                    firestore.addDocument(activityDoc, remoteActivity)
+
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                         listMember.forEach { mem->
                             firestore.insertToArrayField(
@@ -97,6 +123,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                     "what" to "label",
                                     "ref" to doc.path
                                 )
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
                             )
                         }
                         postMessage("Set labels successfully")
@@ -114,8 +145,25 @@ class CardDetailFragmentViewModel @Inject constructor(
                     doc,
                     mapOf("desc" to desc)
                 )){
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+
+                    val message = MessageMaker.getChangedCardDescMessage(user?.email.toString(), user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                    val remoteActivity = RemoteActivity(
+                        activityId,
+                        user?.email,
+                        boardId,
+                        _cardId,
+                        message,
+                        false,
+                        Activity.TYPE_ACTION,
+                        System.currentTimeMillis()
+                    )
+                    firestore.addDocument(activityDoc, remoteActivity)
+
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                         listMember.forEach { mem->
+
                             firestore.insertToArrayField(
                                 firestore.getTrackingDoc(mem.email),
                                 "cards",
@@ -123,6 +171,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                     "what" to "info",
                                     "ref" to doc.path
                                 )
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
                             )
                         }
                         postMessage("Change description successfully")
@@ -139,8 +192,25 @@ class CardDetailFragmentViewModel @Inject constructor(
                     doc,
                     mapOf("name" to name)
                 )){
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                    val message = MessageMaker.getChangedCardNameMessage(user?.email.toString(), user?.name.toString(), _cardId, card.value?.cardName.toString(), name, boardId, board?.boardName.toString())
+                    val remoteActivity = RemoteActivity(
+                        activityId,
+                        email,
+                        boardId,
+                        _cardId,
+                        message,
+                        false,
+                        Activity.TYPE_ACTION,
+                        System.currentTimeMillis()
+                    )
+                    firestore.addDocument(activityDoc, remoteActivity)
+
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                         listMember.forEach { mem->
+
+
                             firestore.insertToArrayField(
                                 firestore.getTrackingDoc(mem.email),
                                 "cards",
@@ -148,6 +218,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                     "what" to "info",
                                     "ref" to doc.path
                                 )
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
                             )
                         }
                         postMessage("Change name successfully")
@@ -165,8 +240,24 @@ class CardDetailFragmentViewModel @Inject constructor(
                         doc,
                         mapOf("cover" to url.toString())
                     )){
+                        val activityId = "activity_${System.currentTimeMillis()}"
+                        val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                        val message = MessageMaker.getChangedCardCoverMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            email,
+                            boardId,
+                            _cardId,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+
                         repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                             listMember.forEach { mem->
+
                                 firestore.insertToArrayField(
                                     firestore.getTrackingDoc(mem.email),
                                     "cards",
@@ -174,6 +265,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                         "what" to "info",
                                         "ref" to doc.path
                                     )
+                                )
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "activities",
+                                    activityDoc.path
                                 )
                             }
                             postMessage("Change cover successfully")
@@ -199,11 +295,33 @@ class CardDetailFragmentViewModel @Inject constructor(
                     )
                     if(firestore.addDocument(attDoc, remoteAttachment)){
                         repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            val activityId = "activity_${System.currentTimeMillis()}"
+                            val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                            val message = MessageMaker.getAttachedImageMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                            val remoteActivity = RemoteActivity(
+                                activityId,
+                                email,
+                                boardId,
+                                _cardId,
+                                message,
+                                false,
+                                Activity.TYPE_ACTION,
+                                System.currentTimeMillis()
+                            )
+                            firestore.addDocument(activityDoc, remoteActivity)
+
                             listMember.forEach { mem->
+
+
                                 firestore.insertToArrayField(
                                     firestore.getTrackingDoc(mem.email),
                                     "attachments",
                                     attDoc.path
+                                )
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "activities",
+                                    activityDoc.path
                                 )
                             }
                             postMessage("Add attachment successfully")
@@ -228,11 +346,31 @@ class CardDetailFragmentViewModel @Inject constructor(
                 )
                 if(firestore.addDocument(attDoc, remoteAttachment)){
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        val activityId = "activity_${System.currentTimeMillis()}"
+                        val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                        val message = MessageMaker.getAttachedLinkMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            email,
+                            boardId,
+                            _cardId,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+
                         listMember.forEach { mem->
                             firestore.insertToArrayField(
                                 firestore.getTrackingDoc(mem.email),
                                 "attachments",
                                 attDoc.path
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
                             )
                         }
                         postMessage("Add attachment successfully")
@@ -253,6 +391,21 @@ class CardDetailFragmentViewModel @Inject constructor(
                     )
                 )){
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        val activityId = "activity_${System.currentTimeMillis()}"
+                        val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                        val message = MessageMaker.getCardAddDateMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            email,
+                            boardId,
+                            _cardId,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+
                         listMember.forEach { mem->
                             firestore.insertToArrayField(
                                 firestore.getTrackingDoc(mem.email),
@@ -261,6 +414,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                     "what" to "info",
                                     "ref" to doc.path
                                 )
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
                             )
                         }
                         postMessage("Set date successfully")
@@ -282,6 +440,25 @@ class CardDetailFragmentViewModel @Inject constructor(
                                 )
                             )){
                             repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                                val activityId = "activity_${System.currentTimeMillis()}"
+                                val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                                val message =
+                                    if (isChecked)
+                                        MessageMaker.getMarkCheckedDateMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                                    else
+                                        MessageMaker.getMarkUncheckedDateMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                                val remoteActivity = RemoteActivity(
+                                    activityId,
+                                    email,
+                                    boardId,
+                                    _cardId,
+                                    message,
+                                    false,
+                                    Activity.TYPE_ACTION,
+                                    System.currentTimeMillis()
+                                )
+                                firestore.addDocument(activityDoc, remoteActivity)
+
                                 listMember.forEach { mem->
                                     firestore.insertToArrayField(
                                         firestore.getTrackingDoc(mem.email),
@@ -290,6 +467,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                             "what" to "info",
                                             "ref" to doc.path
                                         )
+                                    )
+                                    firestore.insertToArrayField(
+                                        firestore.getTrackingDoc(mem.email),
+                                        "activities",
+                                        activityDoc.path
                                     )
                                 }
                                 "change checked".logAny()
@@ -307,33 +489,31 @@ class CardDetailFragmentViewModel @Inject constructor(
         val activityDoc = firestore.getActivityDoc(workspaceId, boardId, activityId)
 
         viewModelScope.launch {
-            UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
-                card.value?.cardName?.let { cardName->
-                    val message = MessageMaker.getCommentMessage(member.email, member.name, cardId, cardName, comment)
-                    val remoteActivity = RemoteActivity(
-                        activityId,
-                        email,
-                        boardId,
-                        cardId,
-                        message,
-                        false,
-                        Activity.TYPE_COMMENT,
-                        time
-                    )
-                    if(firestore.addDocument(
-                        activityDoc,
-                        remoteActivity
-                    )){
-                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
-                            listMember.forEach { mem->
-                                firestore.insertToArrayField(
-                                    firestore.getTrackingDoc(mem.email),
-                                    "activities",
-                                    activityDoc.path
-                                )
-                            }
-                            "Posted a comment".logAny()
+            card.value?.cardName?.let { cardName->
+                val message = MessageMaker.getCommentMessage(email, user?.name.toString(), cardId, cardName, comment)
+                val remoteActivity = RemoteActivity(
+                    activityId,
+                    email,
+                    boardId,
+                    cardId,
+                    message,
+                    false,
+                    Activity.TYPE_COMMENT,
+                    time
+                )
+                if(firestore.addDocument(
+                    activityDoc,
+                    remoteActivity
+                )){
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
+                            )
                         }
+                        "Posted a comment".logAny()
                     }
                 }
             }
@@ -349,6 +529,21 @@ class CardDetailFragmentViewModel @Inject constructor(
                             "status" to Card.STATUS_ACHIEVED,
                         )
                     )){
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                    val message = MessageMaker.getCardAchievedMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                    val remoteActivity = RemoteActivity(
+                        activityId,
+                        email,
+                        boardId,
+                        _cardId,
+                        message,
+                        false,
+                        Activity.TYPE_ACTION,
+                        System.currentTimeMillis()
+                    )
+                    firestore.addDocument(activityDoc, remoteActivity)
+
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                         listMember.forEach { mem->
                             firestore.insertToArrayField(
@@ -358,6 +553,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                     "what" to "info",
                                     "ref" to doc.path
                                 )
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
                             )
                         }
                         postMessage("Card achieved")
@@ -376,6 +576,22 @@ class CardDetailFragmentViewModel @Inject constructor(
                             "status" to Card.STATUS_ACTIVE,
                         )
                     )){
+
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                    val message = MessageMaker.getActiveCardMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                    val remoteActivity = RemoteActivity(
+                        activityId,
+                        email,
+                        boardId,
+                        _cardId,
+                        message,
+                        false,
+                        Activity.TYPE_ACTION,
+                        System.currentTimeMillis()
+                    )
+                    firestore.addDocument(activityDoc, remoteActivity)
+
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                         listMember.forEach { mem->
                             firestore.insertToArrayField(
@@ -385,6 +601,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                     "what" to "info",
                                     "ref" to doc.path
                                 )
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
                             )
                         }
                         postMessage("Card activated")
@@ -407,6 +628,21 @@ class CardDetailFragmentViewModel @Inject constructor(
                     )
                 )){
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        val activityId = "activity_${System.currentTimeMillis()}"
+                        val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                        val message = MessageMaker.getJoinedCardMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            email,
+                            boardId,
+                            _cardId,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+
                         listMember.forEach { mem->
                             firestore.insertToArrayField(
                                 firestore.getTrackingDoc(mem.email),
@@ -415,6 +651,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                     "what" to "member",
                                     "ref" to doc.path
                                 )
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
                             )
                         }
                         postMessage("Join successfully")
@@ -429,6 +670,21 @@ class CardDetailFragmentViewModel @Inject constructor(
             viewModelScope.launch {
                 repository.memberCarDao.getRelByEmailAndCardId(email, cardId)?.let { memberCardRel ->
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        val activityId = "activity_${System.currentTimeMillis()}"
+                        val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                        val message = MessageMaker.getLeftCardMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            email,
+                            boardId,
+                            _cardId,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+
                         listMember.forEach { mem->
                             if(firestore.removeFromArrayField(
                                 doc,
@@ -442,6 +698,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                         "what" to "member",
                                         "ref" to doc.path
                                     )
+                                )
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "activities",
+                                    activityDoc.path
                                 )
                             }
                         }
@@ -464,11 +725,31 @@ class CardDetailFragmentViewModel @Inject constructor(
                     remoteWork
                 )){
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        val activityId = "activity_${System.currentTimeMillis()}"
+                        val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                        val message = MessageMaker.getAddWorkMessage(email, user?.name.toString(), workName, _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            email,
+                            boardId,
+                            _cardId,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+
                         listMember.forEach { mem->
                             firestore.insertToArrayField(
                                 firestore.getTrackingDoc(mem.email),
                                 "works",
                                 workDoc.path
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
                             )
                         }
                         postMessage("Add work successfully")
@@ -489,11 +770,31 @@ class CardDetailFragmentViewModel @Inject constructor(
                     remoteTask
                 )){
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        val activityId = "activity_${System.currentTimeMillis()}"
+                        val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                        val message = MessageMaker.getAddTaskMessage(email, user?.name.toString(), taskName, _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            email,
+                            boardId,
+                            _cardId,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+
                         listMember.forEach { mem->
                             firestore.insertToArrayField(
                                 firestore.getTrackingDoc(mem.email),
                                 "tasks",
                                 taskDoc.path
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc.path
                             )
                         }
                         postMessage("Add task successfully")
@@ -512,11 +813,31 @@ class CardDetailFragmentViewModel @Inject constructor(
                 )){
                     if(repository.taskDao.deleteOne(task) > 0){
                         repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            val activityId = "activity_${System.currentTimeMillis()}"
+                            val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                            val message = MessageMaker.getDelTaskMessage(email, user?.name.toString(), task.taskName, _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                            val remoteActivity = RemoteActivity(
+                                activityId,
+                                email,
+                                boardId,
+                                _cardId,
+                                message,
+                                false,
+                                Activity.TYPE_ACTION,
+                                System.currentTimeMillis()
+                            )
+                            firestore.addDocument(activityDoc, remoteActivity)
+
                             listMember.forEach { mem->
                                 firestore.insertToArrayField(
                                     firestore.getTrackingDoc(mem.email),
                                     "delTasks",
                                     taskDoc.path
+                                )
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "activities",
+                                    activityDoc.path
                                 )
                             }
                             if(isShow){
@@ -562,6 +883,21 @@ class CardDetailFragmentViewModel @Inject constructor(
                 )){
                     if(repository.workDao.deleteOne(work) > 0){
                         repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            val activityId = "activity_${System.currentTimeMillis()}"
+                            val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                            val message = MessageMaker.getDelWorkMessage(email, user?.name.toString(), work.workName, _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                            val remoteActivity = RemoteActivity(
+                                activityId,
+                                email,
+                                boardId,
+                                _cardId,
+                                message,
+                                false,
+                                Activity.TYPE_ACTION,
+                                System.currentTimeMillis()
+                            )
+                            firestore.addDocument(activityDoc, remoteActivity)
+
                             listMember.forEach { mem->
                                 if(firestore.insertToArrayField(
                                         firestore.getTrackingDoc(mem.email),
@@ -572,6 +908,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                         deleteTask(boardId, task, false)
                                     }
                                 }
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "activities",
+                                    activityDoc.path
+                                )
                             }
                             postMessage("Delete work successfully")
                         }
@@ -589,11 +930,31 @@ class CardDetailFragmentViewModel @Inject constructor(
                 )){
                 if(repository.activityDao.deleteOne(activity) > 0){
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        val activityId = "activity_${System.currentTimeMillis()}"
+                        val activityDoc1 = firestore.getActivityDoc(boardDoc, activityId)
+                        val message = MessageMaker.getDelCommendMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            email,
+                            boardId,
+                            _cardId,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc1, remoteActivity)
+
                         listMember.forEach { mem->
                             firestore.insertToArrayField(
                                 firestore.getTrackingDoc(mem.email),
                                 "delActivities",
                                 activityDoc.path
+                            )
+                            firestore.insertToArrayField(
+                                firestore.getTrackingDoc(mem.email),
+                                "activities",
+                                activityDoc1.path
                             )
                         }
                         postMessage("Delete comment successfully")
@@ -612,11 +973,31 @@ class CardDetailFragmentViewModel @Inject constructor(
                 )){
                     if(repository.attachmentDao.deleteOne(attachment) > 0){
                         repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            val activityId = "activity_${System.currentTimeMillis()}"
+                            val activityDoc1 = firestore.getActivityDoc(boardDoc, activityId)
+                            val message = MessageMaker.getDelAttachmentMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                            val remoteActivity = RemoteActivity(
+                                activityId,
+                                email,
+                                boardId,
+                                _cardId,
+                                message,
+                                false,
+                                Activity.TYPE_ACTION,
+                                System.currentTimeMillis()
+                            )
+                            firestore.addDocument(activityDoc1, remoteActivity)
+
                             listMember.forEach { mem->
                                 firestore.insertToArrayField(
                                     firestore.getTrackingDoc(mem.email),
                                     "delAttachments",
                                     attachmentDoc.path
+                                )
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "activities",
+                                    activityDoc1.path
                                 )
                             }
                             postMessage("Delete attachment successfully")
@@ -639,6 +1020,21 @@ class CardDetailFragmentViewModel @Inject constructor(
                     if(firestore.deleteDocument(
                         doc,
                     )){
+                        val activityId = "activity_${System.currentTimeMillis()}"
+                        val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                        val message = MessageMaker.getDelCardMessage(email, user?.name.toString(), _cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            email,
+                            boardId,
+                            _cardId,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+
                         repository.activityDao.getActivityByCardId(c.cardId).forEach {
                             deleteActivity(workspaceId, boardId, it)
                         }
@@ -656,6 +1052,11 @@ class CardDetailFragmentViewModel @Inject constructor(
                                         "delCards",
                                         doc.path
                                     )
+                                    firestore.insertToArrayField(
+                                        firestore.getTrackingDoc(mem.email),
+                                        "activities",
+                                        activityDoc.path
+                                    )
                                 }
                                 doOnSuccess()
                             }
@@ -666,5 +1067,4 @@ class CardDetailFragmentViewModel @Inject constructor(
             }?: doOnFailed()
         } ?: doOnFailed()
     }
-
 }

@@ -3,13 +3,12 @@ package com.tnh.mollert.boardDetail
 import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.*
+import com.google.firebase.firestore.DocumentReference
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.compound.BoardWithLists
 import com.tnh.mollert.datasource.local.compound.MemberAndActivity
-import com.tnh.mollert.datasource.local.model.Board
-import com.tnh.mollert.datasource.local.model.Card
+import com.tnh.mollert.datasource.local.model.*
 import com.tnh.mollert.datasource.local.model.List
-import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.local.relation.CardLabelRel
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberCardRel
@@ -17,6 +16,7 @@ import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
+import com.tnh.mollert.utils.notifyBoardMember
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
@@ -39,6 +39,12 @@ class BoardDetailFragmentViewModel @Inject constructor(
     var cardAchieved: LiveData<kotlin.collections.List<Card>> = MutableLiveData(null)
 
     var memberAndActivity: LiveData<kotlin.collections.List<MemberAndActivity>> = MutableLiveData(null)
+    var boardDoc: DocumentReference? = null
+    private set
+
+    fun setBoardDoc(workspaceId: String, boardId: String){
+        boardDoc = firestore.getBoardDoc(workspaceId, boardId)
+    }
 
     fun getAllList(boardId: String){
         boardWithLists = repository.appDao.getBoardWithLists(boardId).asLiveData()
@@ -81,13 +87,30 @@ class BoardDetailFragmentViewModel @Inject constructor(
                         "boardBackground" to url.toString()
                     )
                 )){
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                    UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                        val message = MessageMaker.getChangeBoardBackgroundMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "")
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            member.email,
+                            boardId,
+                            null,
+                            message,
+                            false,
+                            Activity.TYPE_INFO,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+                    }
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                         listMember.forEach { mem->
                             val tracking = firestore.getTrackingDoc(mem.email)
                             firestore.insertToArrayField(tracking, "boards", boardDoc.path)
-                            postMessage("Change background successfully")
+                            firestore.insertToArrayField(tracking, "activities", activityDoc.path)
                         }
                     }
+                    postMessage("Change background successfully")
                 }
             }
         }
@@ -102,10 +125,27 @@ class BoardDetailFragmentViewModel @Inject constructor(
                         "boardDesc" to content
                     )
                 )){
+                val activityId = "activity_${System.currentTimeMillis()}"
+                val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                    val message = MessageMaker.getChangeBoardDescMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "")
+                    val remoteActivity = RemoteActivity(
+                        activityId,
+                        member.email,
+                        boardId,
+                        null,
+                        message,
+                        false,
+                        Activity.TYPE_INFO,
+                        System.currentTimeMillis()
+                    )
+                    firestore.addDocument(activityDoc, remoteActivity)
+                }
                 repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                     listMember.forEach { mem->
                         val tracking = firestore.getTrackingDoc(mem.email)
                         firestore.insertToArrayField(tracking, "boards", boardDoc.path)
+                        firestore.insertToArrayField(tracking, "activities", activityDoc.path)
                         postMessage("Change description successfully")
                     }
                 }
@@ -127,10 +167,27 @@ class BoardDetailFragmentViewModel @Inject constructor(
             viewModelScope.launch {
                 if(firestore.mergeDocument(listDoc, remoteList)){
                     // notify other members
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(boardDoc!!, activityId)
+                    UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                        val message = MessageMaker.getCreateListMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "", listName)
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            member.email,
+                            boardId,
+                            null,
+                            message,
+                            false,
+                            Activity.TYPE_INFO,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+                    }
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                         listMember.forEach { mem->
                             val tracking = firestore.getTrackingDoc(mem.email)
                             firestore.insertToArrayField(tracking, "lists", listDoc.path)
+                            firestore.insertToArrayField(tracking, "activities", activityDoc.path)
                         }
                     }
                 }else{
@@ -156,6 +213,23 @@ class BoardDetailFragmentViewModel @Inject constructor(
             viewModelScope.launch {
                 if(firestore.mergeDocument(cardLoc, remoteCard)){
                     // notify other members
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(boardDoc!!, activityId)
+                    UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                        val message = MessageMaker.getCreateCardMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "", cardId, cardName)
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            member.email,
+                            boardId,
+                            cardId,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+                    }
+
                     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                         listMember.forEach { mem->
                             val tracking = firestore.getTrackingDoc(mem.email)
@@ -166,6 +240,11 @@ class BoardDetailFragmentViewModel @Inject constructor(
                                     "what" to "info",
                                     "ref" to cardLoc.path
                                 )
+                            )
+                            firestore.insertToArrayField(
+                                tracking,
+                                "activities",
+                                activityDoc.path
                             )
                         }
                     }
@@ -292,6 +371,23 @@ class BoardDetailFragmentViewModel @Inject constructor(
                         MemberBoardRel.ROLE_MEMBER
                     )
                 )){
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(boardDoc!!, activityId)
+                    UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
+                        val message = MessageMaker.getLeaveBoardMessage(member.email, member.name, boardId, boardWithLists.value?.board?.boardName ?: "")
+                        val remoteActivity = RemoteActivity(
+                            activityId,
+                            member.email,
+                            boardId,
+                            null,
+                            message,
+                            false,
+                            Activity.TYPE_ACTION,
+                            System.currentTimeMillis()
+                        )
+                        firestore.addDocument(activityDoc, remoteActivity)
+                    }
+
                     repository.memberBoardDao.getRelByEmailAndBoardId(email, boardId)?.let {
                         repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
                             listMember.forEach { mem->
@@ -301,9 +397,37 @@ class BoardDetailFragmentViewModel @Inject constructor(
                                     "leaveBoards",
                                     firestore.getBoardDoc(workspaceId, boardId).path
                                 )
+                                firestore.insertToArrayField(
+                                    tracking,
+                                    "activities",
+                                    activityDoc.path
+                                )
                             }
                         }
                         onSuccess()
+                    }
+                }
+            }
+        }
+    }
+
+    fun closeBoard(workspaceId: String, boardId: String){
+        UserWrapper.getInstance()?.currentUserEmail?.let { email->
+            val boardDoc = firestore.getBoardDoc(workspaceId, boardId)
+            viewModelScope.launch {
+                if(firestore.mergeDocument(
+                        boardDoc,
+                        mapOf("boardStatus" to Board.STATUS_CLOSED)
+                )){
+                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            val tracking = firestore.getTrackingDoc(mem.email)
+                            firestore.insertToArrayField(
+                                tracking,
+                                "closeBoards",
+                                boardDoc.path
+                            )
+                        }
                     }
                 }
             }

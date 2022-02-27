@@ -4,6 +4,7 @@ import com.tnh.mollert.datasource.local.model.Board
 
 data class RemoteBoard(
     val boardId: String? = null,
+    val workspaceId: String? = null,
     val boardName: String? = null,
     val boardDesc: String? = null,
     val boardBackground: String? = null,
@@ -12,12 +13,12 @@ data class RemoteBoard(
     val members: List<RemoteMemberRef>? = listOf(),
     val positions: List<RemoteListPositionRef>? = listOf()
 ): RemoteModel {
-    fun toModel(workspaceId: String): Board?{
+    fun toModel(): Board?{
         return convertTo {
             Board(
                 boardId!!,
                 boardName!!,
-                workspaceId,
+                workspaceId!!,
                 boardDesc,
                 boardBackground,
                 boardStatus!!,

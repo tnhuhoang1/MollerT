@@ -33,10 +33,10 @@ interface AppDao {
     @Query("select * from member, activity where member.email = activity.actor and member.email = :email")
     fun getActivityAssocWithEmail(email: String): Flow<List<MemberAndActivity>>
 
-    @Query("select * from member, activity where member.email = activity.actor and activity.cardId = :cardId")
+    @Query("select * from member, activity where member.email = activity.actor and activity.cardId = :cardId order by activity.timestamp desc")
     fun getMemberAndActivityByCardIdFlow(cardId: String): Flow<List<MemberAndActivity>>
 
-    @Query("select * from member, activity where member.email = activity.actor and activity.boardId = :boardId")
+    @Query("select * from member, activity where member.email = activity.actor and activity.boardId = :boardId order by activity.timestamp desc")
     fun getMemberAndActivityByBoardIdFlow(boardId: String): Flow<List<MemberAndActivity>>
 
     @Query("select * from card where cardId = :cardId")

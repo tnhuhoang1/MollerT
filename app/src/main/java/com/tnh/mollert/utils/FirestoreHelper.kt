@@ -312,6 +312,10 @@ class FirestoreHelper private constructor(){
         return getBoardDoc(workspaceId, boardId).collection("activities").document(activityId)
     }
 
+    fun getActivityDoc(boardDoc: DocumentReference, activityId: String): DocumentReference{
+        return boardDoc.collection("activities").document(activityId)
+    }
+
     fun getActivityCol(workspaceId: String, boardId: String): CollectionReference{
         return getBoardDoc(workspaceId, boardId).collection("activities")
     }
