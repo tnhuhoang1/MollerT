@@ -55,8 +55,27 @@ class ActivityViewModel @Inject constructor(
                     registerDelWork(email, map)
                     registerDelAttachment(email, map)
                     registerDelCard(email, map)
+                    registerDelList(email, map)
                     registerLeaveBoard(email, map)
                     registerCloseBoard(email, map)
+                }
+            }
+        }
+    }
+
+    private fun registerDelList(email: String, map: Map<String, Any>) {
+        (map["delLists"] as List<String>?)?.let { listRef->
+            if(listRef.isNotEmpty()){
+                listRef.forEach { ref->
+                    "Deleting list $ref".logAny()
+                    viewModelScope.launch {
+                        val doc = firestore.getDocRef(ref)
+                        val listId = doc.id
+                        repository.listDao.getListByListId(listId)?.let { list ->
+                            repository.listDao.deleteOne(list)
+                        }
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "delLists", ref)
+                    }
                 }
             }
         }
@@ -191,9 +210,9 @@ class ActivityViewModel @Inject constructor(
                         firestore.simpleGetDocumentModel<RemoteWork>(doc)?.let { remoteWork ->
                             remoteWork.toModel()?.let { work->
                                 repository.workDao.insertOne(work)
-                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "works", ref)
                             }
                         }
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "works", ref)
                     }
                 }
             }
@@ -241,9 +260,9 @@ class ActivityViewModel @Inject constructor(
                         firestore.simpleGetDocumentModel<RemoteTask>(doc)?.let { remoteTask ->
                             remoteTask.toModel()?.let { task->
                                 repository.taskDao.insertOne(task)
-                                firestore.removeFromArrayField(firestore.getTrackingDoc(email), "tasks", ref)
                             }
                         }
+                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "tasks", ref)
                     }
                 }
             }

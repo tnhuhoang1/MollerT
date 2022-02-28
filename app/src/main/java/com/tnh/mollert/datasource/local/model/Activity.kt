@@ -280,6 +280,10 @@ object MessageMaker{
         return "deleted card ${getEncodedCard(cardId, cardName)} from board ${getEncodedBoard(boardId, boardName)}"
     }
 
+    fun getDelListMessage(listName: String, boardId: String, boardName: String): String{
+        return "deleted list \"$listName\" from board ${getEncodedBoard(boardId, boardName)}"
+    }
+
     fun getAddWorkMessage(workName: String, cardId: String, cardName: String, boardId: String, boardName: String): String{
         return "added work \"$workName\" to card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
     }

@@ -234,6 +234,18 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             }.show()
         }
 
+        boardDetailAdapter.onDeleteListClicked = { list->
+            AlertDialog.Builder(requireContext()).apply {
+                setTitle("This operation is undone and will delete all cards in list. Proceed any way?")
+                setPositiveButton("DO IT"){_, _->
+                    viewModel.deleteList(list)
+                }
+                setNegativeButton("CANCEL"){_, _->
+
+                }
+            }.show()
+        }
+
         binding.boardDetailFragmentRecyclerview.adapter = boardDetailAdapter
         binding.boardDetailFragmentSearchBox.setEndIconOnClickListener {
             if(binding.boardDetailFragmentSearchInput.text.isNullOrEmpty().not()){

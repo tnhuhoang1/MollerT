@@ -29,7 +29,7 @@ class BoardDetailAdapter(
     var onAchieveListClicked: ((list: List) -> Unit)? = null
     var onCardClicked: ((l: String, c: String) -> Unit)? = null
     private val scope = CoroutineScope(Dispatchers.IO)
-
+    var onSortSelected: (sortType:String) -> Unit = {}
 
     inner class BoardDetailViewHolder(
         private val binding: BoardDetailListItemBinding,
@@ -37,15 +37,53 @@ class BoardDetailAdapter(
         private val boardCardAdapter = BoardDetailCardAdapter()
         private var dataFlow: Flow<kotlin.collections.List<Card>>? = null
         private var job: Job? = null
+        private var sorted: String? = null
 
         fun beginObserveData(){
             job = scope.launch {
-                dataFlow?.collectLatest {
+                dataFlow?.collectLatest { listCard->
                     withContext(Dispatchers.Main){
-                        submitCardList(it)
+                        sorted?.let{
+                            val l1 = mutableListOf<Card>()
+                            val l2 = mutableListOf<Card>()
+                            when(sorted){
+                                SORT_BY_DUE_DATE->{
+                                    val current =  System.currentTimeMillis()
+                                    listCard.forEach { card ->  
+                                        if (card.dueDate == 0L || card.dueDate < current){
+                                            l1.add(card)
+                                        }else{
+                                            l2.add(card)
+                                        }
+                                        submitCardList(l2 + l1)
+                                    }
+                                }
+                                else->{
+                                    submitCardList(listCard)
+                                }
+                            }
+                        } ?: submitCardList(listCard)
                     }
                 }
             }
+        }
+
+        fun changeSortType(sortType: String, listId: String){
+            when(sortType){
+                SORT_BY_DUE_DATE ->{
+                    sorted = SORT_BY_DUE_DATE
+                    dataFlow = cardDao.getCardsWithListIdSortedByDueDate(listId)
+                }
+                SORT_BY_NAME ->{
+                    sorted = SORT_BY_NAME
+                    dataFlow = cardDao.getCardsWithListIdSortedByName(listId)
+                }
+                SORT_BY_DATE_ADDED ->{
+                    sorted = SORT_BY_DATE_ADDED
+                    dataFlow = cardDao.getCardsWithListIdSortedByDateAdded(listId)
+                }
+            }
+            beginObserveData()
         }
 
         private fun submitCardList(list: kotlin.collections.List<Card>){
@@ -61,8 +99,6 @@ class BoardDetailAdapter(
             job?.cancel()
             job = null
         }
-
-        var onSortSelected: (sortType:String) -> Unit = {}
 
 
         fun bind(list: List) {
@@ -83,12 +119,15 @@ class BoardDetailAdapter(
                         onAchieveListClicked?.invoke(list)
                     }
                     R.id.board_detail_item_menu_sort_by_date->{
+                        changeSortType(SORT_BY_DATE_ADDED, list.listId)
                         onSortSelected(SORT_BY_DATE_ADDED)
                     }
                     R.id.board_detail_item_menu_sort_by_name->{
+                        changeSortType(SORT_BY_NAME, list.listId)
                         onSortSelected(SORT_BY_NAME)
                     }
                     R.id.board_detail_item_menu_sort_by_due_date->{
+                        changeSortType(SORT_BY_DUE_DATE, list.listId)
                         onSortSelected(SORT_BY_DUE_DATE)
                     }
                     R.id.board_detail_item_menu_delete->{

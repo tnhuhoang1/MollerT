@@ -601,4 +601,64 @@ class BoardDetailFragmentViewModel @Inject constructor(
         )
     }
 
+    fun deleteList(list: List){
+        boardWithLists.value?.board?.let { b->
+            viewModelScope.launch {
+                showProgress()
+                val cards = repository.cardDao.getActiveCardsByListId(list.listId)
+                cards.forEach {
+                    boardCardHelper.deleteThisCard(
+                        b,
+                        it,
+                        email,
+                        this@BoardDetailFragmentViewModel,
+                    ){}
+                }
+                val doc = firestore.getListDoc(b.workspaceId, b.boardId, list.listId)
+                if (firestore.deleteDocument(
+                        doc,
+                    )) {
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(firestore.getBoardDoc(b.workspaceId, b.boardId), activityId)
+                    val message = MessageMaker.getDelListMessage(
+                        list.listName,
+                        b.boardId,
+                        b.boardName
+                    )
+                    val remoteActivity = RemoteActivity(
+                        activityId,
+                        email,
+                        b.boardId,
+                        null,
+                        message,
+                        false,
+                        Activity.TYPE_INFO,
+                        System.currentTimeMillis()
+                    )
+                    firestore.addDocument(activityDoc, remoteActivity)
+
+                    if (repository.listDao.deleteOne(list) > 0) {
+                        repository.appDao.getBoardWithMembers(b.boardId)?.members?.let { listMember ->
+                            listMember.forEach { mem ->
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "delLists",
+                                    doc.path
+                                )
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "activities",
+                                    activityDoc.path
+                                )
+                            }
+                        }
+                    }
+                }
+                postMessage("Delete successfully")
+                hideProgress()
+            }
+        }
+
+    }
+
 }
