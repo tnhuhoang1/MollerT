@@ -3,6 +3,21 @@
     <item
         android:id="@+id/board_detail_item_menu_add"
         android:title="@string/add_new_card" />
+    <item android:id="@+id/board_detail_item_menu_sort"
+        android:title="Sort by">
+        <menu>
+            <item android:id="@+id/board_detail_item_menu_sort_by_name"
+                    android:title="Name"
+                />
+            <item android:id="@+id/board_detail_item_menu_sort_by_date"
+                android:title="Date added"/>
+            <item android:id="@+id/board_detail_item_menu_sort_by_due_date"
+                android:title="Due date"/>
+        </menu>
+    </item>
+    <item android:id="@+id/board_detail_item_menu_achieved"
+        android:title="Achieve list"
+        />
     <item
         android:id="@+id/board_detail_item_menu_delete"
         android:title="@string/delete_list_card"/>

@@ -25,6 +25,7 @@ import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.toast.showToast
+import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -188,6 +189,14 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     }
 
     private fun showAchievedDialog(){
+        achievedCardDialog.setOnCardClicked(){ listId, cardId ->
+            try {
+                achievedCardDialog.dismiss()
+                navigateToCard(args.workspaceId, args.boardId, listId, cardId)
+            }catch (e: Exception){
+                trace(e)
+            }
+        }
         achievedCardDialog.showFullscreen()
     }
 
@@ -206,17 +215,30 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         boardDetailAdapter = BoardDetailAdapter (AppRepository.getInstance(requireContext()).cardDao){
             showCreateListDialog()
         }
-        boardDetailAdapter.onNewCardClicked = { listId ->
-            showCreateCardDialog(listId)
+        boardDetailAdapter.onNewCardClicked = { list ->
+            showCreateCardDialog(list.listId)
         }
         boardDetailAdapter.onCardClicked = {listId, cardId ->
             navigateToCard(args.workspaceId, args.boardId, listId, cardId)
         }
+
+        boardDetailAdapter.onAchieveListClicked = { list->
+            AlertDialog.Builder(requireContext()).apply {
+                setTitle("This will make all cards in this list achieved")
+                setPositiveButton("OK"){_, _->
+                    viewModel.achieveList(list.listId)
+                }
+                setNegativeButton("CANCEL"){_, _->
+
+                }
+            }.show()
+        }
+
         binding.boardDetailFragmentRecyclerview.adapter = boardDetailAdapter
         binding.boardDetailFragmentSearchBox.setEndIconOnClickListener {
             if(binding.boardDetailFragmentSearchInput.text.isNullOrEmpty().not()){
                 lifecycleScope.launchWhenResumed {
-                    viewModel.searchCard(binding.boardDetailFragmentSearchInput.text.toString()).let { listCard ->
+                    viewModel.searchCard(binding.boardDetailFragmentSearchInput.text.toString(), args.boardId).let { listCard ->
                         searchDialog.setCardAdapter(searchCardAdapter)
                         searchCardAdapter.submitList(listCard)
                         searchCardAdapter.setRootClickListener{ card, _, _ ->

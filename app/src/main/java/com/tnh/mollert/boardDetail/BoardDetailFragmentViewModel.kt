@@ -1,7 +1,6 @@
 package com.tnh.mollert.boardDetail
 
 import android.content.ContentResolver
-import android.net.Uri
 import android.util.Patterns
 import androidx.core.net.toUri
 import androidx.lifecycle.*
@@ -35,12 +34,14 @@ class BoardDetailFragmentViewModel @Inject constructor(
     private val repository: AppRepository,
     private val storage: StorageHelper
 ): BaseViewModel() {
-
+    private val boardCardHelper = BoardCardHelper(repository, firestore)
     var boardWithLists: LiveData<BoardWithLists> = MutableLiveData(null)
     private set
 
     private val _isShowProgress = MutableLiveData(false)
     val isShowProgress = _isShowProgress.toLiveData()
+
+    val email = UserWrapper.getInstance()?.currentUserEmail ?: ""
 
     fun showProgress(){
         _isShowProgress.postValue(true)
@@ -77,8 +78,8 @@ class BoardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    suspend fun searchCard(search: String): kotlin.collections.List<Card>{
-        return repository.cardDao.searchCard("%$search%")
+    suspend fun searchCard(search: String, boardId: String): kotlin.collections.List<Card>{
+        return repository.cardDao.searchCardInBoard("%$search%", boardId)
     }
 
     fun getConcatList(list: kotlin.collections.List<List>): kotlin.collections.List<List>{
@@ -470,6 +471,26 @@ class BoardDetailFragmentViewModel @Inject constructor(
                         postMessage("Reopen board successfully")
                     }
                 }
+            }
+        }
+    }
+
+    fun achieveList(listId: String){
+        boardWithLists.value?.board?.let { b->
+            viewModelScope.launch {
+                showProgress()
+                val cards = repository.cardDao.getActiveCardsByListId(listId)
+                cards.forEach {
+                    boardCardHelper.achieveCard(
+                        b,
+                        it,
+                        email
+                    ){}
+                }
+                if(cards.isNotEmpty()){
+                    postMessage("Cards are achieved")
+                }
+                hideProgress()
             }
         }
     }

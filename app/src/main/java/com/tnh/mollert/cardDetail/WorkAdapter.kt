@@ -7,6 +7,7 @@ import com.tnh.mollert.datasource.local.model.Task
 import com.tnh.mollert.datasource.local.model.Work
 import com.tnh.tnhlibrary.dataBinding.recycler.DataBindingViewHolder
 import com.tnh.tnhlibrary.dataBinding.recycler.SimpleDataBindingListAdapter
+import com.tnh.tnhlibrary.logAny
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -34,7 +35,7 @@ class WorkAdapter(private val taskDao: TaskDao): SimpleDataBindingListAdapter<Wo
             taskAdapter.onTaskDeleteClicked = onDeleteTaskClicked
             taskAdapter.onCheckedChanged = onTaskChecked
             taskAdapter.scope = scope
-            taskAdapter.fetchList(item.workId)
+            taskAdapter.fetchList(item.workId, this)
         }
     }
 }

@@ -24,8 +24,9 @@ class BoardDetailAdapter(
     private val cardDao: CardDao,
     private val addNewList:() -> Unit
 ) : ListAdapter<List, BoardDetailAdapter.BoardDetailViewHolder>(ListDiffUtil()) {
-    var onNewCardClicked: ((listId: String) -> Unit)? = null
-    var onDeleteListClicked: ((listId: String) -> Unit)? = null
+    var onNewCardClicked: ((list: List) -> Unit)? = null
+    var onDeleteListClicked: ((list: List) -> Unit)? = null
+    var onAchieveListClicked: ((list: List) -> Unit)? = null
     var onCardClicked: ((l: String, c: String) -> Unit)? = null
     private val scope = CoroutineScope(Dispatchers.IO)
 
@@ -61,6 +62,9 @@ class BoardDetailAdapter(
             job = null
         }
 
+        var onSortSelected: (sortType:String) -> Unit = {}
+
+
         fun bind(list: List) {
             dataFlow = cardDao.getCardsWithListId(list.listId)
             beginObserveData()
@@ -68,15 +72,27 @@ class BoardDetailAdapter(
             boardCardAdapter.onCardClicked = onCardClicked
             binding.boardDetailListItemToolbar.title = list.listName
             binding.boardDetailFragmentNewListButton.setOnClickListener {
-                onNewCardClicked?.invoke(list.listId)
+                onNewCardClicked?.invoke(list)
             }
             binding.boardDetailListItemToolbar.setOnMenuItemClickListener { menuItem->
                 when(menuItem.itemId){
                     R.id.board_detail_item_menu_add->{
-                        onNewCardClicked?.invoke(list.listId)
+                        onNewCardClicked?.invoke(list)
+                    }
+                    R.id.board_detail_item_menu_achieved->{
+                        onAchieveListClicked?.invoke(list)
+                    }
+                    R.id.board_detail_item_menu_sort_by_date->{
+                        onSortSelected(SORT_BY_DATE_ADDED)
+                    }
+                    R.id.board_detail_item_menu_sort_by_name->{
+                        onSortSelected(SORT_BY_NAME)
+                    }
+                    R.id.board_detail_item_menu_sort_by_due_date->{
+                        onSortSelected(SORT_BY_DUE_DATE)
                     }
                     R.id.board_detail_item_menu_delete->{
-                        onDeleteListClicked?.invoke(list.listId)
+                        onDeleteListClicked?.invoke(list)
                     }
                 }
                 true
@@ -179,5 +195,10 @@ class BoardDetailAdapter(
                 oldItem.cardId == newItem.cardId
 
         }
+    }
+    companion object{
+        const val SORT_BY_NAME = "name"
+        const val SORT_BY_DATE_ADDED = "date_added"
+        const val SORT_BY_DUE_DATE = "due_date"
     }
 }

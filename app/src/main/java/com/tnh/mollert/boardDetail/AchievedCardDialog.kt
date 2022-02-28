@@ -17,7 +17,6 @@ class AchievedCardDialog(
     context: Context,
     container: ViewGroup?
 ): BottomSheetDialog(context) {
-    var onCardClicked: ((desc: String) -> Unit)? = null
     val adapter = BoardDetailAdapter.BoardDetailCardAdapter()
 
 
@@ -36,6 +35,10 @@ class AchievedCardDialog(
         }
         binding.achievedCardDialogRecycler.adapter = adapter
         setContentView(binding.root)
+    }
+
+    fun setOnCardClicked(onCardClicked: (listId: String, cardId: String) -> Unit){
+        adapter.onCardClicked = onCardClicked
     }
 
     fun setTitle(title: String){

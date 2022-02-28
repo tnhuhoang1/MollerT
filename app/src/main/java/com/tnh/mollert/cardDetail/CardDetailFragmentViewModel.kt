@@ -860,12 +860,22 @@ class CardDetailFragmentViewModel @Inject constructor(
                             mapOf(
                                 "checked" to newValue
                             )
-                        )){
-                        if(firestore.insertToArrayField(
-                                firestore.getTrackingDoc(email),
-                                "tasks",
-                                taskDoc.path
-                            )){
+                    )){
+                        board?.let { b->
+                            repository.appDao.getBoardWithMembers(b.boardId)?.members?.let { listMember->
+                                listMember.forEach { mem->
+                                    if(mem.email != email){
+                                        firestore.insertToArrayField(
+                                            firestore.getTrackingDoc(mem.email),
+                                            "tasks",
+                                            taskDoc.path
+                                        )
+                                    }else{
+                                        task.checked = newValue
+                                        repository.taskDao.insertOne(task)
+                                    }
+                                }
+                            }
                             "Task checked changed".logAny()
                         }
                     }
