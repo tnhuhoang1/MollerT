@@ -66,7 +66,7 @@ class ActivityViewModel @Inject constructor(
         (map["closeBoards"] as List<String>?)?.let { listRef->
             if(listRef.isNotEmpty()){
                 listRef.forEach { ref->
-                    "Closing board $ref".logAny()
+                    "Closing or reopening board $ref".logAny()
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
                         firestore.simpleGetDocumentModel<RemoteBoard>(doc)?.let { remoteBoard->

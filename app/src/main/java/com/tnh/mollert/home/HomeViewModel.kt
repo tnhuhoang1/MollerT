@@ -389,4 +389,29 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun reopenBoard(workspaceId: String, boardId: String){
+        UserWrapper.getInstance()?.currentUserEmail?.let { email->
+            val boardDoc = firestore.getBoardDoc(workspaceId, boardId)
+            viewModelScope.launch {
+                if(firestore.mergeDocument(
+                        boardDoc,
+                        mapOf("boardStatus" to Board.STATUS_OPEN)
+                    )){
+                    "reopening board".logAny()
+                    // notify all members in workspace
+                    repository.appDao.getWorkspaceWithMembersNoFlow(workspaceId)?.members?.let { listMember->
+                        listMember.forEach { mem->
+                            val tracking = firestore.getTrackingDoc(mem.email)
+                            firestore.insertToArrayField(
+                                tracking,
+                                "closeBoards",
+                                boardDoc.path
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

@@ -229,15 +229,15 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
                     if(it.status == Board.STATUS_CLOSED){
                         if(viewModel.isOwnerOfThisBoard(boardId)){
                             AlertDialog.Builder(requireContext()).apply {
-                                setTitle("This board is closed!")
+                                setTitle("This board was closed!")
                                 setPositiveButton("OK"){_,_->
                                 }
                                 setNegativeButton("REOPEN"){_,_->
-
+                                    viewModel.reopenBoard(workspaceId, boardId)
                                 }
                             }.show()
                         }else{
-                            viewModel.postMessage("This board is closed")
+                            viewModel.postMessage("This board was closed")
                         }
                     }else{
                         navigateToBoardDetail(workspaceId, boardId, boardName)

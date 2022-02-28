@@ -457,7 +457,8 @@ class BoardDetailFragmentViewModel @Inject constructor(
                         mapOf("boardStatus" to Board.STATUS_CLOSED)
                 )){
                     prefManager.putString("$email+$workspaceId+$boardId", "")
-                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                    // notify all members in workspace
+                    repository.appDao.getWorkspaceWithMembersNoFlow(workspaceId)?.members?.let { listMember->
                         listMember.forEach { mem->
                             val tracking = firestore.getTrackingDoc(mem.email)
                             firestore.insertToArrayField(
@@ -466,6 +467,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                                 boardDoc.path
                             )
                         }
+                        postMessage("Reopen board successfully")
                     }
                 }
             }
