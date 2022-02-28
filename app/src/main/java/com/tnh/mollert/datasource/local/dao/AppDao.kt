@@ -5,6 +5,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.tnh.mollert.datasource.local.compound.*
 import com.tnh.mollert.datasource.local.model.Board
+import com.tnh.mollert.datasource.local.model.Member
 import kotlinx.coroutines.flow.Flow
 import java.lang.StringBuilder
 
@@ -13,6 +14,10 @@ interface AppDao {
     @Transaction
     @Query("select * from member where email = :email")
     fun getMemberWithWorkspaces(email: String): Flow<MemberWithWorkspaces>
+
+    @Query("select * from member as m, workspace as w, MemberWorkspaceRel as mw " +
+            "where w.workspaceId = mw.workspaceId and m.email = mw.email and w.workspaceId = :workspaceId")
+    suspend fun getMemberByWorkspaceId(workspaceId: String): List<Member>
 
     @Transaction
     @Query("select * from member where email = :email")

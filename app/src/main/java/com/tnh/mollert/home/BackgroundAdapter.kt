@@ -12,6 +12,8 @@ class BackgroundAdapter: SimpleDataBindingListAdapter<String, BackgroudItemBindi
     var selectedLink: String? = null
     private set
 
+    var onBackgroundSelected: () -> Unit = {}
+
     override fun onBindViewHolder(
         holder: DataBindingViewHolder<BackgroudItemBinding>,
         position: Int
@@ -24,9 +26,15 @@ class BackgroundAdapter: SimpleDataBindingListAdapter<String, BackgroudItemBindi
             backgroundItemBackground.bindImageUri(item)
             root.setOnClickListener {
                 selectItem(backgroundItemCheckBox, item)
+                onBackgroundSelected()
             }
         }
     }
+
+    fun setSelectedUri(uri: String){
+        selectedLink = uri
+    }
+
 
     fun clearSelected(){
         selectedLink = null

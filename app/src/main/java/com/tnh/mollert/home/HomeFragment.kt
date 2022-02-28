@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -47,6 +48,12 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     }
     private val searchDialog by lazy {
         SearchDialog(requireContext(), container)
+    }
+
+    private val imageLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
+        uri?.let {
+            createBoardDialog.setCustomImage(uri.toString())
+        }
     }
     override fun doOnCreateView() {
         (activity as MainActivity?)?.showBottomNav()
@@ -169,6 +176,9 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
 
     private fun showCreateDialog(ws: Workspace){
         createBoardDialog.refresh()
+        createBoardDialog.onSelectImageClicked = {
+            imageLauncher.launch(arrayOf("image/*"))
+        }
         createBoardDialog.onConfirmClicked = { name, vis, url ->
             if(name.isEmpty()){
                 viewModel.setMessage("Board name cannot be empty")
@@ -177,23 +187,14 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
                     viewModel.setMessage("Please select visibility")
                 }else{
                     url?.let {
-                        viewModel.createBoard(ws, name, vis!!, url){
+                        viewModel.createBoard(ws, name, vis!!, url, createBoardDialog.backgroundMode, requireContext().contentResolver){
                             createBoardDialog.dismiss()
                         }
-                    }
+                    }?: viewModel.postMessage("Please select background")
                 }
             }
         }
         createBoardDialog.show()
-//        showAlertDialog("Add new board"){ builder, createBoardLayoutBinding ->
-//            builder.setPositiveButton("Create") { _, _ ->
-//                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrEmpty()){
-//                    viewModel.setMessage("Board name cannot be empty")
-//                }else{
-//                    viewModel.createBoard(ws, createBoardLayoutBinding.createBoardLayoutName.text.toString())
-//                }
-//            }
-//        }
     }
 
     private fun showInviteDialog(ws: Workspace){

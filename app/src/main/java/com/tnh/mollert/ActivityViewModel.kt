@@ -415,12 +415,12 @@ class ActivityViewModel @Inject constructor(
     private fun registerInfoChanged(email: String, map: Map<String, Any>) {
         (map["info"] as List<String>?)?.let { listRef->
             if(listRef.isNotEmpty()){
-                listRef.forEach {
+                listRef.forEach { e->
                     viewModelScope.launch {
-                        UserWrapper.getInstance()?.fetchMember(email)?.let { member ->
+                        UserWrapper.getInstance()?.fetchMember(e)?.let { member ->
                             "Updated user info: $member".logAny()
                             UserWrapper.getInstance()?.reloadMember()
-                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "info", it)
+                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "info", e)
                         }
                     }
                 }

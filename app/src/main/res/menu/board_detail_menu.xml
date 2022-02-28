@@ -13,10 +13,6 @@
                 android:icon="@drawable/vd_invisible"
                 android:title="Private" />
             <item
-                android:id="@+id/board_detail_menu_workspace"
-                android:icon="@drawable/vd_invisible"
-                android:title="Workspace" />
-            <item
                 android:id="@+id/board_detail_menu_public"
                 android:icon="@drawable/vd_tick"
                 android:title="Public" />

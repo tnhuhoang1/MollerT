@@ -12,6 +12,7 @@
         app:cardCornerRadius="32dp"
         app:cardElevation="@dimen/dimen_0"
         android:layout_marginVertical="@dimen/dimen_4"
+        android:layout_marginHorizontal="4dp"
         android:background="@android:color/transparent"
         app:cardBackgroundColor="@android:color/transparent"
         android:backgroundTint="@android:color/transparent"

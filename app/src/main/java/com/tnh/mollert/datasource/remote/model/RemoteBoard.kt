@@ -7,7 +7,7 @@ data class RemoteBoard(
     val workspaceId: String? = null,
     val boardName: String? = null,
     val boardDesc: String? = null,
-    val boardBackground: String? = null,
+    var boardBackground: String? = null,
     val boardStatus: String? = Board.STATUS_OPEN,
     var boardVisibility: String = Board.VISIBILITY_PUBLIC,
     val members: List<RemoteMemberRef>? = listOf(),

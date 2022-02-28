@@ -16,7 +16,9 @@ import com.tnh.mollert.databinding.BoardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Board
+import com.tnh.mollert.home.CreateBoardDialog
 import com.tnh.mollert.home.SearchDialog
+import com.tnh.mollert.utils.LoadingModal
 import com.tnh.mollert.utils.bindImageUriOrHide
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
@@ -40,8 +42,15 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     private val descriptionDialog by lazy {
         DescriptionDialog(requireContext(), viewGroup)
     }
+    private val changeBackgroundDialog by lazy {
+        CreateBoardDialog(requireContext(), viewGroup)
+    }
     private val searchDialog by lazy {
         SearchDialog(requireContext(), viewGroup)
+    }
+
+    private val loadingModal by lazy {
+        LoadingModal(requireContext())
     }
 
     private val searchCardAdapter by lazy {
@@ -59,7 +68,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
     private val imageLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
         uri?.let {
-            viewModel.changeBoardBackground(args.workspaceId, args.boardId, requireContext().contentResolver, it)
+            changeBackgroundDialog.setCustomImage(uri.toString())
         }
     }
 
@@ -112,7 +121,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                     }
                 }
                 R.id.board_detail_menu_background->{
-                    imageLauncher.launch(arrayOf("image/*"))
+                    showChangeBackgroundDialog()
                 }
                 R.id.board_detail_menu_activity->{
                     activityDialog.setTitle("Board activities")
@@ -139,11 +148,6 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                     viewModel.changeVisibility(args.boardId, Board.VISIBILITY_PRIVATE)
                 }
 
-                R.id.board_detail_menu_workspace->{
-                    popupMenu.setNewVisibility(R.id.board_detail_menu_workspace)
-                    viewModel.changeVisibility(args.boardId, Board.VISIBILITY_WORKSPACE)
-                }
-
                 R.id.board_detail_menu_public->{
                     popupMenu.setNewVisibility(R.id.board_detail_menu_public)
                     viewModel.changeVisibility(args.boardId, Board.VISIBILITY_PUBLIC)
@@ -151,6 +155,23 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             }
             true
         }
+    }
+
+    private fun showChangeBackgroundDialog() {
+        changeBackgroundDialog.setTitle("Change background")
+        changeBackgroundDialog.hideNameAndVisibility()
+        changeBackgroundDialog.refresh()
+        changeBackgroundDialog.onSelectImageClicked = {
+            imageLauncher.launch(arrayOf("image/*"))
+        }
+        changeBackgroundDialog.onConfirmClicked = { name, vis, url ->
+            url?.let {
+                viewModel.changeBoardBackground(args.workspaceId, args.boardId, requireContext().contentResolver, url, changeBackgroundDialog.backgroundMode){
+                    changeBackgroundDialog.dismiss()
+                }
+            }?: viewModel.postMessage("Please select background")
+        }
+        changeBackgroundDialog.show()
     }
 
     private fun showInviteDialog() {
@@ -276,6 +297,14 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         }
         safeObserve(viewModel.memberAndActivity){
             activityDialog.submitList(it)
+        }
+
+        safeObserve(viewModel.isShowProgress){
+            if(it){
+                loadingModal.show()
+            }else{
+                loadingModal.dismiss()
+            }
         }
 
         safeObserve(viewModel.cardAchieved){

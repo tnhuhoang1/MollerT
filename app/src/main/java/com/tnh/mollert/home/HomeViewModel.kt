@@ -1,6 +1,8 @@
 package com.tnh.mollert.home
 
+import android.content.ContentResolver
 import android.util.Patterns
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
@@ -15,13 +17,11 @@ import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.*
-import com.tnh.mollert.utils.FirestoreHelper
-import com.tnh.mollert.utils.LabelPreset
-import com.tnh.mollert.utils.UserWrapper
-import com.tnh.mollert.utils.notifyBoardMember
+import com.tnh.mollert.utils.*
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
+import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
@@ -31,7 +31,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val repository: AppRepository,
-    private val firestore: FirestoreHelper
+    private val firestore: FirestoreHelper,
+    private val storage: StorageHelper
 ): BaseViewModel() {
 
     var memberWithWorkspaces = MutableLiveData<MemberWithWorkspaces>(null).toLiveData()
@@ -217,24 +218,40 @@ class HomeViewModel @Inject constructor(
         boardName: String,
         visibility: String,
         background: String,
+        backgroundMode: String,
+        contentResolver: ContentResolver,
         onSuccess: ()-> Unit
     ){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
             showProgress()
             val boardId = "${boardName}_${System.currentTimeMillis()}"
-            val remoteBoard = RemoteBoard(
-                boardId,
-                workspace.workspaceId,
-                boardName,
-                "",
-                background,
-                Board.STATUS_OPEN,
-                visibility,
-                listOf(RemoteMemberRef(email, firestore.getMemberDoc(email).path)),
-                listOf()
-            )
             val boardDoc = firestore.getBoardDoc(workspace.workspaceId, boardId)
             viewModelScope.launch {
+                val remoteBoard = RemoteBoard(
+                    boardId,
+                    workspace.workspaceId,
+                    boardName,
+                    "",
+                    background,
+                    Board.STATUS_OPEN,
+                    visibility,
+                    listOf(RemoteMemberRef(email, firestore.getMemberDoc(email).path)),
+                    listOf()
+                )
+                background.logAny()
+                if(backgroundMode == CreateBoardDialog.BACKGROUND_MODE_CUSTOM){
+                    try{
+                        storage.uploadBackgroundImage(workspace.workspaceId, boardId, contentResolver, background.toUri())?.let{
+                            remoteBoard.boardBackground = it.toString()
+                        } ?: throw Exception("Failed")
+                    }catch (e: Exception){
+                        trace(e)
+                        postMessage("Failed to create board")
+                        hideProgress()
+                        cancel()
+                    }
+                }
+
                 if(firestore.addDocument(boardDoc, remoteBoard)){
                     LabelPreset.getPresetLabelList(boardId).forEach { remoteLabel->
                         val labelDoc = firestore.getLabelDoc(workspace.workspaceId, boardId, remoteLabel.labelId)

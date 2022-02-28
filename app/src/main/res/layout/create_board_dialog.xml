@@ -95,25 +95,25 @@
                     android:fontFamily="@font/poppins"
                     app:layout_constraintTop_toBottomOf="@id/add_workspace_fragment_image"
                     />
-                <com.google.android.material.textview.MaterialTextView
-                    android:id="@+id/create_board_dialog_workspace"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:drawableStart="@drawable/vd_circle_default"
-                    android:maxLines="1"
-                    android:focusable="false"
-                    android:paddingHorizontal="@dimen/dimen_48"
-                    android:paddingVertical="@dimen/dimen_12"
-                    android:drawablePadding="@dimen/dimen_8"
-                    android:inputType="none"
-                    android:background="@android:color/transparent"
-                    android:text="Workspace"
-                    android:textSize="@dimen/text_size_16"
-                    android:fontFamily="@font/poppins"
-                    app:layout_constraintTop_toBottomOf="@id/add_workspace_fragment_image"
-                    />
+<!--                <com.google.android.material.textview.MaterialTextView-->
+<!--                    android:id="@+id/create_board_dialog_workspace"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintEnd_toEndOf="parent"-->
+<!--                    android:drawableStart="@drawable/vd_circle_default"-->
+<!--                    android:maxLines="1"-->
+<!--                    android:focusable="false"-->
+<!--                    android:paddingHorizontal="@dimen/dimen_48"-->
+<!--                    android:paddingVertical="@dimen/dimen_12"-->
+<!--                    android:drawablePadding="@dimen/dimen_8"-->
+<!--                    android:inputType="none"-->
+<!--                    android:background="@android:color/transparent"-->
+<!--                    android:text="Workspace"-->
+<!--                    android:textSize="@dimen/text_size_16"-->
+<!--                    android:fontFamily="@font/poppins"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/add_workspace_fragment_image"-->
+<!--                    />-->
                 <com.google.android.material.textview.MaterialTextView
                     android:id="@+id/create_board_dialog_public"
                     android:layout_width="match_parent"
@@ -156,6 +156,7 @@
                 app:layout_constraintTop_toBottomOf="@id/create_board_dialog_container"
                 android:drawableStart="@drawable/vd_tag"
                 android:maxLines="1"
+                android:ellipsize="end"
                 android:paddingHorizontal="@dimen/dimen_12"
                 android:paddingVertical="@dimen/dimen_12"
                 android:drawablePadding="@dimen/dimen_8"
@@ -166,18 +167,27 @@
                 android:background="@color/neutrals9"
                 android:layout_marginTop="@dimen/dimen_4"
                 />
-            <ImageView
-                android:focusable="false"
-                android:clickable="false"
-                android:layout_marginTop="@dimen/dimen_12"
-                android:layout_marginEnd="@dimen/dimen_12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <FrameLayout
                 app:layout_constraintEnd_toEndOf="parent"
+                android:padding="@dimen/dimen_8"
                 app:layout_constraintTop_toTopOf="@id/create_board_dialog_background"
-                android:src="@drawable/vd_arrow_down"
+                android:layout_width="wrap_content"
+                android:background="@color/neutrals9"
+                android:layout_height="wrap_content">
+                <ImageButton
+                    android:id="@+id/create_board_dialog_select_image"
+                    android:focusable="false"
+                    android:clickable="false"
+                    android:layout_marginTop="@dimen/dimen_4"
+                    android:layout_marginEnd="@dimen/dimen_4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?selectableItemBackgroundBorderless"
 
-                />
+                    android:src="@drawable/ic_round_image_search_24"
+                    />
+            </FrameLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:background="@color/neutrals9"
                 android:paddingHorizontal="@dimen/dimen_8"

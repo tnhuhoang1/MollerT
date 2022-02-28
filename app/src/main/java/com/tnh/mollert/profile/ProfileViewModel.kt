@@ -7,6 +7,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Member
+import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
@@ -37,8 +38,6 @@ class ProfileViewModel @Inject constructor(
     val bio = Transformations.map(member){m-> m?.biography ?: ""}
 
     private val _editAvatar = MutableLiveData("")
-
-
     val editAvatar = _editAvatar.toLiveData()
 
     fun setImageUri(uriString: String){
@@ -49,24 +48,28 @@ class ProfileViewModel @Inject constructor(
         if(email.isNotEmpty()){
             viewModelScope.launch {
                 val avatarUri = editAvatar.value ?: ""
-                var avatar = ""
+                var avatar = member.value?.avatar ?: ""
                 if(avatarUri.isNotEmpty()){
-                    avatar = storage.uploadImage(
-                        storage.getAvatarLocation(email),
-                        contentResolver,
-                        avatarUri.toUri()
-                    )?.toString() ?: ""
+                    try{
+                        storage.uploadImage(
+                            storage.getAvatarLocation(email),
+                            contentResolver,
+                            avatarUri.toUri()
+                        )?.let {
+                            avatar = it.toString()
+                        }
+                    }catch (e: Exception){
+                        trace(e)
+                    }
                 }
-                avatar.logAny()
                 val remoteMember =  RemoteMember(email, name, avatar, bio).info()
 
                 val doc = firestore.getMemberDoc(email)
                 if (firestore.mergeDocument(doc, remoteMember)) {
                     // succeeded
-                    if (notifyInfoChanged(email)) {
-                        postMessage("Edit profile successfully")
-                        dispatchClickEvent(EVENT_SUCCESS)
-                    }
+                    notifyInfoChanged(email)
+                    postMessage("Edit profile successfully")
+                    dispatchClickEvent(EVENT_SUCCESS)
                 } else {
                     // failed
                 }
@@ -100,10 +103,17 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    private suspend fun notifyInfoChanged(email: String): Boolean {
-        return firestore.insertToArrayField(firestore.getTrackingDoc(email), "info", "info")
+    private suspend fun notifyInfoChanged(email: String) {
+        val listMembers: MutableSet<Member> = mutableSetOf()
+        repository.appDao.getMemberWithWorkspacesNoFlow(email)?.workspaces?.forEach { workspace->
+            repository.appDao.getMemberByWorkspaceId(workspace.workspaceId).forEach {
+                listMembers.add(it)
+            }
+        }
+        listMembers.forEach {
+            firestore.insertToArrayField(firestore.getTrackingDoc(it.email), "info", email)
+        }
     }
-
 
     companion object {
         const val EVENT_LOGOUT_CLICKED = "logout_clicked"

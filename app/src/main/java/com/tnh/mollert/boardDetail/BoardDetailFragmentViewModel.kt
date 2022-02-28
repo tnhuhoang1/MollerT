@@ -3,6 +3,7 @@ package com.tnh.mollert.boardDetail
 import android.content.ContentResolver
 import android.net.Uri
 import android.util.Patterns
+import androidx.core.net.toUri
 import androidx.lifecycle.*
 import com.google.firebase.firestore.DocumentReference
 import com.tnh.mollert.datasource.AppRepository
@@ -14,11 +15,14 @@ import com.tnh.mollert.datasource.local.relation.CardLabelRel
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberCardRel
 import com.tnh.mollert.datasource.remote.model.*
+import com.tnh.mollert.home.CreateBoardDialog
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
+import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
+import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
@@ -34,6 +38,17 @@ class BoardDetailFragmentViewModel @Inject constructor(
 
     var boardWithLists: LiveData<BoardWithLists> = MutableLiveData(null)
     private set
+
+    private val _isShowProgress = MutableLiveData(false)
+    val isShowProgress = _isShowProgress.toLiveData()
+
+    fun showProgress(){
+        _isShowProgress.postValue(true)
+    }
+
+    fun hideProgress(){
+        _isShowProgress.postValue(false)
+    }
 
     var isOwner: Boolean = false
 
@@ -78,16 +93,30 @@ class BoardDetailFragmentViewModel @Inject constructor(
         it?.board?.background ?: ""
     }
 
-    fun changeBoardBackground(workspaceId: String, boardId: String, contentResolver: ContentResolver, uri: Uri){
+    fun changeBoardBackground(
+        workspaceId: String,
+        boardId: String,
+        contentResolver: ContentResolver,
+        uri: String,
+        backgroundMode: String,
+        onSuccess: () -> Unit
+    ){
+        showProgress()
         val boardDoc = firestore.getBoardDoc(workspaceId, boardId)
         viewModelScope.launch {
-            storage.uploadBackgroundImage(workspaceId, boardId, contentResolver, uri)?.let { url->
+            try{
+                var bg = uri
+                if(backgroundMode == CreateBoardDialog.BACKGROUND_MODE_CUSTOM){
+                    storage.uploadBackgroundImage(workspaceId, boardId, contentResolver, uri.toUri())?.let { url->
+                        bg = url.toString()
+                    }
+                }
                 if(firestore.mergeDocument(
-                    boardDoc,
-                    mapOf(
-                        "boardBackground" to url.toString()
-                    )
-                )){
+                        boardDoc,
+                        mapOf(
+                            "boardBackground" to bg
+                        )
+                    )){
                     val activityId = "activity_${System.currentTimeMillis()}"
                     val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
                     UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
@@ -111,8 +140,14 @@ class BoardDetailFragmentViewModel @Inject constructor(
                             firestore.insertToArrayField(tracking, "activities", activityDoc.path)
                         }
                     }
+                    hideProgress()
+                    onSuccess()
                     postMessage("Change background successfully")
                 }
+            }catch (e: Exception){
+                trace(e)
+                hideProgress()
+                postMessage("Something went wrong")
             }
         }
     }
