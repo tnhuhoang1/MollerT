@@ -1,9 +1,12 @@
 package com.tnh.mollert.notification
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.NotificationFragmentBinding
 import com.tnh.mollert.datasource.local.model.Activity
@@ -12,10 +15,12 @@ import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 
 @AndroidEntryPoint
 class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.layout.notification_fragment) {
@@ -23,9 +28,39 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
     private val adapter by lazy {
         NotificationAdapter()
     }
-    override fun doOnCreateView() {
-        binding.notificationFragmentToolbar.twoActionToolbarTitle.text = "Notifications"
+    private val notificationMenu by lazy {
+        NotificationMenu(requireContext(), binding.notificationFragmentToolbar.twoActionToolbarEndIcon)
     }
+    override fun doOnCreateView() {
+        binding.notificationFragmentToolbar.apply {
+            twoActionToolbarTitle.text = "Notifications"
+            twoActionToolbarEndIcon.setImageResource(R.drawable.vd_more)
+            twoActionToolbarEndIcon.show()
+            twoActionToolbarEndIcon.setOnClickListener {
+                showNotificationType()
+            }
+        }
+
+    }
+
+    private fun showNotificationType() {
+        notificationMenu.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.notification_menu_your->{
+                    viewModel.changeToYourNotification()
+                    collectData()
+                }
+                R.id.notification_menu_all->{
+                    viewModel.changeToAllNotification()
+                    collectData()
+                }
+            }
+            true
+        }
+        notificationMenu.show()
+    }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,16 +69,17 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
     }
 
     private fun setupObserver() {
-        safeObserve(viewModel.memberAndActivity){
-            if(it.isEmpty()){
-                binding.notificationFragmentNoContent.show()
-            }else{
-                binding.notificationFragmentNoContent.gone()
-                adapter.submitList(it)
-            }
-        }
+        collectData()
         eventObserve(viewModel.message){
             binding.root.showSnackBar(it)
+        }
+    }
+
+    private fun collectData(){
+        lifecycleScope.launchWhenResumed {
+            viewModel.memberAndActivity.collectLatest {
+                adapter.submitList(it)
+            }
         }
     }
 
@@ -58,8 +94,26 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
                     onBoardInvitationClicked(memberAndActivity.activity)
                 }
                 Activity.TYPE_ACTION->{
-
+                    val cardId = MessageMaker.getEncodedRef(MessageMaker.HEADER_CARD, memberAndActivity.activity.message)
+                    if(cardId.isEmpty().not()){
+                        navigateToCard(cardId)
+                    }
                 }
+            }
+        }
+    }
+
+    fun navigateToCard(cardId: String){
+        lifecycleScope.launchWhenResumed {
+            viewModel.getCardById(cardId)?.let { boardAndCard ->
+                findNavController().navigate(
+                    NotificationFragmentDirections.actionNotificationFragmentToCardDetailFragment(
+                        boardAndCard.board.workspaceId,
+                        boardAndCard.board.boardId,
+                        boardAndCard.card.listId,
+                        boardAndCard.card.cardId
+                    )
+                )
             }
         }
     }

@@ -22,7 +22,8 @@ data class RemoteActivity(
                 cardId,
                 message!!,
                 seen,
-                activityType
+                activityType,
+                timestamp!!
             )
         }
     }

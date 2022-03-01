@@ -6,7 +6,6 @@ import androidx.appcompat.widget.PopupMenu
 import com.tnh.mollert.R
 import com.tnh.mollert.datasource.local.compound.CardWithMembers
 import com.tnh.mollert.datasource.local.model.Card
-import com.tnh.tnhlibrary.logAny
 
 class CardPopupMenu(
     context: Context,
@@ -19,7 +18,7 @@ class CardPopupMenu(
         this.cardWithMembers = cardWithMembers
         this.cardWithMembers?.let { c ->
             menu.findItem(R.id.card_detail_menu_achieved)?.let { menuItem ->
-                if(c.card.status == Card.STATUS_ACTIVE){
+                if(c.card.cardStatus == Card.STATUS_ACTIVE){
                     menuItem.title = "Achieve card"
                     menu.findItem(R.id.card_detail_menu_delete)?.let {
                         it.isVisible = false
@@ -39,7 +38,7 @@ class CardPopupMenu(
     }
 
     fun getCardStatus(): String{
-        return cardWithMembers?.card?.status ?: Card.STATUS_ACTIVE
+        return cardWithMembers?.card?.cardStatus ?: Card.STATUS_ACTIVE
     }
 
     fun isMemberInCard(email: String): Boolean{

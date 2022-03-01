@@ -135,6 +135,19 @@ object MessageMaker{
         return ""
     }
 
+    fun getEncodedRef(header: String, eMessage: String): String{
+        eMessage.split("***").forEach { s->
+            if(s.startsWith("[*") && s.endsWith("*]")){
+                val l = s.removePrefix("[*").removeSuffix("*]").split("/*")
+                if(l.getOrNull(0) == header){
+                    return l.getOrElse(1){""}
+                }
+            }
+        }
+        return ""
+    }
+
+
     fun getDecodedSpannable(encodedMessage: String): Spannable{
         val builder = SpannableStringBuilder("")
         var start = 0

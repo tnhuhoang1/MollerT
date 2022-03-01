@@ -22,7 +22,7 @@ interface BoardDao: BaseDao<Board> {
     @Query("select * from board where boardId = :boardId")
     suspend fun getBoardByIdNoFlow(boardId: String): Board?
 
-    @Query("select * from board where boardName like :search and status = 'open'")
+    @Query("select * from board where boardName like :search and boardStatus = 'open'")
     suspend fun searchBoard(search: String): List<Board>
 
     @Query("select * from member as m, board as b, workspace as w, memberboardrel as mb " +

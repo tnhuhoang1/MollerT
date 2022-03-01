@@ -11,7 +11,7 @@ class Card(
     var position: Int,
     val listId: String,
     var createdAt: Long = System.currentTimeMillis(),
-    var status: String = STATUS_ACTIVE,
+    var cardStatus: String = STATUS_ACTIVE,
     var cardDesc: String? = null,
     var startDate: Long = 0L,
     var dueDate: Long = 0L,

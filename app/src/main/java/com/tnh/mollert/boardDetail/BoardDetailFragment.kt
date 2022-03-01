@@ -320,7 +320,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             }
         }
         safeObserve(viewModel.boardWithLists){
-            if(it.board.status == Board.STATUS_CLOSED){
+            if(it.board.boardStatus == Board.STATUS_CLOSED){
                 showToast("The board was closed")
                 findNavController().popBackStack(R.id.homeFragment, false)
             }

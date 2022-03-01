@@ -20,7 +20,6 @@ import com.tnh.mollert.utils.LoadingModal
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.log
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.toast.showToast
@@ -226,7 +225,7 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
             if(viewModel.isJoinedThisBoard(boardId)){
                 viewModel.getBoardById(boardId)?.let {
                     "Navigate to $it".logAny()
-                    if(it.status == Board.STATUS_CLOSED){
+                    if(it.boardStatus == Board.STATUS_CLOSED){
                         if(viewModel.isOwnerOfThisBoard(boardId)){
                             AlertDialog.Builder(requireContext()).apply {
                                 setTitle("This board was closed!")

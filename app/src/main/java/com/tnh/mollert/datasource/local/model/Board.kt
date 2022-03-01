@@ -11,7 +11,7 @@ data class Board(
     val workspaceId: String,
     var boardDesc: String? = null,
     var background: String? = null,
-    var status: String = STATUS_OPEN,
+    var boardStatus: String = STATUS_OPEN,
     var boardVisibility: String = VISIBILITY_PUBLIC
 ) {
     companion object{

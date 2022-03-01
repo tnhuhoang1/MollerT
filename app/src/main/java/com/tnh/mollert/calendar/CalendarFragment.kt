@@ -84,7 +84,7 @@ class CalendarFragment: DataBindingFragment<CalendarFragmentBinding>(R.layout.ca
 
     private fun setupToolbar(){
         binding.calendarFragmentToolbar.apply {
-            twoActionToolbarTitle.text = "Calendar"
+            twoActionToolbarTitle.text = "Deadlines"
         }
     }
 

@@ -110,8 +110,13 @@ class ProfileViewModel @Inject constructor(
                 listMembers.add(it)
             }
         }
-        listMembers.forEach {
-            firestore.insertToArrayField(firestore.getTrackingDoc(it.email), "info", email)
+
+        if(listMembers.isEmpty()){
+            firestore.insertToArrayField(firestore.getTrackingDoc(email), "info", email)
+        }else{
+            listMembers.forEach {
+                firestore.insertToArrayField(firestore.getTrackingDoc(it.email), "info", email)
+            }
         }
     }
 
