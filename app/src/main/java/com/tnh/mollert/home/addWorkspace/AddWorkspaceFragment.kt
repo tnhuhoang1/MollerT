@@ -142,10 +142,10 @@ class AddWorkspaceFragment: DataBindingFragment<AddWorkspaceFragmentBinding>(R.l
     }
 
     private fun createWorkspace(){
-        if(binding.addWorkspaceFragmentName.text.isNullOrEmpty().not()
+        if(binding.addWorkspaceFragmentName.text.isNullOrBlank().not()
             && binding.addWorkspaceFragmentType.text.isNullOrEmpty().not()){
             viewModel.addWorkspace(
-                binding.addWorkspaceFragmentName.text.toString(),
+                binding.addWorkspaceFragmentName.text.toString().trim(),
                 binding.addWorkspaceFragmentType.text.toString(),
                 binding.addWorkspaceFragmentDesc.text.toString()
             )

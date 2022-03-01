@@ -179,7 +179,7 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
             imageLauncher.launch(arrayOf("image/*"))
         }
         createBoardDialog.onConfirmClicked = { name, vis, url ->
-            if(name.isEmpty()){
+            if(name.isBlank()){
                 viewModel.setMessage("Board name cannot be empty")
             }else{
                 if(vis == "null"){
@@ -200,10 +200,10 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         showAlertDialog("Invite to workspace"){ builder, createBoardLayoutBinding ->
             createBoardLayoutBinding.createBoardLayoutName.hint = "Email"
             builder.setPositiveButton("Invite") { _, _ ->
-                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrBlank()){
                     viewModel.setMessage("Email address cannot be empty")
                 }else{
-                    viewModel.inviteMember(ws, createBoardLayoutBinding.createBoardLayoutName.text.toString())
+                    viewModel.inviteMember(ws, createBoardLayoutBinding.createBoardLayoutName.text.toString().trim())
                 }
             }
         }

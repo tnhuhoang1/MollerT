@@ -296,10 +296,10 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         showAlertDialog("Create new card"){ builder, dialogBinding ->
             dialogBinding.createBoardLayoutName.hint = "Card name"
             builder.setPositiveButton("OK") { _, _ ->
-                if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                if(dialogBinding.createBoardLayoutName.text.isNullOrBlank()){
                     viewModel.setMessage("Card name cannot be empty")
                 }else{
-                    viewModel.createNewCard(args.workspaceId, args.boardId, listId, dialogBinding.createBoardLayoutName.text.toString())
+                    viewModel.createNewCard(args.workspaceId, args.boardId, listId, dialogBinding.createBoardLayoutName.text.toString().trim())
                 }
             }
         }

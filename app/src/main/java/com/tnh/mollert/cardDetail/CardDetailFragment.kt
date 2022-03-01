@@ -212,10 +212,10 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         showAlertDialog("Add work"){ builder, dialogBinding ->
             dialogBinding.createBoardLayoutName.hint = "Work name"
             builder.setPositiveButton("OK") { _, _ ->
-                if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                if(dialogBinding.createBoardLayoutName.text.isNullOrBlank()){
                     viewModel.setMessage("Work name cannot be empty")
                 }else{
-                    viewModel.addWork(args.boardId, args.cardId, dialogBinding.createBoardLayoutName.text.toString())
+                    viewModel.addWork(args.boardId, args.cardId, dialogBinding.createBoardLayoutName.text.toString().trim())
                 }
             }
         }
@@ -225,10 +225,10 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         showAlertDialog("Add task"){ builder, dialogBinding ->
             dialogBinding.createBoardLayoutName.hint = "Task name"
             builder.setPositiveButton("OK") { _, _ ->
-                if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                if(dialogBinding.createBoardLayoutName.text.isNullOrBlank()){
                     viewModel.setMessage("Task name cannot be empty")
                 }else{
-                    viewModel.addTask(args.boardId, workId, dialogBinding.createBoardLayoutName.text.toString())
+                    viewModel.addTask(args.boardId, workId, dialogBinding.createBoardLayoutName.text.toString().trim())
                 }
             }
         }

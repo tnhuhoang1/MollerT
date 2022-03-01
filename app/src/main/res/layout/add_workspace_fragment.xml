@@ -39,6 +39,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:drawableStart="@drawable/vd_note_text"
                 android:maxLines="1"
+                android:digits="1234567890 qwertzuiopasdfghjklyxcvbnm"
                 android:paddingHorizontal="@dimen/dimen_12"
                 android:paddingVertical="@dimen/dimen_12"
                 android:drawablePadding="@dimen/dimen_8"
