@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.local.compound.MemberAndActivity
 import com.tnh.mollert.datasource.local.compound.MemberAndBoard
 import com.tnh.mollert.datasource.local.compound.MemberWithWorkspaces
 import com.tnh.mollert.datasource.local.model.Activity

@@ -12,10 +12,19 @@
         android:label="SplashFragment" >
         <action
             android:id="@+id/action_splashFragment_to_registerFragment"
-            app:destination="@id/registerFragment" />
+            app:destination="@id/registerFragment"
+
+            app:enterAnim="@anim/fade_in_slow"
+            app:exitAnim="@anim/slide_up_from_bottom"
+            app:popEnterAnim="@anim/slide_down_from_top"
+            app:popExitAnim="@anim/fade_out_fast" />
         <action
             android:id="@+id/action_splashFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:enterAnim="@anim/fade_in_slow"
+            app:exitAnim="@anim/slide_up_from_bottom"
+            app:popEnterAnim="@anim/slide_down_from_top"
+            app:popExitAnim="@anim/fade_out_fast" />
         <action
             android:id="@+id/action_splashFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -32,8 +41,11 @@
         <action
             android:id="@+id/action_loginFragment_to_registerFragment"
             app:destination="@id/registerFragment"
-            app:popUpTo="@id/splashFragment"
-            />
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_down_from_top"
+            app:popExitAnim="@anim/fade_out_fast"
+            app:popUpTo="@id/splashFragment" />
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -42,7 +54,10 @@
         <action
             android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
             app:destination="@id/forgotPasswordFragment"
-            />
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/registerFragment"
@@ -51,6 +66,10 @@
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
             app:destination="@id/loginFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_down_from_top"
+            app:popExitAnim="@anim/fade_out_fast"
             app:popUpTo="@id/splashFragment" />
         <action
             android:id="@+id/action_registerFragment_to_homeFragment"
@@ -93,7 +112,10 @@
             />
         <action
             android:id="@+id/action_boardDetailFragment_to_cardDetailFragment"
-            app:destination="@id/cardDetailFragment" />
+            app:destination="@id/cardDetailFragment"
+            app:enterAnim="@anim/slide_up_from_bottom_normal"
+            app:popEnterAnim="@anim/fade_in_slow"
+            app:popExitAnim="@anim/slide_down_from_bottom_normal" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -102,10 +124,18 @@
         tools:layout="@layout/home_fragment" >
         <action
             android:id="@+id/action_homeFragment_to_boardDetailFragment"
-            app:destination="@id/boardDetailFragment" />
+            app:destination="@id/boardDetailFragment"
+            app:enterAnim="@anim/slide_up_from_bottom_normal"
+            app:exitAnim="@anim/slide_up_from_top_normal"
+            app:popEnterAnim="@anim/slide_down_from_top"
+            app:popExitAnim="@anim/slide_down_from_bottom_normal" />
         <action
             android:id="@+id/action_homeFragment_to_addWorkspaceFragment"
-            app:destination="@id/addWorkspaceFragment" />
+            app:destination="@id/addWorkspaceFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
     </fragment>
     <fragment
         android:id="@+id/testFragment"
@@ -122,6 +152,10 @@
         <action
             android:id="@+id/action_forgotPasswordFragment_to_registerFragment"
             app:destination="@id/registerFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
             app:popUpTo="@id/splashFragment" />
         <action
             android:id="@+id/action_forgotPasswordFragment_to_loginFragment"
@@ -153,7 +187,11 @@
         android:label="ProfileFragment" >
         <action
             android:id="@+id/action_profileFragment_to_editProfileFragment"
-            app:destination="@id/editProfileFragment" />
+            app:destination="@id/editProfileFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right" />
         <action
             android:id="@+id/action_profileFragment_to_splashFragment"
             app:destination="@id/splashFragment"
