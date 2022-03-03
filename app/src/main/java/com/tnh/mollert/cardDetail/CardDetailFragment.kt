@@ -83,10 +83,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         AttachmentAdapter()
     }
 
-    private val optionMenu by lazy {
-        CardPopupMenu(requireContext(), binding.cardDetailFragmentToolbar.twoActionToolbarEndIcon)
-    }
-
+    private lateinit var optionMenu: CardPopupMenu
     private val imageLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()){ uri->
         if(uri != null){
             viewModel.changeCardCover(args.boardId, requireContext().contentResolver, uri, args.cardId)
@@ -120,6 +117,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
     }
 
     private fun setupToolbar(hasCover: Boolean = false){
+        optionMenu = CardPopupMenu(requireContext(), binding.cardDetailFragmentToolbar.twoActionToolbarEndIcon)
         binding.cardDetailFragmentToolbar.apply {
             twoActionToolbarStartIcon.setImageResource(R.drawable.vd_close_circle)
             twoActionToolbarStartIcon.show()

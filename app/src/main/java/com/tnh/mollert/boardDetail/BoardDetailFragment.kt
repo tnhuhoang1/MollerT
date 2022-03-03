@@ -59,9 +59,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     }
     @Inject lateinit var prefManager: PrefManager
 
-    private val popupMenu by lazy {
-        BoardPopupMenu(requireContext(), binding.boardDetailFragmentToolbar.twoActionToolbarEndIcon)
-    }
+    private lateinit var popupMenu: BoardPopupMenu
 
     private val activityDialog by lazy {
         ActivityDialog(requireContext(),viewGroup)
@@ -110,6 +108,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                 showOptionMenu()
             }
         }
+        popupMenu = BoardPopupMenu(requireContext(), binding.boardDetailFragmentToolbar.twoActionToolbarEndIcon)
         popupMenu.setOnMenuItemClickListener { menuItem->
             when(menuItem.itemId){
                 R.id.board_detail_menu_desc->{

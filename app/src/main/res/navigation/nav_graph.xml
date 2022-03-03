@@ -49,6 +49,9 @@
         <action
             android:id="@+id/action_loginFragment_to_homeFragment"
             app:destination="@id/homeFragment"
+            app:enterAnim="@anim/fade_in_slow"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_out_left"
             app:popUpTo="@id/splashFragment"
             app:popUpToInclusive="true" />
         <action
@@ -195,6 +198,10 @@
         <action
             android:id="@+id/action_profileFragment_to_splashFragment"
             app:destination="@id/splashFragment"
+            app:enterAnim="@anim/slide_down_from_top"
+            app:exitAnim="@anim/fade_out_fast"
+            app:popEnterAnim="@anim/slide_down_from_top"
+            app:popExitAnim="@anim/fade_out_fast"
             app:popUpTo="@id/homeFragment"
             app:popUpToInclusive="true" />
     </fragment>

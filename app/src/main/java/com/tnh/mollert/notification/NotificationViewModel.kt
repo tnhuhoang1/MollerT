@@ -1,11 +1,10 @@
 package com.tnh.mollert.notification
 
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.compound.BoardAndCard
 import com.tnh.mollert.datasource.local.model.Board
-import com.tnh.mollert.datasource.local.model.Card
+import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
@@ -23,16 +22,22 @@ class NotificationViewModel @Inject constructor(
 ): BaseViewModel() {
 
     var memberAndActivity = repository.appDao.getActivityAssocWithEmail(UserWrapper.getInstance()?.currentUserEmail ?: "")
-
+    var notificationType: String = "single"
     suspend fun getCardById(cardId: String): BoardAndCard?{
         return repository.cardDao.getBoardAndCardByCardId(cardId)
     }
 
+    suspend fun getMemberBoardRelByEmail(): List<MemberBoardRel>{
+        return repository.memberBoardDao.getRelsByEmailId(UserWrapper.getInstance()?.currentUserEmail ?: "")
+    }
+
     fun changeToYourNotification(){
+        notificationType = "single"
         memberAndActivity = repository.appDao.getActivityAssocWithEmail(UserWrapper.getInstance()?.currentUserEmail ?: "")
     }
 
     fun changeToAllNotification(){
+        notificationType = "all"
         memberAndActivity = repository.appDao.getAllMemberAndActivityByEmail()
     }
 

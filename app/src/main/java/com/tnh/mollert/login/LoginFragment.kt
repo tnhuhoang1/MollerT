@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.transition.MaterialSharedAxis
 import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.R
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
@@ -53,6 +54,7 @@ class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fr
     }
 
     private fun navigateToHome() {
+
         findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
     }
 

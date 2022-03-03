@@ -24,7 +24,7 @@ interface AppDao {
     suspend fun getMemberWithWorkspacesNoFlow(email: String): MemberWithWorkspaces?
 
     @Query("select * from member as m, board as b, memberboardrel as mb, activity as a " +
-            "where m.email = mb.email and mb.boardId = b.boardId and (a.boardId = b.boardId) and a.actor = m.email order by timestamp desc")
+            "where m.email = mb.email and mb.boardId = b.boardId and a.boardId = b.boardId and a.actor = m.email order by timestamp desc")
     fun getAllMemberAndActivityByEmail(): Flow<List<MemberAndActivity>>
 
     @Transaction

@@ -1,6 +1,5 @@
 package com.tnh.mollert.notification
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -14,9 +13,6 @@ import com.tnh.mollert.datasource.local.model.MessageMaker
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
-import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,23 +24,11 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
     private val adapter by lazy {
         NotificationAdapter()
     }
-    private val notificationMenu by lazy {
-        NotificationMenu(requireContext(), binding.notificationFragmentToolbar.twoActionToolbarEndIcon)
-    }
+    private lateinit var notificationMenu: NotificationMenu
+
     override fun doOnCreateView() {
-        binding.notificationFragmentToolbar.apply {
-            twoActionToolbarTitle.text = "Notifications"
-            twoActionToolbarEndIcon.setImageResource(R.drawable.vd_more)
-            twoActionToolbarEndIcon.show()
-            twoActionToolbarEndIcon.setOnClickListener {
-                showNotificationType()
-            }
-        }
-
-    }
-
-    private fun showNotificationType() {
-        notificationMenu.setOnMenuItemClickListener {
+        notificationMenu = NotificationMenu(requireContext(), binding.notificationFragmentToolbar.twoActionToolbarEndIcon)
+        notificationMenu.popupMenu.setOnMenuItemClickListener {
             when(it.itemId){
                 R.id.notification_menu_your->{
                     viewModel.changeToYourNotification()
@@ -57,6 +41,18 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
             }
             true
         }
+        binding.notificationFragmentToolbar.apply {
+            twoActionToolbarTitle.text = "Notifications"
+            twoActionToolbarEndIcon.setImageResource(R.drawable.vd_more)
+            twoActionToolbarEndIcon.show()
+            twoActionToolbarEndIcon.setOnClickListener {
+                showNotificationType()
+            }
+        }
+
+    }
+
+    private fun showNotificationType() {
         notificationMenu.show()
     }
 
@@ -77,8 +73,21 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
 
     private fun collectData(){
         lifecycleScope.launchWhenResumed {
-            viewModel.memberAndActivity.collectLatest {
-                adapter.submitList(it)
+            viewModel.memberAndActivity.collectLatest {list->
+                if(viewModel.notificationType == "all"){
+                    viewModel.getMemberBoardRelByEmail().let { listMemberBoardRel->
+                        adapter.submitList(list.filter { memberAndActivity->
+                            listMemberBoardRel.forEach { memberBoardRel ->
+                                if(memberAndActivity.activity.boardId == memberBoardRel.boardId){
+                                    return@filter true
+                                }
+                            }
+                            return@filter false
+                        })
+                    }
+                }else{
+                    adapter.submitList(list)
+                }
             }
         }
     }
