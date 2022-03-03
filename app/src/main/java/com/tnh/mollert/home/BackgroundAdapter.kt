@@ -20,7 +20,7 @@ class BackgroundAdapter: SimpleDataBindingListAdapter<String, BackgroudItemBindi
     ) {
         val item = getItem(position)
         holder.binding.apply {
-            if(selectedItem == null){
+            if(selectedItem == null && selectedLink.isNullOrEmpty()){
                 selectItem(backgroundItemCheckBox, item)
             }
             backgroundItemBackground.bindImageUri(item)
@@ -35,11 +35,10 @@ class BackgroundAdapter: SimpleDataBindingListAdapter<String, BackgroudItemBindi
         selectedLink = uri
     }
 
-
     fun clearSelected(){
-        selectedLink = null
         selectedItem?.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.vd_invisible, 0, 0, 0)
         selectedItem = null
+        selectedLink = ""
     }
 
     private fun selectItem(textView: MaterialTextView, url: String){
