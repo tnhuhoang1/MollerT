@@ -13,7 +13,6 @@ import com.tnh.mollert.datasource.local.dao.CardDao
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.utils.getDate
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 import kotlinx.coroutines.*
@@ -209,7 +208,7 @@ class BoardDetailAdapter(
                     binding.boardDetailCardItemDueData.gone()
                 }
                 binding.root.setOnClickListener {
-                    onCardClicked?.invoke(card.listId, card.cardId)
+                    onCardClicked?.invoke(card.listIdPar, card.cardId)
                 }
                 binding.boardDetailCardItemAttachmentCount.gone()
                 binding.executePendingBindings()

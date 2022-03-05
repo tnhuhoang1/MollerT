@@ -20,7 +20,7 @@ class BoardCardHelper(
         email: String,
         onSuccess: () -> Unit
     ){
-        val cardDoc = firestore.getCardDoc(board.workspaceId, board.boardId, card.listId, card.cardId)
+        val cardDoc = firestore.getCardDoc(board.workspaceId, board.boardId, card.listIdPar, card.cardId)
         val boardDoc = firestore.getBoardDoc(board.workspaceId, board.boardId)
         cardDoc.let { doc->
             if(firestore.mergeDocument(
@@ -74,7 +74,7 @@ class BoardCardHelper(
         baseViewModel: BaseViewModel,
         doOnSuccess: () -> Unit
     ){
-        val cardDoc = firestore.getCardDoc(board.workspaceId, board.boardId, card.listId, card.cardId)
+        val cardDoc = firestore.getCardDoc(board.workspaceId, board.boardId, card.listIdPar, card.cardId)
         val boardDoc = firestore.getBoardDoc(board.workspaceId, board.boardId)
         cardDoc.let { doc->
             card.let { c->
@@ -193,7 +193,7 @@ class BoardCardHelper(
         baseViewModel: BaseViewModel,
         onSuccess: () -> Unit
     ) {
-        val cardDoc = firestore.getCardDoc(board.workspaceId, board.boardId, card.listId, card.cardId)
+        val cardDoc = firestore.getCardDoc(board.workspaceId, board.boardId, card.listIdPar, card.cardId)
         val boardDoc = firestore.getBoardDoc(board.workspaceId, board.boardId)
         cardDoc.let { doc->
             val attachmentDoc = firestore.getAttachmentDoc(doc, attachment.attachmentId)
@@ -246,7 +246,7 @@ class BoardCardHelper(
         baseViewModel: BaseViewModel,
         onSuccess: () -> Unit
     ) {
-        val cardDoc = firestore.getCardDoc(board.workspaceId, board.boardId, card.listId, card.cardId)
+        val cardDoc = firestore.getCardDoc(board.workspaceId, board.boardId, card.listIdPar, card.cardId)
         val boardDoc = firestore.getBoardDoc(board.workspaceId, board.boardId)
         cardDoc.let { doc->
             val workDoc = firestore.getWorkDoc(doc, work.workId)
@@ -303,7 +303,7 @@ class BoardCardHelper(
         baseViewModel: BaseViewModel,
         onSuccess: () -> Unit
     ){
-        val cardDoc = firestore.getCardDoc(board.workspaceId, board.boardId, card.listId, card.cardId)
+        val cardDoc = firestore.getCardDoc(board.workspaceId, board.boardId, card.listIdPar, card.cardId)
         val boardDoc = firestore.getBoardDoc(board.workspaceId, board.boardId)
         cardDoc.let { doc->
             val taskDoc = firestore.getTaskDoc(doc, task.workId, task.taskId)

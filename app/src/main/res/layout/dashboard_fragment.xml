@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/dashboard_fragment_toolbar"
+            layout="@layout/two_action_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/dashboard_fragment_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/dimen_16"
+            android:text="Cards"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            app:fontFamily="@font/poppins"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dashboard_fragment_toolbar" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_marginTop="@dimen/dimen_8"
+            android:id="@+id/dashboard_fragment_recycler"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="@id/dashboard_fragment_guideline_1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/dashboard_fragment_stone_100"
+            app:layout_constraintBottom_toBottomOf="@id/dashboard_fragment_stone_0"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/dashboard_item"
+            />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/dashboard_fragment_guideline_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.10"
+            />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/dashboard_fragment_stone_0"
+            android:layout_marginStart="@dimen/dimen_8"
+            android:layout_width="wrap_content"
+            android:layout_height="56dp"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            android:layout_marginBottom="@dimen/dimen_16"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/dashboard_fragment_guideline_1"
+            android:text="0"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/dashboard_fragment_stone_25"
+            android:layout_marginStart="@dimen/dimen_8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/dashboard_fragment_stone_0"
+            app:layout_constraintEnd_toEndOf="@id/dashboard_fragment_guideline_1"
+            app:layout_constraintTop_toBottomOf="@id/dashboard_fragment_stone_50"
+            android:text="25"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/dashboard_fragment_stone_50"
+            android:layout_marginStart="@dimen/dimen_8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/dashboard_fragment_stone_25"
+            app:layout_constraintTop_toBottomOf="@id/dashboard_fragment_stone_75"
+            app:layout_constraintEnd_toEndOf="@id/dashboard_fragment_guideline_1"
+            android:text="50"
+            />
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/dashboard_fragment_stone_75"
+            android:layout_marginStart="@dimen/dimen_8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/dashboard_fragment_stone_100"
+            app:layout_constraintBottom_toTopOf="@id/dashboard_fragment_stone_50"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/dashboard_fragment_guideline_1"
+            android:text="75"
+            />
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_marginTop="@dimen/dimen_8"
+            android:id="@+id/dashboard_fragment_stone_100"
+            android:layout_marginStart="@dimen/dimen_8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintTop_toBottomOf="@id/dashboard_fragment_title"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/dashboard_fragment_guideline_1"
+            android:text="100"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

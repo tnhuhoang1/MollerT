@@ -43,6 +43,13 @@ interface AppDao {
     @Query("select * from workspace where workspaceId = :id")
     suspend fun getWorkspaceWithBoardsNoFlow(id: String): WorkspaceWithBoards
 
+//    @Query("select * from list as l, card as c where c.listIdPar = l.listId and l.boardId = :boardId order by l.listName asc")
+//    suspend fun getListAndCardByBoardId(boardId: String): List<ListAndCard>
+
+    @Transaction
+    @Query("select * from list where boardId = :boardId")
+    suspend fun getListWithCardsByBoardId(boardId: String): List<ListWithCards>
+
     @Query("select * from member, activity where member.email = activity.actor and member.email = :email order by timestamp desc")
     fun getActivityAssocWithEmail(email: String): Flow<List<MemberAndActivity>>
 

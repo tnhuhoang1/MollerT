@@ -10,6 +10,6 @@ interface CardLabelDao: BaseDao<CardLabelRel> {
     @Query("select * from cardlabelrel where cardId = :cardId")
     suspend fun getRelByCardId(cardId: String): List<CardLabelRel>
 
-    @Query("select * from cardlabelrel where cardId = :labelId")
+    @Query("select * from cardlabelrel where labelId = :labelId")
     suspend fun getRelByLabelId(labelId: String): List<CardLabelRel>
 }

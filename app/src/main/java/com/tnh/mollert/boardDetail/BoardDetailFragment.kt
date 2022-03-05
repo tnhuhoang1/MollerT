@@ -157,9 +157,18 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                 R.id.board_detail_menu_board_name->{
                     showChangeBoardNameDialog()
                 }
+                R.id.board_detail_menu_dashboard ->{
+                    navigateToDashboard()
+                }
             }
             true
         }
+    }
+    private fun navigateToDashboard(){
+        findNavController().navigate(BoardDetailFragmentDirections.actionBoardDetailFragmentToDashboardFragment(
+            args.workspaceId,
+            args.boardId
+        ))
     }
 
     private fun showChangeBackgroundDialog() {
@@ -291,7 +300,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                         searchDialog.setCardAdapter(searchCardAdapter)
                         searchCardAdapter.submitList(listCard)
                         searchCardAdapter.setRootClickListener{ card, _, _ ->
-                            navigateToCard(args.workspaceId, args.boardId, card.listId, card.cardId)
+                            navigateToCard(args.workspaceId, args.boardId, card.listIdPar, card.cardId)
                             searchDialog.dismiss()
                         }
                         searchDialog.show()

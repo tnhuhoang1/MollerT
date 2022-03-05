@@ -1,17 +1,13 @@
 package com.tnh.mollert.datasource.local.compound
 
 import androidx.room.Embedded
-import androidx.room.Relation
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.datasource.local.model.List
 
-class ListWithCards(
+data class ListAndCard(
     @Embedded
     val list: List,
-    @Relation(
-        parentColumn = "listId",
-        entityColumn = "listIdPar"
-    )
-    val cards: kotlin.collections.List<Card>
+    @Embedded
+    val card: Card
 ) {
 }

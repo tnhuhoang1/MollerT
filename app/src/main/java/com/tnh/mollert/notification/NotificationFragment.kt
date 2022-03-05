@@ -119,7 +119,7 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
                     NotificationFragmentDirections.actionNotificationFragmentToCardDetailFragment(
                         boardAndCard.board.workspaceId,
                         boardAndCard.board.boardId,
-                        boardAndCard.card.listId,
+                        boardAndCard.card.listIdPar,
                         boardAndCard.card.cardId
                     )
                 )

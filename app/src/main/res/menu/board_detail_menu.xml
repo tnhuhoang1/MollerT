@@ -36,6 +36,9 @@
         android:id="@+id/board_detail_menu_leave"
         android:title="Leave board"
         android:visible="false" />
+    <item android:title="Dashboard"
+        android:id="@+id/board_detail_menu_dashboard"
+        />
     <item
         android:id="@+id/board_detail_menu_close"
         android:title="Close board"

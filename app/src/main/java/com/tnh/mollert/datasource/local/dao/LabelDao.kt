@@ -18,6 +18,9 @@ interface LabelDao: BaseDao<Label> {
     @Query("select * from label where boardId = :boardId")
     fun getLabelsWithBoardId(boardId: String): Flow<List<Label>>
 
+    @Query("select * from label where boardId = :boardId")
+    suspend fun getLabelsWithBoardIdNoFlow(boardId: String): List<Label>
+
     @Query("select * from label where labelId = :labelId")
     suspend fun getLabelById(labelId: String): Label?
 }

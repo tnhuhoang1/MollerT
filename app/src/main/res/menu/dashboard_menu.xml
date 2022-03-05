@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/dashboard_menu_card_per_list"
+        android:title="Cards per list"
+        />
+    <item android:id="@+id/dashboard_menu_card_per_due"
+        android:title="Cards per due date"
+        />
+    <item android:id="@+id/dashboard_menu_card_per_member"
+        android:title="Cards per member"
+        />
+    <item android:id="@+id/dashboard_menu_card_per_label"
+        android:title="Cards per label"
+        />
+</menu>

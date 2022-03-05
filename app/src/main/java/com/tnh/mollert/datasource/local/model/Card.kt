@@ -9,7 +9,7 @@ class Card(
     val cardId: String,
     var cardName: String,
     var position: Int,
-    val listId: String,
+    val listIdPar: String,
     var createdAt: Long = System.currentTimeMillis(),
     var cardStatus: String = STATUS_ACTIVE,
     var cardDesc: String? = null,

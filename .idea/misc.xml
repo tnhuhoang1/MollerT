@@ -63,6 +63,8 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/create_board_dialog.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/create_board_layout.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/custom_menu.xml" value="0.25" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/dashboard_fragment.xml" value="0.25" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/dashboard_item.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/day_item.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/deadline_item.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/layout/edit_profile_fragment.xml" value="0.25" />
@@ -98,6 +100,7 @@
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/board_detail_menu.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/bottom_nav.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/card_detail_menu.xml" value="0.25" />
+        <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/dashboard_menu.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/notification_menu.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/menu/top_app_bar.xml" value="0.25" />
         <entry key="..\:/NewAndroid/MollerT/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.121" />
