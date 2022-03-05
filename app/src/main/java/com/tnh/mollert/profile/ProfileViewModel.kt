@@ -8,6 +8,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.local.model.Workspace
+import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
@@ -42,6 +43,10 @@ class ProfileViewModel @Inject constructor(
 
     fun setImageUri(uriString: String){
         _editAvatar.postValue(uriString)
+    }
+
+    suspend fun getBoardByEmail(email: String): List<MemberBoardRel>{
+        return repository.memberBoardDao.getRelsByEmailId(email)
     }
 
     fun saveMemberInfoToFirestore(name: String, bio: String, contentResolver: ContentResolver) {

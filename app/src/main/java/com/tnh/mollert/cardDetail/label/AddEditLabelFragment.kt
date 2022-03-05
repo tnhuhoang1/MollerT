@@ -97,13 +97,13 @@ class AddEditLabelFragment: DataBindingFragment<AddLabelBinding>(R.layout.add_la
 
     private fun addLabel(){
         adapter.selectedPosition?.let {
-            viewModel.addLabel(args.workspaceId, args.boardId, LabelPreset.colorDataSet[it], binding.addLabelName.text.toString())
+            viewModel.addLabel(args.workspaceId, args.boardId, LabelPreset.colorDataSet[it], binding.addLabelName.text.toString().trim())
         } ?: viewModel.setMessage("Please select color")
     }
 
     private fun editLabel(){
         adapter.selectedPosition?.let {
-            viewModel.editLabel(args.workspaceId, args.boardId, args.labelId, LabelPreset.colorDataSet[it], binding.addLabelName.text.toString())
+            viewModel.editLabel(args.workspaceId, args.boardId, args.labelId, LabelPreset.colorDataSet[it], binding.addLabelName.text.toString().trim())
         } ?: viewModel.setMessage("Please select color")
     }
 }

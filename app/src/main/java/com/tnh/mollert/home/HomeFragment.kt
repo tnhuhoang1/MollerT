@@ -28,6 +28,8 @@ import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.hideKeyboard
 import com.tnh.tnhlibrary.view.show
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -88,13 +90,21 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
 
     private fun observeData() {
         safeObserve(viewModel.memberWithWorkspaces){
-            homeAdapter.submitList(it.workspaces)
             if(it.workspaces.isEmpty()){
                 binding.homeFragmentNoWorkspace.show()
             }else{
                 binding.homeFragmentNoWorkspace.gone()
             }
-            submitBoardList(it.workspaces)
+            lifecycleScope.launchWhenStarted {
+                withContext(Dispatchers.Default){
+                    it.workspaces.sortedBy { workspace->
+                        workspace.workspaceName
+                    }
+                }.let { l->
+                    homeAdapter.submitList(l)
+                    submitBoardList(l)
+                }
+            }
         }
 
         safeObserve(viewModel.boards){
@@ -137,13 +147,21 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToAddWorkspaceFragment())
     }
 
+    private fun navigateToManageWorkspace(workspaceId: String){
+        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToManageWorkspaceFragment(workspaceId))
+    }
+
     private fun initControl() {
-        homeAdapter = HomeWorkSpaceAdapter(onClick)
+        homeAdapter = HomeWorkSpaceAdapter(onClick, viewModel.getMemberWorkspaceDao())
         homeAdapter.onNewClicked = { ws->
             showCreateDialog(ws)
         }
 
-        homeAdapter.onNewMemberClicked = {ws->
+        homeAdapter.onSettingClicked = { ws->
+            navigateToManageWorkspace(ws.workspaceId)
+        }
+
+        homeAdapter.onInviteClicked = {ws->
             showInviteDialog(ws)
         }
 

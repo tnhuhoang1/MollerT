@@ -68,13 +68,19 @@ class NotificationViewModel @Inject constructor(
                                 firestore.insertToArrayField(
                                     firestore.getTrackingDoc(member.email ?: currentEmail),
                                     "workspaces",
-                                    workspaceDoc.path
+                                    mapOf(
+                                        "what" to "all",
+                                        "ref" to workspaceDoc.path
+                                    )
                                 )
                             }
                             if(firestore.insertToArrayField(
                                 firestore.getTrackingDoc(currentEmail),
                                 "workspaces",
-                                workspaceDoc.path
+                                mapOf(
+                                    "what" to "all",
+                                    "ref" to workspaceDoc.path
+                                )
                             )){
                                 postMessage("Join workspace successfully")
                             }
@@ -114,13 +120,19 @@ class NotificationViewModel @Inject constructor(
                                 firestore.insertToArrayField(
                                     firestore.getTrackingDoc(member.email ?: currentEmail),
                                     "workspaces",
-                                    workspaceDoc.path
+                                    mapOf(
+                                        "what" to "all",
+                                        "ref" to workspaceDoc.path
+                                    )
                                 )
                             }
                             if(firestore.insertToArrayField(
                                     firestore.getTrackingDoc(currentEmail),
                                     "workspaces",
-                                    workspaceDoc.path
+                                    mapOf(
+                                        "what" to "all",
+                                        "ref" to workspaceDoc.path
+                                    )
                                 )){
                             }
                         }
@@ -150,14 +162,20 @@ class NotificationViewModel @Inject constructor(
                             firestore.insertToArrayField(
                                 firestore.getTrackingDoc(members.email ?: ""),
                                 "boards",
-                                boardDoc.path
+                                mapOf(
+                                    "what" to "all",
+                                    "ref" to boardDoc.path
+                                )
                             )
 
                         }
                         firestore.insertToArrayField(
                             firestore.getTrackingDoc(currentEmail),
                             "boards",
-                            boardDoc.path
+                            mapOf(
+                                "what" to "all",
+                                "ref" to boardDoc.path
+                            )
                         )
                         postMessage("Join board successfully")
                     }

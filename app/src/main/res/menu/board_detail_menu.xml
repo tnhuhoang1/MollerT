@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/board_detail_menu_board_name"
+        android:title="Board name"/>
+    <item
+        android:id="@+id/board_detail_menu_desc"
+        android:title="Board description" />
     <item
         android:id="@+id/board_detail_menu_invite"
         android:title="Invite member" />
@@ -18,9 +23,6 @@
                 android:title="Public" />
         </menu>
     </item>
-    <item
-        android:id="@+id/board_detail_menu_desc"
-        android:title="Board description" />
     <item
         android:id="@+id/board_detail_menu_background"
         android:title="Change background" />

@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
         userWrapper.listenForUser(
             {
                 hideBottomNav()
+                viewModel.unregisterRemoteEvent()
             }
         ) {
             viewModel.registerRemoteEvent()

@@ -83,7 +83,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
     }
 
     fun getConcatList(list: kotlin.collections.List<List>): kotlin.collections.List<List>{
-        return list + List("null",
+        return list.sortedBy { it.listName } + List("null",
             "",
             "",
             "",
@@ -295,13 +295,13 @@ class BoardDetailFragmentViewModel @Inject constructor(
 
     fun checkAndFetchList(prefManager: PrefManager, workspaceId: String, boardId: String){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
-            if(prefManager.getString("$email+$workspaceId+$boardId").isEmpty()){
+            if(prefManager.getString("$email+$boardId").isEmpty()){
                 "Fetching all board content".logAny()
                 viewModelScope.launch {
                     fetchAllLabels(workspaceId, boardId)
                     fetchAllList(workspaceId, boardId)
                     fetchAllActivity(workspaceId, boardId)
-                    prefManager.putString("$email+$workspaceId+$boardId", "synced")
+                    prefManager.putString("$email+$boardId", "synced")
                 }
             }
         }
@@ -441,7 +441,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                                 )
                             }
                         }
-                        prefManager.putString("$email+$workspaceId+$boardId", "")
+                        prefManager.putString("$email+$boardId", "")
                         onSuccess()
                     }
                 }
@@ -457,7 +457,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
                         boardDoc,
                         mapOf("boardStatus" to Board.STATUS_CLOSED)
                 )){
-                    prefManager.putString("$email+$workspaceId+$boardId", "")
+                    prefManager.putString("$email+$boardId", "")
                     // notify all members in workspace
                     repository.appDao.getWorkspaceWithMembersNoFlow(workspaceId)?.members?.let { listMember->
                         listMember.forEach { mem->
@@ -526,7 +526,10 @@ class BoardDetailFragmentViewModel @Inject constructor(
                                 firestore.insertToArrayField(
                                     tracking,
                                     "boards",
-                                    doc.path
+                                    mapOf(
+                                        "what" to "all",
+                                        "ref" to doc.path
+                                    )
                                 )
                                 firestore.insertToArrayField(
                                     tracking,
@@ -659,6 +662,107 @@ class BoardDetailFragmentViewModel @Inject constructor(
             }
         }
 
+    }
+
+    fun changeBoardName(name: String, workspaceId: String, boardId: String) {
+        val boardDoc = firestore.getBoardDoc(workspaceId, boardId)
+        viewModelScope.launch {
+            val data = mapOf(
+                "boardName" to name
+            )
+            if(firestore.mergeDocument(boardDoc, data)){
+                val boardWithMember = repository.appDao.getBoardWithMembers(boardId)
+                boardWithMember?.members?.let { listMember ->
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                    val message = MessageMaker.getChangeBoardNameMessage(
+                        boardId,
+                        boardWithMember.board.boardName,
+                        name
+                    )
+                    val remoteActivity = RemoteActivity(
+                        activityId,
+                        email,
+                        boardId,
+                        null,
+                        message,
+                        false,
+                        Activity.TYPE_INFO,
+                        System.currentTimeMillis()
+                    )
+                    firestore.addDocument(activityDoc, remoteActivity)
+
+                    listMember.forEach { mem ->
+                        firestore.insertToArrayField(
+                            firestore.getTrackingDoc(mem.email),
+                            "boards",
+                            mapOf(
+                                "what" to "info",
+                                "ref" to boardDoc.path
+                            )
+                        )
+                        firestore.insertToArrayField(
+                            firestore.getTrackingDoc(mem.email),
+                            "activities",
+                            activityDoc.path
+                        )
+                    }
+                }
+                postMessage("Change board name successfully")
+            }
+        }
+    }
+
+    fun changeListName(
+        name: String,
+        workspaceId: String,
+        boardId: String,
+        list: List
+    ) {
+        val listDoc = firestore.getListDoc(workspaceId, boardId, list.listId)
+        viewModelScope.launch {
+            val data = mapOf(
+                "name" to name
+            )
+            if(firestore.mergeDocument(listDoc, data)){
+                val boardWithMember = repository.appDao.getBoardWithMembers(boardId)
+                boardWithMember?.members?.let { listMember ->
+                    val activityId = "activity_${System.currentTimeMillis()}"
+                    val activityDoc = firestore.getActivityDoc(listDoc, activityId)
+                    val message = MessageMaker.getChangeListNameMessage(
+                        boardId,
+                        boardWithMember.board.boardName,
+                        list.listName,
+                        name
+                    )
+                    val remoteActivity = RemoteActivity(
+                        activityId,
+                        email,
+                        boardId,
+                        null,
+                        message,
+                        false,
+                        Activity.TYPE_INFO,
+                        System.currentTimeMillis()
+                    )
+                    firestore.addDocument(activityDoc, remoteActivity)
+
+                    listMember.forEach { mem ->
+                        firestore.insertToArrayField(
+                            firestore.getTrackingDoc(mem.email),
+                            "lists",
+                            listDoc.path
+                        )
+                        firestore.insertToArrayField(
+                            firestore.getTrackingDoc(mem.email),
+                            "activities",
+                            activityDoc.path
+                        )
+                    }
+                }
+                postMessage("Change list name successfully")
+            }
+        }
     }
 
 }

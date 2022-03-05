@@ -6,15 +6,20 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.ProfileFragmentBinding
+import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
+import com.tnh.tnhlibrary.liveData.utils.safeObserve
+import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class ProfileFragment: DataBindingFragment<ProfileFragmentBinding>(R.layout.profile_fragment) {
     private val viewModel by viewModels<ProfileViewModel>()
+    @Inject lateinit var prefManager: PrefManager
     override fun doOnCreateView() {
         binding.profileFragmentToolbar.apply {
             twoActionToolbarEndIcon.setImageResource(R.drawable.vd_user_edit)
@@ -46,6 +51,15 @@ class ProfileFragment: DataBindingFragment<ProfileFragmentBinding>(R.layout.prof
                 }
             }
         }
+        safeObserve(viewModel.member){ member ->
+            member?.let {
+                binding.apply {
+                    profileFragmentProfileName.text = member.name
+                    profileFragmentEmail.setText(member.email)
+                    profileFragmentBio.setText(member.biography)
+                }
+            }
+        }
         eventObserve(viewModel.message){
             binding.root.showSnackBar(it)
         }
@@ -53,8 +67,14 @@ class ProfileFragment: DataBindingFragment<ProfileFragmentBinding>(R.layout.prof
 
     private fun onLogoutButtonClicked() {
         lifecycleScope.launchWhenCreated {
-            FirebaseAuth.getInstance().signOut()
-            navigateToSplash()
+            UserWrapper.getInstance()?.currentUserEmail?.let { email->
+                prefManager.putString("$email+sync+all", "")
+                viewModel.getBoardByEmail(email).forEach {
+                    prefManager.putString("$email+${it.boardId}", "")
+                }
+                FirebaseAuth.getInstance().signOut()
+                navigateToSplash()
+            }
         }
     }
 }

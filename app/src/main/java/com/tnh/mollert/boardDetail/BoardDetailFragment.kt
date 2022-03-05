@@ -16,9 +16,11 @@ import com.tnh.mollert.databinding.BoardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.local.model.Board
+import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.home.CreateBoardDialog
 import com.tnh.mollert.home.SearchDialog
 import com.tnh.mollert.utils.LoadingModal
+import com.tnh.mollert.utils.SpecialCharFilter
 import com.tnh.mollert.utils.bindImageUriOrHide
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
@@ -152,6 +154,9 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                     popupMenu.setNewVisibility(R.id.board_detail_menu_public)
                     viewModel.changeVisibility(args.boardId, Board.VISIBILITY_PUBLIC)
                 }
+                R.id.board_detail_menu_board_name->{
+                    showChangeBoardNameDialog()
+                }
             }
             true
         }
@@ -177,11 +182,40 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     private fun showInviteDialog() {
         showAlertDialog("Invite to board"){ builder, createBoardLayoutBinding ->
             createBoardLayoutBinding.createBoardLayoutName.hint = "Email"
+            createBoardLayoutBinding.createBoardLayoutName.filters = arrayOf(SpecialCharFilter())
             builder.setPositiveButton("Invite") { _, _ ->
-                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrEmpty()){
+                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrBlank()){
                     viewModel.setMessage("Email address cannot be empty")
                 }else{
-                    viewModel.inviteMemberToBoard(createBoardLayoutBinding.createBoardLayoutName.text.toString(), args.workspaceId)
+                    viewModel.inviteMemberToBoard(createBoardLayoutBinding.createBoardLayoutName.text.toString().trim(), args.workspaceId)
+                }
+            }
+        }
+    }
+
+    private fun showChangeListNameDialog(list: List) {
+        showAlertDialog("Change list name"){ builder, createBoardLayoutBinding ->
+            createBoardLayoutBinding.createBoardLayoutName.filters = arrayOf(SpecialCharFilter())
+            createBoardLayoutBinding.createBoardLayoutName.hint = "List name"
+            builder.setPositiveButton("OK") { _, _ ->
+                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrBlank()){
+                    viewModel.setMessage("List name cannot be empty")
+                }else{
+                    viewModel.changeListName(createBoardLayoutBinding.createBoardLayoutName.text.toString().trim(), args.workspaceId, args.boardId, list)
+                }
+            }
+        }
+    }
+
+    private fun showChangeBoardNameDialog() {
+        showAlertDialog("Change board name"){ builder, createBoardLayoutBinding ->
+            createBoardLayoutBinding.createBoardLayoutName.filters = arrayOf(SpecialCharFilter())
+            createBoardLayoutBinding.createBoardLayoutName.hint = "Board name"
+            builder.setPositiveButton("OK") { _, _ ->
+                if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrBlank()){
+                    viewModel.setMessage("Board name cannot be empty")
+                }else{
+                    viewModel.changeBoardName(createBoardLayoutBinding.createBoardLayoutName.text.toString().trim(), args.workspaceId, args.boardId)
                 }
             }
         }
@@ -243,6 +277,10 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
                 }
             }.show()
+        }
+
+        boardDetailAdapter.onChangeListNameClicked = { list->
+            showChangeListNameDialog(list)
         }
 
         binding.boardDetailFragmentRecyclerview.adapter = boardDetailAdapter
@@ -319,6 +357,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             }
         }
         safeObserve(viewModel.boardWithLists){
+            binding.boardDetailFragmentToolbar.twoActionToolbarTitle.text = it.board.boardName
             if(it.board.boardStatus == Board.STATUS_CLOSED){
                 showToast("The board was closed")
                 findNavController().popBackStack(R.id.homeFragment, false)

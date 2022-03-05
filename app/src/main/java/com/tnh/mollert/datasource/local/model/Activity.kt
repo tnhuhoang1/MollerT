@@ -225,6 +225,15 @@ object MessageMaker{
         return "joined board ${getEncodedBoard(boardId, boardName)}"
     }
 
+    fun getChangeBoardNameMessage(boardId: String, boardName: String, newName: String): String{
+        return "changed board ${getEncodedBoard(boardId, boardName)} to ${getEncodedBoard(boardId, newName)}"
+    }
+
+    fun getChangeListNameMessage(boardId: String, boardName: String, listName: String, newName: String): String{
+        return "changed list \"$listName\" to \"$newName\" in board ${getEncodedBoard(boardId, boardName)}"
+    }
+
+
     fun getChangeBoardVisMessage(boardId: String, boardName: String, vis: String): String{
         return "changed board ${getEncodedBoard(boardId, boardName)} visibility to $vis"
     }

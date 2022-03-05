@@ -139,6 +139,9 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
+        <action
+            android:id="@+id/action_homeFragment_to_manageWorkspaceFragment"
+            app:destination="@id/manageWorkspaceFragment" />
     </fragment>
     <fragment
         android:id="@+id/testFragment"
@@ -232,4 +235,12 @@
         android:id="@+id/editProfileFragment"
         android:name="com.tnh.mollert.profile.edit.EditProfileFragment"
         android:label="EditProfileFragment" />
+    <fragment
+        android:id="@+id/manageWorkspaceFragment"
+        android:name="com.tnh.mollert.home.manage.ManageWorkspaceFragment"
+        android:label="ManageWorkspaceFragment" >
+        <argument
+            android:name="workspaceId"
+            app:argType="string" />
+    </fragment>
 </navigation>

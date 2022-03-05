@@ -25,8 +25,7 @@ import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,20 +63,19 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun getMemberWorkspaceDao() = repository.memberWorkspaceDao
+
     fun syncWorkspacesAndBoardsDataFirstTime(
         pref: PrefManager
     ){
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
             if(pref.getString("$email+sync+all").isEmpty()){
                 viewModelScope.launch {
-                    // need strong internet connect to avoid error
-                    repository.workspaceDao.countOne()?.let {
-                        if(it == 0){
-                            "Syncing all workspaces and boards data".logAny()
-                            reloadWorkspaceFromRemote(email)
-                            pref.putString("$email+sync+all", "synced")
-                            "Synced".logAny()
-                        }
+                    coroutineScope {
+                        "Syncing all workspaces and boards data".logAny()
+                        reloadWorkspaceFromRemote(email)
+                        pref.putString("$email+sync+all", "synced")
+                        "Synced".logAny()
                     }
                 }
             }
@@ -104,7 +102,6 @@ class HomeViewModel @Inject constructor(
             it.toModel()?.let { model->
                 repository.workspaceDao.insertOne(model)
                 saveMemberWorkspaceRelation(it.members, model.workspaceId)
-                repository.memberWorkspaceDao.insertOne(MemberWorkspaceRel(email, model.workspaceId))
                 saveAllBoardFromRemote(model.workspaceId)
             }
         }
@@ -207,7 +204,12 @@ class HomeViewModel @Inject constructor(
         if(lock <= 0){
             lock++
             listBoard = list.map {
-                repository.appDao.getWorkspaceWithBoardsNoFlow(it.workspaceId).boards
+                val l = repository.appDao.getWorkspaceWithBoardsNoFlow(it.workspaceId).boards
+                withContext(Dispatchers.Default){
+                    l.sortedBy { board->
+                        board.boardName
+                    }
+                }
             }
         }
         lock = 0
@@ -292,7 +294,10 @@ class HomeViewModel @Inject constructor(
                         "Notify to other members (${members.size}) about new board inserted".logAny()
                         members.forEach {
                             val trackingLoc = firestore.getTrackingDoc(it.email)
-                            firestore.insertToArrayField(trackingLoc, "boards", boardDoc.path)
+                            firestore.insertToArrayField(trackingLoc, "boards", mapOf(
+                                "what" to "all",
+                                "ref" to boardDoc.path
+                            ))
                         }
                         postMessage("Board added")
                         onSuccess()
@@ -363,7 +368,10 @@ class HomeViewModel @Inject constructor(
                                 firestore.insertToArrayField(
                                     tracking,
                                     "boards",
-                                    boardRef.path
+                                    mapOf(
+                                        "what" to "all",
+                                        "ref" to boardRef.path
+                                    )
                                 )
                                 firestore.insertToArrayField(
                                     tracking,
@@ -376,7 +384,10 @@ class HomeViewModel @Inject constructor(
                     firestore.insertToArrayField(
                         firestore.getTrackingDoc(email),
                         "boards",
-                        boardRef.path
+                        mapOf(
+                            "what" to "all",
+                            "ref" to boardRef.path
+                        )
                     )
                     firestore.insertToArrayField(
                         firestore.getTrackingDoc(email),

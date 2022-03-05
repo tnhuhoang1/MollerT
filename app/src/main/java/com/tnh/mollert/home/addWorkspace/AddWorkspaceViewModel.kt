@@ -78,7 +78,7 @@ class AddWorkspaceViewModel @Inject constructor(
                     type,
                     desc,
                     listOf(
-                        RemoteMemberRef(it.email, memLoc.path)
+                        RemoteMemberRef(it.email, memLoc.path, RemoteMemberRef.ROLE_LEADER)
                     )
                 )
                 if(firestore.addDocument(loc,data)){

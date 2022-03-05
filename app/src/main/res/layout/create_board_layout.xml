@@ -14,7 +14,6 @@
         android:paddingVertical="@dimen/dimen_12"
         android:drawablePadding="@dimen/dimen_8"
         android:singleLine="true"
-        android:digits="1234567890 qwertzuiopasdfghjklyxcvbnm.@,!"
         android:inputType="text"
         android:id="@+id/create_board_layout_name"
         android:fontFamily="@font/poppins"

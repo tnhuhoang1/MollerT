@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CardDao: BaseDao<Card> {
 
-    @Query("select * from card where listId = :listId and cardStatus = :status")
+    @Query("select * from card where listId = :listId and cardStatus = :status order by cardName asc")
     fun getCardsWithListId(listId: String, status: String = Card.STATUS_ACTIVE): Flow<List<Card>>
 
     @Query("select * from card where listId = :listId and cardStatus = :status order by cardName asc")

@@ -10,6 +10,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.CreateBoardDialogBinding
 import com.tnh.mollert.utils.BackgroundPreset
+import com.tnh.mollert.utils.SpecialCharFilter
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 
@@ -52,6 +53,7 @@ class CreateBoardDialog(
         binding.createBoardDialogSelectImage.setOnClickListener {
             onSelectImageClicked()
         }
+        binding.createBoardDialogName.filters = arrayOf(SpecialCharFilter())
         binding.createBoardDialogPublic.setOnClickListener {
             selectItem(binding.createBoardDialogPublic)
         }

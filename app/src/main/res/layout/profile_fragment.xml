@@ -45,7 +45,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dimen_10"
                 android:fontFamily="@font/poppins"
-                android:text="@{viewModel.memberName}"
                 android:textAllCaps="false"
                 android:textColor="@color/primaryTextColor"
                 android:textSize="@dimen/text_size_18"
@@ -68,7 +67,6 @@
                 style="@style/Theme.MollerT.CommonEditText"
                 android:layout_marginTop="@dimen/dimen_10"
                 android:enabled="false"
-                android:text="@{viewModel.memberEmail}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/profile_fragment_email_label" />
@@ -110,7 +108,6 @@
                 android:enabled="false"
                 android:gravity="start|top"
                 android:singleLine="false"
-                android:text="@{viewModel.bio}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.2"
                 app:layout_constraintStart_toStartOf="parent"

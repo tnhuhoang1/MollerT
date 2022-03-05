@@ -39,7 +39,6 @@
                 android:paddingHorizontal="@dimen/dimen_12"
                 android:paddingVertical="@dimen/dimen_12"
                 android:drawablePadding="@dimen/dimen_8"
-                android:digits="1234567890 qwertzuiopasdfghjklyxcvbnm"
                 android:hint="Name of the board"
                 android:textSize="@dimen/text_size_16"
                 android:singleLine="true"

@@ -7,127 +7,136 @@
             name="viewModel"
             type="com.tnh.mollert.login.LoginFragmentViewModel" />
     </data>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
+        android:fillViewport="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/login_fragment_toolbar"
-            style="@style/Theme.MollerT.CommonToolBar"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/login_fragment_toolbar"
+                style="@style/Theme.MollerT.CommonToolBar"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_BACK_CLICKED)}"
-                android:id="@+id/login_fragment_back_button"
-                android:layout_width="@dimen/dimen_30"
-                android:layout_height="match_parent"
-                android:layout_gravity="start"
-                android:src="@drawable/ic_baseline_chevron_left_24" />
+                <ImageView
+                    android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_BACK_CLICKED)}"
+                    android:id="@+id/login_fragment_back_button"
+                    android:layout_width="@dimen/dimen_30"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="start"
+                    android:src="@drawable/ic_baseline_chevron_left_24" />
 
-            <TextView
-                android:id="@+id/login_fragment_title"
+                <TextView
+                    android:id="@+id/login_fragment_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="@string/sign_in_title"
+                    android:textAllCaps="false"
+                    android:textColor="@color/primaryTextColor"
+                    android:textSize="@dimen/text_size_22"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_REG_CLICKED)}"
+                    android:id="@+id/login_fragment_sign_up_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="end"
+                    android:gravity="center"
+                    android:padding="@dimen/dimen_16"
+                    android:text="@string/sign_up"
+                    android:textColor="@color/lightDarkBlue" />
+            </com.google.android.material.appbar.MaterialToolbar>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/login_fragment_app_icon"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/sign_in_title"
-                android:textAllCaps="false"
-                android:textColor="@color/primaryTextColor"
-                android:textSize="@dimen/text_size_22"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_50"
+                android:clipChildren="false"
+                android:elevation="@dimen/dimen_20"
+                android:shadowColor="@color/primaryTextColor"
+                app:cardElevation="@dimen/dimen_50"
+                app:cardPreventCornerOverlap="false"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/login_fragment_toolbar">
 
-            <TextView
-                android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_REG_CLICKED)}"
-                android:id="@+id/login_fragment_sign_up_button"
+                <ImageView
+                    android:layout_width="@dimen/dimen_130"
+                    android:layout_height="@dimen/dimen_130"
+                    android:src="@drawable/app_icon" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/login_fragment_email_label"
+                style="@style/Theme.MollerT.CommonLabelText"
+                android:layout_marginTop="@dimen/dimen_55"
+                android:text="@string/email_label"
+                app:layout_constraintStart_toStartOf="@id/login_fragment_email"
+                app:layout_constraintTop_toBottomOf="@id/login_fragment_app_icon" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/login_fragment_email"
+                style="@style/Theme.MollerT.CommonEditText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:inputType="text"
+                android:hint="@string/edit_text_email_placeholder"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/login_fragment_email_label" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/login_fragment_password_label"
+                style="@style/Theme.MollerT.CommonLabelText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:text="@string/password_label"
+                app:layout_constraintStart_toStartOf="@id/login_fragment_email"
+                app:layout_constraintTop_toBottomOf="@id/login_fragment_email" />
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/login_fragment_password"
+                style="@style/Theme.MollerT.CommonEditText"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:hint="@string/edit_text_pass_placeholder"
+                android:inputType="textPassword"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/login_fragment_password_label" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/login_fragment_sign_in"
+                style="@style/Theme.MollerT.ExpandedYellowButton"
+                android:layout_marginBottom="@dimen/dimen_15"
+                android:text="@string/sign_in"
+                app:layout_constraintTop_toBottomOf="@id/login_fragment_password"
+                app:layout_constraintVertical_bias="1"
+                android:layout_marginTop="@dimen/dimen_56"
+                android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_LOGIN_CLICKED)}"
+                app:layout_constraintBottom_toTopOf="@id/login_fragment_forgot_account"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_FORGOT_CLICKED)}"
+                android:id="@+id/login_fragment_forgot_account"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:gravity="center"
-                android:padding="@dimen/dimen_16"
-                android:text="@string/sign_up"
-                android:textColor="@color/lightDarkBlue" />
-        </com.google.android.material.appbar.MaterialToolbar>
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/login_fragment_app_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/dimen_50"
-            android:clipChildren="false"
-            android:elevation="@dimen/dimen_20"
-            android:shadowColor="@color/primaryTextColor"
-            app:cardElevation="@dimen/dimen_50"
-            app:cardPreventCornerOverlap="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/login_fragment_toolbar">
-
-            <ImageView
-                android:layout_width="@dimen/dimen_130"
-                android:layout_height="@dimen/dimen_130"
-                android:src="@drawable/app_icon" />
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/login_fragment_email_label"
-            style="@style/Theme.MollerT.CommonLabelText"
-            android:layout_marginTop="@dimen/dimen_55"
-            android:text="@string/email_label"
-            app:layout_constraintStart_toStartOf="@id/login_fragment_email"
-            app:layout_constraintTop_toBottomOf="@id/login_fragment_app_icon" />
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/login_fragment_email"
-            style="@style/Theme.MollerT.CommonEditText"
-            android:layout_marginTop="@dimen/dimen_10"
-            android:hint="@string/edit_text_email_placeholder"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/login_fragment_email_label" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/login_fragment_password_label"
-            style="@style/Theme.MollerT.CommonLabelText"
-            android:layout_marginTop="@dimen/dimen_10"
-            android:text="@string/password_label"
-            app:layout_constraintStart_toStartOf="@id/login_fragment_email"
-            app:layout_constraintTop_toBottomOf="@id/login_fragment_email" />
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/login_fragment_password"
-            style="@style/Theme.MollerT.CommonEditText"
-            android:layout_marginTop="@dimen/dimen_10"
-            android:hint="@string/edit_text_pass_placeholder"
-            android:inputType="textPassword"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/login_fragment_password_label" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/login_fragment_sign_in"
-            style="@style/Theme.MollerT.ExpandedYellowButton"
-            android:layout_marginBottom="@dimen/dimen_15"
-            android:text="@string/sign_in"
-            android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_LOGIN_CLICKED)}"
-            app:layout_constraintBottom_toTopOf="@id/login_fragment_forgot_account"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:onClick="@{()-> viewModel.dispatchClickEvent(viewModel.EVENT_FORGOT_CLICKED)}"
-            android:id="@+id/login_fragment_forgot_account"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/dimen_15"
-            android:text="@string/forgot_account"
-            android:textColor="@color/lightDarkBlue"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dimen_15"
+                android:text="@string/forgot_account"
+                android:textColor="@color/lightDarkBlue"
+                android:textStyle="bold"
+                app:layout_constraintVertical_bias="1"
+                app:layout_constraintTop_toBottomOf="@id/login_fragment_password"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </layout>

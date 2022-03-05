@@ -28,7 +28,9 @@ class ActivityViewModel @Inject constructor(
 ): BaseViewModel() {
     private var eventChangedListener: ListenerRegistration? = null
 
+
     fun registerRemoteEvent(){
+        "register remote event".logAny()
         UserWrapper.getInstance()?.currentUserEmail?.let { email->
             eventChangedListener = firestore.listenDocument(
                 firestore.getTrackingDoc(email),
@@ -233,7 +235,7 @@ class ActivityViewModel @Inject constructor(
                                         NotificationHelper.CHANNEL_DEFAULT_ID,
                                         NotificationHelper.CHANNEL_DEFAULT_NAME,
                                         MessageMaker.getDecodedMessageWithMemberName(
-                                            UserWrapper.getInstance()?.getCurrentUser()?.name ?: email,
+                                            repository.memberDao.getByEmail(activity.actor)?.name ?: email,
                                             activity.message
                                         ),
                                         "MollerT",
@@ -448,12 +450,29 @@ class ActivityViewModel @Inject constructor(
     }
 
     private fun registerWorkspace(email: String, map: Map<String, Any>){
-        (map["workspaces"] as List<String>?)?.let { listRef->
+        (map["workspaces"] as List<Map<String, String>>?)?.let { listRef->
             if(listRef.isNotEmpty()){
-                listRef.forEach {
+                listRef.forEach { source->
                     viewModelScope.launch {
-                        saveWorkspaceFromRemote(email, it)
-                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "workspaces", it)
+                        val what = source.getOrElse("what"){"all"}
+                        val ref = source["ref"]
+                        ref?.let {
+                            when(what){
+                                "info"->{
+                                    saveWorkspace(ref)
+                                }
+                                "members" ->{
+
+                                }
+                                "boards" ->{
+
+                                }
+                                else->{
+                                    saveWorkspaceFromRemote(email, ref)
+                                }
+                            }
+                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "workspaces", source)
+                        }
                     }
                 }
             }else{
@@ -471,24 +490,25 @@ class ActivityViewModel @Inject constructor(
     }
 
     private fun registerBoard(email: String, map: Map<String, Any>){
-        (map["boards"] as List<String>?)?.let { listRef->
+        (map["boards"] as List<Map<String, String>>?)?.let { listRef->
             if(listRef.isNotEmpty()){
-                listRef.forEach {
+                listRef.forEach { entry->
                     viewModelScope.launch {
-                        saveBoardFromRemote(it)
-                        firestore.removeFromArrayField(firestore.getTrackingDoc(email), "boards", it)
+                        val what = entry.getOrElse("what"){"all"}
+                        val ref = entry["ref"]
+                        ref?.let {
+                            when(what){
+                                "info"->{
+                                    saveBoardInfo(ref)
+                                }
+                                else->{
+                                    saveBoardFromRemote(ref)
+                                }
+                            }
+                            firestore.removeFromArrayField(firestore.getTrackingDoc(email), "boards", entry)
+                        }
                     }
                 }
-            }else{
-                // moved to home fragment
-//                viewModelScope.launch {
-//                    repository.boardDao.countOne()?.let {
-//                        if(it == 0){
-//                            "Reloading all boards from remote".logAny()
-//                            reloadBoardFromRemote(email)
-//                        }
-//                    }
-//                }
             }
         }
     }
@@ -526,6 +546,17 @@ class ActivityViewModel @Inject constructor(
                         trace(e)
                     }
                 }
+            }
+        }
+    }
+
+    private suspend fun saveBoardInfo(ref: String){
+        "Saving board info $ref".logAny()
+        firestore.simpleGetDocumentModel<RemoteBoard>(
+            firestore.getDocRef(ref)
+        )?.let {
+            it.toModel()?.let { model->
+                repository.boardDao.insertOne(model)
             }
         }
     }
@@ -595,6 +626,14 @@ class ActivityViewModel @Inject constructor(
         }
     }
 
+    private suspend fun saveWorkspace(ref: String){
+        firestore.simpleGetDocumentModel<RemoteWorkspace>(
+            firestore.getDocRef(ref)
+        )?.toModel()?.let {
+            repository.workspaceDao.insertOne(it)
+        }
+    }
+
     private suspend fun saveWorkspaceFromRemote(email: String, ref: String){
         firestore.simpleGetDocumentModel<RemoteWorkspace>(
             firestore.getDocRef(ref)
@@ -602,7 +641,6 @@ class ActivityViewModel @Inject constructor(
             it.toModel()?.let { model->
                 repository.workspaceDao.insertOne(model)
                 saveMemberWorkspaceRelation(it.members, model.workspaceId)
-                repository.memberWorkspaceDao.insertOne(MemberWorkspaceRel(email, model.workspaceId))
                 saveAllBoardFromRemote(model.workspaceId)
             }
         }
@@ -616,13 +654,10 @@ class ActivityViewModel @Inject constructor(
         }
     }
 
-    private fun unregisterRemoteEvent(){
+    fun unregisterRemoteEvent(){
+        "Unregister remote event".logAny()
         eventChangedListener?.remove()
         eventChangedListener = null
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        unregisterRemoteEvent()
-    }
 }

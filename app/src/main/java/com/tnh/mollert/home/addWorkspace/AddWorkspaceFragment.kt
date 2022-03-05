@@ -13,6 +13,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.AddWorkspaceFragmentBinding
 import com.tnh.mollert.utils.LoadingModal
+import com.tnh.mollert.utils.SpecialCharFilter
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
@@ -48,7 +49,7 @@ class AddWorkspaceFragment: DataBindingFragment<AddWorkspaceFragmentBinding>(R.l
             }
             twoActionToolbarTitle.text = "New Workspace"
         }
-        
+        binding.addWorkspaceFragmentName.filters = arrayOf(SpecialCharFilter())
         viewModel.setupListType {
             createTypeItem(it)
         }

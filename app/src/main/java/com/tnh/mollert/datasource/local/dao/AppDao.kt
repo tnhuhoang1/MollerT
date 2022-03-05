@@ -32,6 +32,10 @@ interface AppDao {
     suspend fun getWorkspaceWithMembersNoFlow(workspaceId: String): WorkspaceWithMembers?
 
     @Transaction
+    @Query("select * from workspace where workspaceId = :workspaceId")
+    fun getWorkspaceWithMembers(workspaceId: String): Flow<WorkspaceWithMembers>
+
+    @Transaction
     @Query("select * from workspace where workspaceId = :id")
     fun getWorkspaceWithBoards(id: String): Flow<WorkspaceWithBoards>
 

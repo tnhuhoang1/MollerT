@@ -32,6 +32,7 @@
             android:paddingVertical="@dimen/dimen_12"
             android:drawablePadding="@dimen/dimen_8"
             android:hint="Name (optional)"
+            android:textSize="@dimen/text_size_16"
             android:singleLine="true"
             android:fontFamily="@font/poppins"
             android:background="@color/neutrals9"

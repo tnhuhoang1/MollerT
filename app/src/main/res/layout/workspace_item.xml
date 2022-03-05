@@ -25,21 +25,37 @@
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle1"
                 android:layout_margin="@dimen/dimen_8"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/workspace_item_invite"
+                app:layout_constraintEnd_toStartOf="@id/workspace_item_setting"
                 app:layout_constraintTop_toTopOf="parent" />
             <ImageButton
-                android:id="@+id/workspace_item_invite"
+                android:visibility="gone"
+                android:id="@+id/workspace_item_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_round_person_add_alt_1_24"
+                android:src="@drawable/vd_setting"
                 android:background="?selectableItemBackgroundBorderless"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/workspace_item_name"
                 app:layout_constraintBottom_toBottomOf="@id/workspace_item_name"
                 android:clickable="true"
                 android:focusable="true"
+                android:padding="@dimen/dimen_8"
                 android:layout_marginEnd="@dimen/dimen_8"
-
+                />
+            <ImageButton
+                android:visibility="gone"
+                android:id="@+id/workspace_item_invite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/vd_user_add"
+                android:background="?selectableItemBackgroundBorderless"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/workspace_item_name"
+                app:layout_constraintBottom_toBottomOf="@id/workspace_item_name"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="@dimen/dimen_8"
+                android:layout_marginEnd="@dimen/dimen_8"
                 />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/workspace_board_item_board_list"

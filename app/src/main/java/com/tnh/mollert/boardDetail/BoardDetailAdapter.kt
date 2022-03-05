@@ -27,6 +27,7 @@ class BoardDetailAdapter(
     var onNewCardClicked: ((list: List) -> Unit)? = null
     var onDeleteListClicked: ((list: List) -> Unit)? = null
     var onAchieveListClicked: ((list: List) -> Unit)? = null
+    var onChangeListNameClicked: ((list: List) -> Unit)? = null
     var onCardClicked: ((l: String, c: String) -> Unit)? = null
     private val scope = CoroutineScope(Dispatchers.IO)
     var onSortSelected: (sortType:String) -> Unit = {}
@@ -100,7 +101,6 @@ class BoardDetailAdapter(
             job = null
         }
 
-
         fun bind(list: List) {
             dataFlow = cardDao.getCardsWithListId(list.listId)
             beginObserveData()
@@ -132,6 +132,9 @@ class BoardDetailAdapter(
                     }
                     R.id.board_detail_item_menu_delete->{
                         onDeleteListClicked?.invoke(list)
+                    }
+                    R.id.board_detail_item_menu_list_name->{
+                        onChangeListNameClicked?.invoke(list)
                     }
                 }
                 true
