@@ -5,7 +5,7 @@ import com.tnh.mollert.datasource.remote.model.RemoteModel
 import com.tnh.tnhlibrary.trace
 import kotlinx.coroutines.suspendCancellableCoroutine
 
-class FirestoreHelper private constructor(){
+class FirestoreHelper private constructor() : FirestoreAction {
     private val store = FirebaseFirestore.getInstance()
 
 
@@ -14,7 +14,7 @@ class FirestoreHelper private constructor(){
      *
      * if you need to update entire document, use [mergeDocument]
      */
-    fun addDocument(
+    override fun addDocument(
         document: DocumentReference,
         data: RemoteModel,
         onFailure: (Exception?) -> Unit,
@@ -29,7 +29,7 @@ class FirestoreHelper private constructor(){
             }
     }
 
-    suspend fun addDocument(
+    override suspend fun addDocument(
         document: DocumentReference,
         data: RemoteModel,
     ) = suspendCancellableCoroutine<Boolean> { cont->
@@ -49,7 +49,7 @@ class FirestoreHelper private constructor(){
     /**
      * update single field of the document
      */
-    fun updateDocument(
+    override fun updateDocument(
         document: DocumentReference,
         field: String,
         data: Any,
@@ -64,7 +64,7 @@ class FirestoreHelper private constructor(){
             }
     }
 
-    suspend fun updateDocument(
+    override suspend fun updateDocument(
         document: DocumentReference,
         field: String,
         data: Any
@@ -82,7 +82,7 @@ class FirestoreHelper private constructor(){
         }
     }
 
-    fun updateDocument(
+    override fun updateDocument(
         document: DocumentReference,
         map: Map<String, Any>,
         onFailure: (Exception?) -> Unit,
@@ -95,7 +95,7 @@ class FirestoreHelper private constructor(){
             }
     }
 
-    suspend fun updateDocument(
+    override suspend fun updateDocument(
         document: DocumentReference,
         map: Map<String, Any>
     ) = suspendCancellableCoroutine<Boolean> { cont->
@@ -111,7 +111,7 @@ class FirestoreHelper private constructor(){
         }
     }
 
-    fun deleteDocument(
+    override fun deleteDocument(
         document: DocumentReference,
         onFailure: (Exception) -> Unit,
         onSuccess: () -> Unit
@@ -123,7 +123,7 @@ class FirestoreHelper private constructor(){
             }
     }
 
-    suspend fun deleteDocument(document: DocumentReference) = suspendCancellableCoroutine<Boolean> { cont->
+    override suspend fun deleteDocument(document: DocumentReference) = suspendCancellableCoroutine<Boolean> { cont->
         deleteDocument(
             document,
             {
@@ -135,7 +135,7 @@ class FirestoreHelper private constructor(){
         }
     }
 
-    fun insertToArrayField(
+    override fun insertToArrayField(
         document: DocumentReference,
         field: String,
         data: Any,
@@ -149,7 +149,7 @@ class FirestoreHelper private constructor(){
             }
     }
 
-    suspend fun insertToArrayField(
+    override suspend fun insertToArrayField(
         document: DocumentReference,
         field: String,
         data: Any,
@@ -167,7 +167,7 @@ class FirestoreHelper private constructor(){
         }
     }
 
-    fun removeFromArrayField(
+    override fun removeFromArrayField(
         document: DocumentReference,
         field: String,
         data: Any,
@@ -181,7 +181,7 @@ class FirestoreHelper private constructor(){
             }
     }
 
-    suspend fun removeFromArrayField(
+    override suspend fun removeFromArrayField(
         document: DocumentReference,
         field: String,
         data: Any,
@@ -199,7 +199,7 @@ class FirestoreHelper private constructor(){
         }
     }
 
-    fun getCol(
+    override fun getCol(
         collection: CollectionReference,
         onFailure: (Exception?) -> Unit,
         onSuccess: (QuerySnapshot) -> Unit
@@ -213,7 +213,7 @@ class FirestoreHelper private constructor(){
             }
     }
 
-    suspend fun getCol(collection: CollectionReference) = suspendCancellableCoroutine<QuerySnapshot?>{ cont ->
+    override suspend fun getCol(collection: CollectionReference) = suspendCancellableCoroutine<QuerySnapshot?>{ cont ->
         getCol(
             collection,
             {
@@ -225,10 +225,10 @@ class FirestoreHelper private constructor(){
         }
     }
 
-    fun mergeDocument(
+    override fun mergeDocument(
         document: DocumentReference,
         data: Any,
-        onFailure: (Exception?) -> Unit = {},
+        onFailure: (Exception?) -> Unit,
         onSuccess: () -> Unit,
     ){
         document.set(data, SetOptions.merge())
@@ -240,7 +240,7 @@ class FirestoreHelper private constructor(){
             }
     }
 
-    suspend fun mergeDocument(
+    override suspend fun mergeDocument(
         document: DocumentReference,
         data: Any,
     ) = suspendCancellableCoroutine<Boolean> { cont->
@@ -256,127 +256,128 @@ class FirestoreHelper private constructor(){
         }
     }
 
-    fun getDocRef(refPath: String): DocumentReference{
+    override fun getDocRef(refPath: String): DocumentReference{
         return store.document(refPath)
     }
 
-    fun getColRef(refPath: String): CollectionReference{
+    override fun getColRef(refPath: String): CollectionReference{
         return store.collection(refPath)
     }
 
-    fun getListCol(workspaceId: String, boardId: String): CollectionReference{
+    override fun getListCol(workspaceId: String, boardId: String): CollectionReference{
         return getBoardDoc(workspaceId, boardId).collection("lists")
     }
 
-    fun getCardCol(workspaceId: String, boardId: String, listId: String): CollectionReference{
+    override fun getCardCol(workspaceId: String, boardId: String, listId: String): CollectionReference{
         return getListDoc(workspaceId, boardId, listId).collection("cards")
     }
 
-    fun getLabelCol(workspaceId: String, boardId: String): CollectionReference{
+    override fun getLabelCol(workspaceId: String, boardId: String): CollectionReference{
         return getBoardDoc(workspaceId, boardId).collection("labels")
     }
 
-    fun getAttachmentCol(workspaceId: String, boardId: String, listId: String, cardId: String): CollectionReference{
+    override fun getAttachmentCol(workspaceId: String, boardId: String, listId: String, cardId: String): CollectionReference{
         return getCardDoc(workspaceId, boardId, listId, cardId).collection("attachments")
     }
 
-    fun getWorkDoc(workspaceId: String, boardId: String, listId: String, cardId: String, workId: String): DocumentReference{
+    override fun getWorkDoc(workspaceId: String, boardId: String, listId: String, cardId: String, workId: String): DocumentReference{
         return getCardDoc(workspaceId, boardId, listId, cardId).collection("works").document(workId)
     }
 
-    fun getWorkDoc(cardDoc: DocumentReference, workId: String): DocumentReference{
+    override fun getWorkDoc(cardDoc: DocumentReference, workId: String): DocumentReference{
         return cardDoc.collection("works").document(workId)
     }
 
-    fun getTaskDoc(cardDoc: DocumentReference, workId: String, taskId: String): DocumentReference{
+    override fun getTaskDoc(cardDoc: DocumentReference, workId: String, taskId: String): DocumentReference{
         return cardDoc.collection("works").document(workId).collection("tasks").document(taskId)
     }
 
-    fun getTaskCol(cardDoc: DocumentReference, workId: String): CollectionReference{
+    override fun getTaskCol(cardDoc: DocumentReference, workId: String): CollectionReference{
         return cardDoc.collection("works").document(workId).collection("tasks")
     }
 
-    fun getWorkDoc(workspaceId: String, boardId: String, listId: String, cardId: String): CollectionReference{
+    override fun getWorkDoc(workspaceId: String, boardId: String, listId: String, cardId: String): CollectionReference{
         return getCardDoc(workspaceId, boardId, listId, cardId).collection("works")
     }
 
-    fun getMemberDoc(email: String): DocumentReference{
+    override fun getMemberDoc(email: String): DocumentReference{
         return getDocRef("$MEMBER_ROOT_COL/$email")
     }
 
-    fun getTrackingDoc(email: String): DocumentReference{
+    override fun getTrackingDoc(email: String): DocumentReference{
         return getDocRef("$TRACKING_ROOT_COL/$email")
     }
 
-    fun getActivityDoc(workspaceId: String, boardId: String, activityId: String): DocumentReference{
+    override fun getActivityDoc(workspaceId: String, boardId: String, activityId: String): DocumentReference{
         return getBoardDoc(workspaceId, boardId).collection("activities").document(activityId)
     }
 
-    fun getActivityDoc(boardDoc: DocumentReference, activityId: String): DocumentReference{
+    override fun getActivityDoc(boardDoc: DocumentReference, activityId: String): DocumentReference{
         return boardDoc.collection("activities").document(activityId)
     }
 
-    fun getActivityCol(workspaceId: String, boardId: String): CollectionReference{
+    override fun getActivityCol(workspaceId: String, boardId: String): CollectionReference{
         return getBoardDoc(workspaceId, boardId).collection("activities")
     }
 
-    fun getListDoc(workspaceId: String, boardId: String, listId: String): DocumentReference{
+    override fun getListDoc(workspaceId: String, boardId: String, listId: String): DocumentReference{
         return getBoardDoc(workspaceId, boardId).collection("lists").document(listId)
     }
 
-    fun getCardDoc(workspaceId: String, boardId: String, listId: String, cardId: String): DocumentReference{
+    override fun getCardDoc(workspaceId: String, boardId: String, listId: String, cardId: String): DocumentReference{
         return getListDoc(workspaceId, boardId, listId).collection("cards").document(cardId)
     }
 
-    fun getAttachmentDoc(workspaceId: String, boardId: String, listId: String, cardId: String, attachmentId: String): DocumentReference{
+    override fun getAttachmentDoc(workspaceId: String, boardId: String, listId: String, cardId: String, attachmentId: String): DocumentReference{
         return getCardDoc(workspaceId, boardId, listId, cardId).collection("attachments").document(attachmentId)
     }
 
-    fun getAttachmentDoc(cardDoc: DocumentReference, attachmentId: String): DocumentReference{
+    override fun getAttachmentDoc(cardDoc: DocumentReference, attachmentId: String): DocumentReference{
         return cardDoc.collection("attachments").document(attachmentId)
     }
 
-    fun getBoardDoc(workspaceId: String, boardId: String): DocumentReference{
+    override fun getBoardDoc(workspaceId: String, boardId: String): DocumentReference{
         return getDocRef("$WORKSPACE_ROOT_COL/${workspaceId}/boards/${boardId}")
     }
 
-    fun getLabelDoc(workspaceId: String, boardId: String, labelId: String): DocumentReference{
+    override fun getLabelDoc(workspaceId: String, boardId: String, labelId: String): DocumentReference{
         return getBoardDoc(workspaceId, boardId).collection("labels").document(labelId)
     }
 
-    fun getBoardCol(workspaceId: String): CollectionReference{
+    override fun getBoardCol(workspaceId: String): CollectionReference{
         return getColRef("$WORKSPACE_ROOT_COL/$workspaceId/boards")
     }
 
-    fun getWorkspaceDoc(email: String, workspaceName: String): DocumentReference{
+    override fun getWorkspaceDoc(email: String, workspaceName: String): DocumentReference{
         return getDocRef("$WORKSPACE_ROOT_COL/${email}_${workspaceName}")
     }
 
-    fun getWorkspaceDoc(workspaceId: String): DocumentReference{
+    override fun getWorkspaceDoc(workspaceId: String): DocumentReference{
         return getDocRef("$WORKSPACE_ROOT_COL/$workspaceId")
     }
 
-    fun getDocument(
+    override fun getDocument(
         document: DocumentReference,
-        onFailure: (Exception)-> Unit = {},
-        onSuccess: (data: DocumentSnapshot) -> Unit = {}
+        onFailure: (Exception)-> Unit,
+        onSuccess: (data: DocumentSnapshot) -> Unit
     ){
         document.get()
             .addOnFailureListener(onFailure)
             .addOnSuccessListener(onSuccess)
     }
 
-    inline fun <reified T: RemoteModel>getDocumentModel(
+    override fun <T: RemoteModel>getDocumentModel(
+        type: Class<T>,
         document: DocumentReference,
-        noinline onFailure: (Exception?) -> Unit = {},
-        noinline onSuccess: (T?) -> Unit = {}
+        onFailure: (Exception?) -> Unit,
+        onSuccess: (T?) -> Unit
     ){
         getDocument(
             document,
             onFailure
         ) {
             try {
-                onSuccess(it.toObject(T::class.java))
+                onSuccess(it.toObject(type))
             } catch (e: Exception) {
                 trace(e)
                 onFailure(e)
@@ -384,10 +385,12 @@ class FirestoreHelper private constructor(){
         }
     }
 
-    suspend inline fun <reified T: RemoteModel>simpleGetDocumentModel(
+    override suspend fun <T: RemoteModel>simpleGetDocumentModel(
+        type: Class<T>,
         document: DocumentReference
     ) = suspendCancellableCoroutine<T?> { cont->
-        getDocumentModel<T>(
+        getDocumentModel(
+            type,
             document,
             {
                 trace(it)
@@ -399,7 +402,7 @@ class FirestoreHelper private constructor(){
         )
     }
 
-    fun listenDocument(
+    override fun listenDocument(
         document: DocumentReference,
         onFailure: (Exception?) -> Unit,
         onSuccess: (DocumentSnapshot?) -> Unit

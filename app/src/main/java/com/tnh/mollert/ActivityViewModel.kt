@@ -2,7 +2,7 @@ package com.tnh.mollert
 
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.ListenerRegistration
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.model.MessageMaker
 import com.tnh.mollert.datasource.local.relation.CardLabelRel
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ActivityViewModel @Inject constructor(
-    private val repository: AppRepository,
+    private val repository: DataSource,
     private val firestore: FirestoreHelper,
     private val notificationHelper: NotificationHelper
 ): BaseViewModel() {
@@ -90,7 +90,7 @@ class ActivityViewModel @Inject constructor(
                     "Closing or reopening board $ref".logAny()
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
-                        firestore.simpleGetDocumentModel<RemoteBoard>(doc)?.let { remoteBoard->
+                        firestore.simpleGetDocumentModel(RemoteBoard::class.java, doc)?.let { remoteBoard->
                             remoteBoard.toModel()?.let { model->
                                 repository.boardDao.insertOne(model)
                             }
@@ -109,7 +109,7 @@ class ActivityViewModel @Inject constructor(
                     "Leaving board $ref".logAny()
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
-                        firestore.simpleGetDocumentModel<RemoteBoard>(doc)?.let { remoteBoard->
+                        firestore.simpleGetDocumentModel(RemoteBoard::class.java,doc)?.let { remoteBoard->
                             remoteBoard.members?.let { listMember->
                                 remoteBoard.boardId?.let { boardId->
                                     repository.memberBoardDao.getRelsByBoardId(boardId).forEach {
@@ -209,7 +209,7 @@ class ActivityViewModel @Inject constructor(
                     "Loading work $ref".logAny()
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
-                        firestore.simpleGetDocumentModel<RemoteWork>(doc)?.let { remoteWork ->
+                        firestore.simpleGetDocumentModel(RemoteWork::class.java, doc)?.let { remoteWork ->
                             remoteWork.toModel()?.let { work->
                                 repository.workDao.insertOne(work)
                             }
@@ -228,7 +228,7 @@ class ActivityViewModel @Inject constructor(
                     "Loading activity $ref".logAny()
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
-                        firestore.simpleGetDocumentModel<RemoteActivity>(doc)?.let { remoteActivity ->
+                        firestore.simpleGetDocumentModel(RemoteActivity::class.java, doc)?.let { remoteActivity ->
                             remoteActivity.toModel()?.let { activity->
                                 if(activity.actor != email){
                                     notificationHelper.simpleShowNotification(
@@ -259,7 +259,7 @@ class ActivityViewModel @Inject constructor(
                     "Loading task $ref".logAny()
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
-                        firestore.simpleGetDocumentModel<RemoteTask>(doc)?.let { remoteTask ->
+                        firestore.simpleGetDocumentModel(RemoteTask::class.java, doc)?.let { remoteTask ->
                             remoteTask.toModel()?.let { task->
                                 repository.taskDao.insertOne(task)
                             }
@@ -317,7 +317,7 @@ class ActivityViewModel @Inject constructor(
                     "Loading labels $ref".logAny()
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
-                        firestore.simpleGetDocumentModel<RemoteLabel>(doc)?.let { remoteLabel ->
+                        firestore.simpleGetDocumentModel(RemoteLabel::class.java, doc)?.let { remoteLabel ->
                             remoteLabel.toLabel()?.let { label->
                                 repository.labelDao.insertOne(label)
                                 firestore.removeFromArrayField(firestore.getTrackingDoc(email), "labels", ref)
@@ -336,7 +336,7 @@ class ActivityViewModel @Inject constructor(
                     "Loading attachment $ref".logAny()
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
-                        firestore.simpleGetDocumentModel<RemoteAttachment>(doc)?.let { remoteAttachment ->
+                        firestore.simpleGetDocumentModel(RemoteAttachment::class.java, doc)?.let { remoteAttachment ->
                             remoteAttachment.toModel().let { attachment->
                                 repository.attachmentDao.insertOne(attachment)
                                 firestore.removeFromArrayField(firestore.getTrackingDoc(email), "attachments", ref)
@@ -358,7 +358,7 @@ class ActivityViewModel @Inject constructor(
                     viewModelScope.launch {
                         ref?.let {
                             val doc = firestore.getDocRef(ref)
-                            firestore.simpleGetDocumentModel<RemoteCard>(doc)?.let { remoteCard ->
+                            firestore.simpleGetDocumentModel(RemoteCard::class.java, doc)?.let { remoteCard ->
                                 when(what){
                                     "info"->{
                                         remoteCard.toModel()?.let { card->
@@ -419,7 +419,7 @@ class ActivityViewModel @Inject constructor(
                 listRef.forEach { ref->
                     viewModelScope.launch {
                         val doc = firestore.getDocRef(ref)
-                        firestore.simpleGetDocumentModel<RemoteList>(doc)?.let { remoteList ->
+                        firestore.simpleGetDocumentModel(RemoteList::class.java, doc)?.let { remoteList ->
                             remoteList.toModel()?.let { l->
                                 repository.listDao.insertOne(l)
                                 firestore.removeFromArrayField(firestore.getTrackingDoc(email), "lists", ref)
@@ -552,7 +552,8 @@ class ActivityViewModel @Inject constructor(
 
     private suspend fun saveBoardInfo(ref: String){
         "Saving board info $ref".logAny()
-        firestore.simpleGetDocumentModel<RemoteBoard>(
+        firestore.simpleGetDocumentModel(
+            RemoteBoard::class.java,
             firestore.getDocRef(ref)
         )?.let {
             it.toModel()?.let { model->
@@ -563,7 +564,8 @@ class ActivityViewModel @Inject constructor(
 
     private suspend fun saveBoardFromRemote(ref: String){
         "Saving board $ref".logAny()
-        firestore.simpleGetDocumentModel<RemoteBoard>(
+        firestore.simpleGetDocumentModel(
+            RemoteBoard::class.java,
             firestore.getDocRef(ref)
         )?.let {
             it.toModel()?.let { model->
@@ -580,7 +582,8 @@ class ActivityViewModel @Inject constructor(
     }
 
     private suspend fun saveMemberAndRelationFromRemote(ref: String, boardId: String, role: String){
-        firestore.simpleGetDocumentModel<RemoteMember>(
+        firestore.simpleGetDocumentModel(
+            RemoteMember::class.java,
             firestore.getDocRef(ref)
         )?.let { rm->
             rm.toMember()?.let {
@@ -593,7 +596,8 @@ class ActivityViewModel @Inject constructor(
 
     private suspend fun reloadWorkspaceFromRemote(email: String) {
         "Reloading all workspaces from remote".logAny()
-        firestore.simpleGetDocumentModel<RemoteMember>(
+        firestore.simpleGetDocumentModel(
+            RemoteMember::class.java,
             firestore.getMemberDoc(email)
         )?.let { rm->
             rm.workspaces?.forEach { ws->
@@ -627,7 +631,8 @@ class ActivityViewModel @Inject constructor(
     }
 
     private suspend fun saveWorkspace(ref: String){
-        firestore.simpleGetDocumentModel<RemoteWorkspace>(
+        firestore.simpleGetDocumentModel(
+            RemoteWorkspace::class.java,
             firestore.getDocRef(ref)
         )?.toModel()?.let {
             repository.workspaceDao.insertOne(it)
@@ -635,7 +640,8 @@ class ActivityViewModel @Inject constructor(
     }
 
     private suspend fun saveWorkspaceFromRemote(email: String, ref: String){
-        firestore.simpleGetDocumentModel<RemoteWorkspace>(
+        firestore.simpleGetDocumentModel(
+            RemoteWorkspace::class.java,
             firestore.getDocRef(ref)
         )?.let {
             it.toModel()?.let { model->

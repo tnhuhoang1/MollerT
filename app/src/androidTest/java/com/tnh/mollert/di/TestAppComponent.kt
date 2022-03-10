@@ -1,6 +1,9 @@
-package com.tnh.mollert.components
+package com.tnh.mollert.di
 
 import android.content.Context
+import com.tnh.mollert.FakeFirestore
+import com.tnh.mollert.FakeStorage
+import com.tnh.mollert.components.AppComponent
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.utils.FirestoreHelper
@@ -9,41 +12,44 @@ import com.tnh.mollert.utils.StorageHelper
 import com.tnh.tnhlibrary.preference.PrefManager
 import dagger.Module
 import dagger.Provides
-import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import dagger.hilt.testing.TestInstallIn
 
-@InstallIn(SingletonComponent::class)
+@TestInstallIn(
+    components = [SingletonComponent::class],
+    replaces = [AppComponent::class]
+)
 @Module
-class AppComponent {
+class TestAppComponent {
+
     @Provides
-    fun pds(@ApplicationContext context: Context): DataSource{
+    fun pds(@ApplicationContext context: Context): DataSource {
         return DataSource.getInstance(context)
     }
 
     @Provides
-    fun ppm(@ApplicationContext context: Context): PrefManager{
+    fun ppm(@ApplicationContext context: Context): PrefManager {
         return PrefManager.getInstance(context)
     }
 
     @Provides
-    fun pfh(): FirestoreHelper{
+    fun pfh(): FirestoreHelper {
         return FirestoreHelper.getInstance()
     }
 
     @Provides
-    fun psh(): StorageHelper{
+    fun psh(): StorageHelper {
         return StorageHelper.getInstance()
     }
 
     @Provides
-    fun pnh(@ApplicationContext context: Context): NotificationHelper{
+    fun pnh(@ApplicationContext context: Context): NotificationHelper {
         return NotificationHelper.get(context)
     }
 
     @Provides
-    fun par(dataSource: DataSource, firestoreHelper: FirestoreHelper, storageHelper: StorageHelper): AppRepository{
+    fun par(dataSource: DataSource, firestoreHelper: FakeFirestore, storageHelper: FakeStorage): AppRepository {
         return AppRepository.getInstance(dataSource, firestoreHelper, storageHelper)
     }
-
 }

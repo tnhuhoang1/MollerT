@@ -12,32 +12,32 @@ import java.io.IOException
 import java.io.InputStream
 
 @Suppress("BlockingMethodInNonBlockingContext")
-class StorageHelper private constructor(){
-    fun getUploadAttachmentLocation(boardId: String, cardId: String): StorageReference{
+class StorageHelper private constructor() : StorageFunction {
+    override fun getUploadAttachmentLocation(boardId: String, cardId: String): StorageReference{
         return storage.getReference("$ATTACHMENT_ROOT/${boardId}_${cardId}")
     }
 
-    fun getUploadBackgroundLocation(workspaceId: String, boardId: String): StorageReference{
+    override fun getUploadBackgroundLocation(workspaceId: String, boardId: String): StorageReference{
         return storage.getReference("$BACKGROUND_ROOT/${workspaceId}_${boardId}")
     }
 
-    fun getUploadCoverLocation(cardId: String): StorageReference{
+    override fun getUploadCoverLocation(cardId: String): StorageReference{
         return storage.getReference("$COVER_ROOT/${cardId}")
     }
 
-    fun getAvatarLocation(email: String): StorageReference{
+    override fun getAvatarLocation(email: String): StorageReference{
         return storage.getReference("$AVATAR_ROOT/$email")
     }
 
-    fun getCustomRef(path: String): StorageReference{
+    override fun getCustomRef(path: String): StorageReference{
         return storage.getReference(path)
     }
 
-    fun getStorage() = storage
+    override fun getStorage() = storage
 
 
     @Throws(IOException::class)
-    fun uploadFromStream(
+    override fun uploadFromStream(
         ref: StorageReference,
         dataStream: InputStream,
         failureBlock: (Exception?) -> Unit,
@@ -61,11 +61,11 @@ class StorageHelper private constructor(){
         }
     }
 
-    suspend fun uploadAndGetUrlFromStream(
+    override suspend fun uploadAndGetUrlFromStream(
         ref: StorageReference,
         dataStream: InputStream,
-        failureBlock: (Exception?) -> Unit = {trace(it)},
-        successBlock: (url: Uri) -> Unit = {}
+        failureBlock: (Exception?) -> Unit,
+        successBlock: (url: Uri) -> Unit
     ) = suspendCancellableCoroutine<Uri?> { continuation->
         uploadFromStream(
             ref,
@@ -89,11 +89,11 @@ class StorageHelper private constructor(){
      *
      * @return null if upload failed, url of the image if succeeded
      */
-    suspend fun uploadImage(
+    override suspend fun uploadImage(
         parentRef: StorageReference,
         contentResolver: ContentResolver,
         uri: Uri,
-        imageName: String = "attachment_${System.currentTimeMillis()}",
+        imageName: String,
     ): Uri?{
         val type = contentResolver.getType(uri)?.let {
             try {
@@ -115,7 +115,7 @@ class StorageHelper private constructor(){
         return null
     }
 
-    suspend fun uploadCardCover(
+    override suspend fun uploadCardCover(
         contentResolver: ContentResolver,
         uri: Uri,
         cardId: String
@@ -128,7 +128,7 @@ class StorageHelper private constructor(){
         )
     }
 
-    suspend fun uploadImageAttachment(
+    override suspend fun uploadImageAttachment(
         contentResolver: ContentResolver,
         uri: Uri,
         boardId: String,
@@ -143,7 +143,7 @@ class StorageHelper private constructor(){
         )
     }
 
-    suspend fun uploadBackgroundImage(
+    override suspend fun uploadBackgroundImage(
         workspaceId: String,
         boardId: String,
         contentResolver: ContentResolver,

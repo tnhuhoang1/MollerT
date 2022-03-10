@@ -1,27 +1,21 @@
 package com.tnh.mollert.home.manage
 
 import android.util.Patterns
-import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.compound.WorkspaceWithMembers
 import com.tnh.mollert.datasource.local.model.Activity
-import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.MessageMaker
 import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.*
-import com.tnh.mollert.home.CreateBoardDialog
 import com.tnh.mollert.utils.FirestoreHelper
-import com.tnh.mollert.utils.LabelPreset
 import com.tnh.mollert.utils.UserWrapper
-import com.tnh.mollert.utils.notifyBoardMember
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
@@ -30,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ManageWorkspaceViewModel @Inject constructor(
-    private val repository: AppRepository,
+    private val repository: DataSource,
     private val firestore: FirestoreHelper
 ): BaseViewModel() {
     var homeWorkspace: LiveData<WorkspaceWithMembers> = MutableLiveData(null)
@@ -67,7 +61,7 @@ class ManageWorkspaceViewModel @Inject constructor(
                     postMessage("Invalid email address")
                     cancel()
                 }
-                firestore.simpleGetDocumentModel<RemoteMember>(firestore.getMemberDoc(otherEmail))?.toMember()?.let { m ->
+                firestore.simpleGetDocumentModel(RemoteMember::class.java, firestore.getMemberDoc(otherEmail))?.toMember()?.let { m ->
                     val id = "invitation_${workspace.workspaceId}_"
                     val remoteActivity = RemoteActivity(
                         id + System.currentTimeMillis(),

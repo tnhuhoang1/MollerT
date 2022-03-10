@@ -1,16 +1,15 @@
 package com.tnh.mollert.utils
 
 import com.google.firebase.auth.FirebaseAuth
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.datasource.remote.model.toMember
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.trace
 import kotlinx.coroutines.*
 
 class UserWrapper private constructor(
-    private val repository: AppRepository
+    private val repository: DataSource
 ) {
     val currentUserEmail: String?
         get() {
@@ -74,14 +73,16 @@ class UserWrapper private constructor(
 
     suspend fun fetchMember(email: String): Member?{
         FirestoreHelper.getInstance().apply {
-            getDocumentModel<RemoteMember>(
+            getDocumentModel(
+                RemoteMember::class.java,
                 getMemberDoc(email),
                 {
                     trace(it)
                 }
             ){
             }
-            simpleGetDocumentModel<RemoteMember>(
+            simpleGetDocumentModel(
+                RemoteMember::class.java,
                 getMemberDoc(email)
             )?.let { remoteMember->
                 val member = remoteMember.toMember()
@@ -97,7 +98,7 @@ class UserWrapper private constructor(
         @Volatile
         private lateinit var instance: UserWrapper
 
-        fun getInstance(repository: AppRepository): UserWrapper{
+        fun getInstance(repository: DataSource): UserWrapper{
             if(::instance.isInitialized.not()){
                 instance = UserWrapper(repository)
             }

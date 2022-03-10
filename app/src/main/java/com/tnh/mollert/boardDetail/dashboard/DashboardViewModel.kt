@@ -1,9 +1,7 @@
 package com.tnh.mollert.boardDetail.dashboard
 
 import android.graphics.Color
-import android.text.Spannable
-import android.text.style.ForegroundColorSpan
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
@@ -14,7 +12,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val repository: AppRepository,
+    private val repository: DataSource,
     private val firestore: FirestoreHelper
 ) : BaseViewModel(){
 

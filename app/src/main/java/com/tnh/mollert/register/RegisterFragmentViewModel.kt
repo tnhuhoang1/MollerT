@@ -1,7 +1,5 @@
 package com.tnh.mollert.register
 
-import com.tnh.mollert.datasource.AppRepository
-import com.tnh.mollert.datasource.local.model.Member
 import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.tnhlibrary.trace

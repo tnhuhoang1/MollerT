@@ -11,7 +11,7 @@ buildscript {
         version_recyclerview = "1.2.1"
         version_preference = "1.2.0"
         version_dagger = "2.27"
-        version_hilt = "2.37"
+        version_hilt = "2.38.1"
 
     }
     repositories {

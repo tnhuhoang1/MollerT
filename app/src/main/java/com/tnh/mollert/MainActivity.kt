@@ -3,12 +3,10 @@ package com.tnh.mollert
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.tnh.mollert.databinding.ActivityMainBinding
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
@@ -23,7 +21,7 @@ class MainActivity : AppCompatActivity() {
         (supportFragmentManager.findFragmentById(R.id.activity_main_fragment_container) as NavHostFragment).navController
     }
     @Inject
-    lateinit var repository: AppRepository
+    lateinit var repository: DataSource
     private lateinit var userWrapper: UserWrapper
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -3,11 +3,10 @@ package com.tnh.mollert.calendar
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.mollert.utils.getDate
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.text.SimpleDateFormat
@@ -16,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CalendarViewModel @Inject constructor(
-    private val repository: AppRepository,
+    private val repository: DataSource,
 ): BaseViewModel() {
     var cardHasDate: LiveData<List<Card>> = MutableLiveData()
     private set

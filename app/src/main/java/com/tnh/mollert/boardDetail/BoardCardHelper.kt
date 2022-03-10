@@ -1,16 +1,17 @@
 package com.tnh.mollert.boardDetail
 
 import androidx.lifecycle.viewModelScope
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.model.*
 import com.tnh.mollert.datasource.remote.model.RemoteActivity
+import com.tnh.mollert.utils.FirestoreAction
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import kotlinx.coroutines.launch
 
 class BoardCardHelper(
-    private val repository: AppRepository,
-    private val firestore: FirestoreHelper
+    private val repository: DataSource,
+    private val firestore: FirestoreAction
 ) {
 
 

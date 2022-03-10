@@ -2,23 +2,19 @@ package com.tnh.mollert.cardDetail.label
 
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.DocumentReference
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.remote.model.RemoteLabel
-import com.tnh.mollert.datasource.remote.model.RemoteModel
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.LabelPreset
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class AddEditLabelViewModel @Inject constructor(
     private val firestore: FirestoreHelper,
-    private val repository: AppRepository
+    private val repository: DataSource
 ): BaseViewModel() {
     var mode = MODE_CREATE
     val allLabels = repository.labelDao.getAll().asLiveData()

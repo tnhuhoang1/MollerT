@@ -102,23 +102,23 @@ class DashboardFragment: DataBindingFragment<DashboardFragmentBinding>(R.layout.
 
     private fun setupView(){
         binding.dashboardFragmentRecycler.adapter = adapter
-
     }
 
     private fun setupDashboard(dashboard: Dashboard){
-        adapter.max = dashboard.max
-        binding.dashboardFragmentTitle.text = dashboard.title
-        binding.dashboardFragmentStone100.text = dashboard.max.toString()
-        binding.dashboardFragmentStone75.text = (dashboard.max * 0.75f).toInt().toString()
-        binding.dashboardFragmentStone50.text = (dashboard.max * 0.5f).toInt().toString()
-        binding.dashboardFragmentStone25.text = (dashboard.max * 0.25f).toInt().toString()
-        binding.dashboardFragmentStone0.text = dashboard.min.toString()
-        adapter.submitList(dashboard.listItem)
+        requireActivity().runOnUiThread {
+            adapter.max = dashboard.max
+            binding.dashboardFragmentTitle.text = dashboard.title
+            binding.dashboardFragmentStone100.text = dashboard.max.toString()
+            binding.dashboardFragmentStone75.text = (dashboard.max * 0.75f).toInt().toString()
+            binding.dashboardFragmentStone50.text = (dashboard.max * 0.5f).toInt().toString()
+            binding.dashboardFragmentStone25.text = (dashboard.max * 0.25f).toInt().toString()
+            binding.dashboardFragmentStone0.text = dashboard.min.toString()
+            adapter.submitList(dashboard.listItem)
+        }
     }
 
 
     private fun setupObserver(){
 
     }
-
 }

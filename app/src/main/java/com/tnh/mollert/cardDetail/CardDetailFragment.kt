@@ -14,7 +14,6 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupWindow
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
@@ -28,8 +27,7 @@ import com.tnh.mollert.cardDetail.label.LabelChipAdapter
 import com.tnh.mollert.cardDetail.label.LabelPickerDialog
 import com.tnh.mollert.databinding.CardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
-import com.tnh.mollert.databinding.CustomMenuItemBinding
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.model.Attachment
 import com.tnh.mollert.datasource.local.model.Card
@@ -40,7 +38,6 @@ import com.tnh.mollert.utils.getDate
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
@@ -68,7 +65,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         DescriptionDialog(requireContext(), container)
     }
     private val workAdapter by lazy {
-        WorkAdapter(AppRepository.getInstance(requireContext()).taskDao)
+        WorkAdapter(DataSource.getInstance(requireContext()).taskDao)
     }
     private val chipAdapter by lazy {
         LabelChipAdapter()
@@ -436,60 +433,74 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
         }
 
         safeObserve(viewModel.labels){
-            labelPickerDialog.submitList(it)
+            requireActivity().runOnUiThread {
+                labelPickerDialog.submitList(it)
+            }
         }
 
         safeObserve(viewModel.card){
-            bindData(it)
+            requireActivity().runOnUiThread {
+                bindData(it)
+            }
         }
 
         safeObserve(viewModel.cardWithLabels){
-            if(it.labels.isEmpty()){
-                binding.cardDetailFragmentLabelRecycler.gone()
-            }else{
-                binding.cardDetailFragmentLabelRecycler.show()
-                binding.cardDetailFragmentLabelRecycler.adapter = chipAdapter
-                chipAdapter.submitList(it.labels)
+            requireActivity().runOnUiThread {
+                if(it.labels.isEmpty()){
+                    binding.cardDetailFragmentLabelRecycler.gone()
+                }else{
+                    binding.cardDetailFragmentLabelRecycler.show()
+                    binding.cardDetailFragmentLabelRecycler.adapter = chipAdapter
+                    chipAdapter.submitList(it.labels)
+                }
             }
         }
 
         safeObserve(viewModel.attachments){
-            if(it.isEmpty()){
-                binding.cardDetailFragmentAttachmentRecycler.gone()
-            }else{
-                binding.cardDetailFragmentAttachmentRecycler.show()
-                attachmentAdapter.submitList(it)
+            requireActivity().runOnUiThread {
+                if(it.isEmpty()){
+                    binding.cardDetailFragmentAttachmentRecycler.gone()
+                }else{
+                    binding.cardDetailFragmentAttachmentRecycler.show()
+                    attachmentAdapter.submitList(it)
+                }
             }
         }
 
         safeObserve(viewModel.memberAndActivity){
-            activityDialog.submitList(it)
-            if(it.isEmpty()){
-                binding.cardDetailFragmentCommentRecycler.gone()
-            }else{
-                binding.cardDetailFragmentCommentRecycler.show()
-                commentAdapter.submitList(it.filter { memberAndActivity->
-                    memberAndActivity.activity.activityType == Activity.TYPE_COMMENT
-                })
+            requireActivity().runOnUiThread {
+                activityDialog.submitList(it)
+                if(it.isEmpty()){
+                    binding.cardDetailFragmentCommentRecycler.gone()
+                }else{
+                    binding.cardDetailFragmentCommentRecycler.show()
+                    commentAdapter.submitList(it.filter { memberAndActivity->
+                        memberAndActivity.activity.activityType == Activity.TYPE_COMMENT
+                    })
+                }
             }
         }
 
         safeObserve(viewModel.cardWithMembers){
-            optionMenu.setCardWithMembers(it)
-            if(it.members.isEmpty()){
-                binding.cardDetailFragmentMemberRecycler.gone()
-            }else{
-                binding.cardDetailFragmentMemberRecycler.show()
-                memberAdapter.submitList(it.members)
+            requireActivity().runOnUiThread {
+                optionMenu.setCardWithMembers(it)
+                if(it.members.isEmpty()){
+                    binding.cardDetailFragmentMemberRecycler.gone()
+                }else{
+                    binding.cardDetailFragmentMemberRecycler.show()
+                    memberAdapter.submitList(it.members)
+                }
             }
         }
 
         safeObserve(viewModel.works){
-            if(it.isEmpty()){
-                binding.cardDetailFragmentWorkRecycler.gone()
-            }else{
-                binding.cardDetailFragmentWorkRecycler.show()
-                workAdapter.submitList(it)
+            requireActivity().runOnUiThread {
+                if(it.isEmpty()){
+                    binding.cardDetailFragmentWorkRecycler.gone()
+                }else{
+                    binding.cardDetailFragmentWorkRecycler.show()
+                    workAdapter.submitList(it)
+                }
             }
         }
     }

@@ -14,7 +14,7 @@ import com.tnh.mollert.R
 import com.tnh.mollert.cardDetail.ActivityDialog
 import com.tnh.mollert.databinding.BoardDetailFragmentBinding
 import com.tnh.mollert.databinding.CreateBoardLayoutBinding
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.home.CreateBoardDialog
@@ -175,6 +175,9 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         changeBackgroundDialog.setTitle("Change background")
         changeBackgroundDialog.hideNameAndVisibility()
         changeBackgroundDialog.refresh()
+        viewModel.boardWithLists.value?.board?.background?.let {
+            changeBackgroundDialog.setSelectedDefaultBackground(it)
+        }
         changeBackgroundDialog.onSelectImageClicked = {
             imageLauncher.launch(arrayOf("image/*"))
         }
@@ -254,7 +257,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        boardDetailAdapter = BoardDetailAdapter (AppRepository.getInstance(requireContext()).cardDao){
+        boardDetailAdapter = BoardDetailAdapter (DataSource.getInstance(requireContext()).cardDao){
             showCreateListDialog()
         }
         boardDetailAdapter.onNewCardClicked = { list ->
@@ -341,6 +344,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
     private fun showCreateCardDialog(listId: String){
         showAlertDialog("Create new card"){ builder, dialogBinding ->
             dialogBinding.createBoardLayoutName.hint = "Card name"
+            dialogBinding.createBoardLayoutName.requestFocus()
             builder.setPositiveButton("OK") { _, _ ->
                 if(dialogBinding.createBoardLayoutName.text.isNullOrBlank()){
                     viewModel.setMessage("Card name cannot be empty")
@@ -355,23 +359,27 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
 
     private fun setupObserver() {
         viewModel.boardWithLists.observe(viewLifecycleOwner){boardWithLists->
-            if(boardWithLists == null){
-                boardDetailAdapter.submitList(viewModel.getConcatList(listOf()))
-            }else{
-                if(boardWithLists.lists.isEmpty()){
-                    boardDetailAdapter.submitList(viewModel.getConcatList(boardWithLists.lists))
+            requireActivity().runOnUiThread {
+                if(boardWithLists == null){
+                    boardDetailAdapter.submitList(viewModel.getConcatList(listOf()))
                 }else{
-                    boardDetailAdapter.submitList(viewModel.getConcatList(boardWithLists.lists))
+                    if(boardWithLists.lists.isEmpty()){
+                        boardDetailAdapter.submitList(viewModel.getConcatList(boardWithLists.lists))
+                    }else{
+                        boardDetailAdapter.submitList(viewModel.getConcatList(boardWithLists.lists))
+                    }
                 }
             }
         }
         safeObserve(viewModel.boardWithLists){
-            binding.boardDetailFragmentToolbar.twoActionToolbarTitle.text = it.board.boardName
-            if(it.board.boardStatus == Board.STATUS_CLOSED){
-                showToast("The board was closed")
-                findNavController().popBackStack(R.id.homeFragment, false)
+            requireActivity().runOnUiThread {
+                binding.boardDetailFragmentToolbar.twoActionToolbarTitle.text = it.board.boardName
+                if(it.board.boardStatus == Board.STATUS_CLOSED){
+                    showToast("The board was closed")
+                    findNavController().popBackStack(R.id.homeFragment, false)
+                }
+                binding.boardDetailFragmentBackground.bindImageUriOrHide(it.board.background)
             }
-            binding.boardDetailFragmentBackground.bindImageUriOrHide(it.board.background)
         }
         eventObserve(viewModel.message){
             binding.root.showSnackBar(it)

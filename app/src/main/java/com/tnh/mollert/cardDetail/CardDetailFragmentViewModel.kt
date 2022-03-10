@@ -7,7 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.DocumentReference
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.compound.CardWithLabels
 import com.tnh.mollert.datasource.local.compound.CardWithMembers
 import com.tnh.mollert.datasource.local.compound.MemberAndActivity
@@ -25,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CardDetailFragmentViewModel @Inject constructor(
     private val firestore: FirestoreHelper,
-    private val repository: AppRepository,
+    private val repository: DataSource,
     private val storage: StorageHelper
 ): BaseViewModel() {
 

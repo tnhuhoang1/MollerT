@@ -84,7 +84,11 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
     private fun submitBoardList(workspaces: List<Workspace>){
         lifecycleScope.launchWhenResumed {
             // TODO: Need to improve performance
-            homeAdapter.submitBoardList(viewModel.getAllBoardOfUser(workspaces))
+            viewModel.getAllBoardOfUser(workspaces).let {
+                requireActivity().runOnUiThread {
+                    homeAdapter.submitBoardList(it)
+                }
+            }
         }
     }
 

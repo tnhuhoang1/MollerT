@@ -83,6 +83,13 @@ class CreateBoardDialog(
         adapter.setSelectedUri(uri)
     }
 
+    fun setSelectedDefaultBackground(url: String){
+        backgroundMode = BACKGROUND_MODE_DEFAULT
+        adapter.clearSelected()
+        adapter.setSelectedUri(url)
+    }
+
+
     private fun selectItem(textView: MaterialTextView){
         selectedTv?.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.vd_circle_default, 0, 0, 0)
         selectedTv = textView

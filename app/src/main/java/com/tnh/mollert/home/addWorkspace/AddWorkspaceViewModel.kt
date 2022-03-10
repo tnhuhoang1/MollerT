@@ -5,13 +5,13 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.material.textview.MaterialTextView
 import com.tnh.mollert.R
 import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.RemoteMemberRef
 import com.tnh.mollert.datasource.remote.model.RemoteWorkspace
 import com.tnh.mollert.datasource.remote.model.RemoteWorkspaceRef
 import com.tnh.mollert.utils.FirestoreHelper
-import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
@@ -21,8 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddWorkspaceViewModel @Inject constructor(
-    private val repository: AppRepository,
-    private val firestore: FirestoreHelper,
+    private val repository: AppRepository
 ): BaseViewModel() {
     private val wsTypes = listOf(
         Workspace.TYPE_EDUCATION,
@@ -68,35 +67,19 @@ class AddWorkspaceViewModel @Inject constructor(
     fun addWorkspace(name: String, type: String, desc: String){
         viewModelScope.launch {
             showProgress()
-            UserWrapper.getInstance()?.getCurrentUser()?.let {
-                val workspaceId = "${it.email}_${name}"
-                val memLoc = firestore.getMemberDoc(it.email)
-                val loc = firestore.getWorkspaceDoc(it.email, name)
-                val data = RemoteWorkspace(
-                    workspaceId,
-                    name,
-                    type,
-                    desc,
-                    listOf(
-                        RemoteMemberRef(it.email, memLoc.path, RemoteMemberRef.ROLE_LEADER)
-                    )
-                )
-                if(firestore.addDocument(loc,data)){
-                    if(firestore.insertToArrayField(memLoc, "workspaces", RemoteWorkspaceRef(workspaceId, loc.path))){
-                        data.toModel()?.let { ws->
-                            repository.workspaceDao.insertOne(ws)
-                            MemberWorkspaceRel(it.email, workspaceId).let { rel->
-                                repository.memberWorkspaceDao.insertOne(rel)
-                            }
-                            onCreateSuccess("Create workspace successfully")
-                        }
-                    }else{
-                        // failed
-                    }
-                }else{
+            repository.addWorkspace(
+                name,
+                type,
+                desc,
+                {
                     onCreateFailed("Something went wrong")
+                },
+                {
+                    onCreateSuccess("Create workspace successfully")
                 }
-            } ?: hideProgress()
+
+            )
+            hideProgress()
         }
     }
 

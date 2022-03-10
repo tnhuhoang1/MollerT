@@ -1,7 +1,7 @@
 package com.tnh.mollert.notification
 
 import androidx.lifecycle.viewModelScope
-import com.tnh.mollert.datasource.AppRepository
+import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.compound.BoardAndCard
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
@@ -18,7 +18,7 @@ import javax.inject.Inject
 @HiltViewModel
 class NotificationViewModel @Inject constructor(
     private val firestore: FirestoreHelper,
-    private val repository: AppRepository
+    private val repository: DataSource
 ): BaseViewModel() {
 
     var memberAndActivity = repository.appDao.getActivityAssocWithEmail(UserWrapper.getInstance()?.currentUserEmail ?: "")
@@ -49,7 +49,7 @@ class NotificationViewModel @Inject constructor(
         val currentUserDoc = firestore.getMemberDoc(currentEmail)
         val workspaceDoc = firestore.getWorkspaceDoc(workspaceId)
         viewModelScope.launch {
-            firestore.simpleGetDocumentModel<RemoteWorkspace>(workspaceDoc)?.let { remoteWorkspace ->
+            firestore.simpleGetDocumentModel(RemoteWorkspace::class.java, workspaceDoc)?.let { remoteWorkspace ->
                 var isExisted = false
                 remoteWorkspace.members.forEach { remoteMemberRef->
                     if(currentEmail == remoteMemberRef.email){
@@ -103,7 +103,7 @@ class NotificationViewModel @Inject constructor(
         val boardDoc = firestore.getBoardDoc(workspaceId, boardId)
         viewModelScope.launch {
             val workspaceDoc = firestore.getWorkspaceDoc(workspaceId)
-            firestore.simpleGetDocumentModel<RemoteWorkspace>(workspaceDoc)?.let { remoteWorkspace ->
+            firestore.simpleGetDocumentModel(RemoteWorkspace::class.java, workspaceDoc)?.let { remoteWorkspace ->
                 var isExisted = false
                 remoteWorkspace.members.forEach { remoteMemberRef->
                     if(currentEmail == remoteMemberRef.email){
@@ -140,7 +140,7 @@ class NotificationViewModel @Inject constructor(
                 }
             }
 
-            firestore.simpleGetDocumentModel<RemoteBoard>(boardDoc)?.let { remoteBoard ->
+            firestore.simpleGetDocumentModel(RemoteBoard::class.java, boardDoc)?.let { remoteBoard ->
                 remoteBoard.logAny()
                 var isExisted = false
                 remoteBoard.members?.forEach { remoteMemberRef->

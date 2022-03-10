@@ -1,13 +1,10 @@
 package com.tnh.mollert.utils
 
 import android.content.res.Resources
-import android.util.DisplayMetrics
-import com.tnh.mollert.datasource.AppRepository
-import com.tnh.tnhlibrary.logAny
+import com.tnh.mollert.datasource.DataSource
 import kotlinx.coroutines.CancellableContinuation
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 
 val Int.pxToDp
@@ -26,7 +23,7 @@ inline fun<T> CancellableContinuation<T>.safeResume(block: () -> T){
     }
 }
 
-suspend fun notifyBoardMember(repository: AppRepository, firestore: FirestoreHelper, boardId: String, field: String, data: Any){
+suspend fun notifyBoardMember(repository: DataSource, firestore: FirestoreAction, boardId: String, field: String, data: Any){
     repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
         listMember.forEach { mem->
             firestore.insertToArrayField(

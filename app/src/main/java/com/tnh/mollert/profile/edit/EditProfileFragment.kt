@@ -26,6 +26,7 @@ import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.logVar
 import com.tnh.tnhlibrary.trace
+import com.tnh.tnhlibrary.view.hideKeyboard
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -80,15 +81,23 @@ class EditProfileFragment :
             viewModel.setImageUri(it?.avatar ?: "")
         }
 
+        safeObserve(viewModel.process){
+            if(it){
+                loadingModal.show()
+            }else{
+                loadingModal.dismiss()
+            }
+        }
+
     }
 
     private fun onSaveButtonClicked() {
-        loadingModal.show()
+        viewModel.showProcess()
         if (!this.isValidInput()) {
-            loadingModal.dismiss()
+            viewModel.hideProcess()
             return
         }
-
+        binding.root.hideKeyboard()
         val bio = binding.editProfileFragmentBio.text.toString()
         val name = binding.editProfileFragmentName.text.toString()
         val newPassword = binding.editProfileFragmentPassword.text.toString()
@@ -100,11 +109,16 @@ class EditProfileFragment :
                 if(viewModel.changePassword(oldPassword, newPassword)){
                     viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
                 }
-                loadingModal.dismiss()
+                viewModel.hideProcess()
+                navigateToProfile()
             }
         }else{
             // Save user info
-            viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
+            lifecycleScope.launchWhenResumed {
+                viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
+                viewModel.hideProcess()
+                navigateToProfile()
+            }
         }
     }
 

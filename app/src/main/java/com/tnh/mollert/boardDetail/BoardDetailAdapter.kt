@@ -42,27 +42,31 @@ class BoardDetailAdapter(
         fun beginObserveData(){
             job = scope.launch {
                 dataFlow?.collectLatest { listCard->
-                    withContext(Dispatchers.Main){
-                        sorted?.let{
-                            val l1 = mutableListOf<Card>()
-                            val l2 = mutableListOf<Card>()
-                            when(sorted){
-                                SORT_BY_DUE_DATE->{
-                                    val current =  System.currentTimeMillis()
-                                    listCard.forEach { card ->  
-                                        if (card.dueDate == 0L || card.dueDate < current){
-                                            l1.add(card)
-                                        }else{
-                                            l2.add(card)
-                                        }
+                    sorted?.let{
+                        val l1 = mutableListOf<Card>()
+                        val l2 = mutableListOf<Card>()
+                        when(sorted){
+                            SORT_BY_DUE_DATE->{
+                                val current =  System.currentTimeMillis()
+                                listCard.forEach { card ->
+                                    if (card.dueDate == 0L || card.dueDate < current){
+                                        l1.add(card)
+                                    }else{
+                                        l2.add(card)
+                                    }
+                                    withContext(Dispatchers.Main){
                                         submitCardList(l2 + l1)
                                     }
                                 }
-                                else->{
+                            }
+                            else->{
+                                withContext(Dispatchers.Main){
                                     submitCardList(listCard)
                                 }
                             }
-                        } ?: submitCardList(listCard)
+                        }
+                    } ?: withContext(Dispatchers.Main){
+                        submitCardList(listCard)
                     }
                 }
             }
