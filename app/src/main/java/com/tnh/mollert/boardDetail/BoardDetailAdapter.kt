@@ -25,7 +25,7 @@ class BoardDetailAdapter(
 ) : ListAdapter<List, BoardDetailAdapter.BoardDetailViewHolder>(ListDiffUtil()) {
     var onNewCardClicked: ((list: List) -> Unit)? = null
     var onDeleteListClicked: ((list: List) -> Unit)? = null
-    var onAchieveListClicked: ((list: List) -> Unit)? = null
+    var onArchiveListClicked: ((list: List) -> Unit)? = null
     var onChangeListNameClicked: ((list: List) -> Unit)? = null
     var onCardClicked: ((l: String, c: String) -> Unit)? = null
     private val scope = CoroutineScope(Dispatchers.IO)
@@ -118,8 +118,8 @@ class BoardDetailAdapter(
                     R.id.board_detail_item_menu_add->{
                         onNewCardClicked?.invoke(list)
                     }
-                    R.id.board_detail_item_menu_achieved->{
-                        onAchieveListClicked?.invoke(list)
+                    R.id.board_detail_item_menu_archived->{
+                        onArchiveListClicked?.invoke(list)
                     }
                     R.id.board_detail_item_menu_sort_by_date->{
                         changeSortType(SORT_BY_DATE_ADDED, list.listId)

@@ -9,6 +9,7 @@ import com.tnh.mollert.R
 import com.tnh.mollert.boardDetail.SearchCardAdapter
 import com.tnh.mollert.databinding.SearchLayoutBinding
 import com.tnh.tnhlibrary.dataBinding.recycler.SimpleClickableDataBindingListAdapter
+import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 
 class SearchDialog(context: Context, container: ViewGroup?): BottomSheetDialog(context) {
@@ -25,6 +26,14 @@ class SearchDialog(context: Context, container: ViewGroup?): BottomSheetDialog(c
             }
         }
         setContentView(binding.root)
+    }
+
+    fun showNoResult(){
+        binding.searchLayoutNoContent.show()
+    }
+
+    fun hideNoResult(){
+        binding.searchLayoutNoContent.gone()
     }
 
     fun setBoardAdapter(adapter: SearchBoardAdapter){

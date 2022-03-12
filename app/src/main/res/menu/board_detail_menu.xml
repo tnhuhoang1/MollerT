@@ -30,8 +30,8 @@
         android:id="@+id/board_detail_menu_activity"
         android:title="Activities" />
     <item
-        android:id="@+id/board_detail_menu_achieved_cards"
-        android:title="Achieved cards" />
+        android:id="@+id/board_detail_menu_archived_cards"
+        android:title="Archived cards" />
     <item
         android:id="@+id/board_detail_menu_leave"
         android:title="Leave board"

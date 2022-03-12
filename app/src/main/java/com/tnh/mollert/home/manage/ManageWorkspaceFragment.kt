@@ -73,7 +73,7 @@ class ManageWorkspaceFragment: DataBindingFragment<ManageWorkspaceFragmentBindin
             createBoardLayoutBinding.createBoardLayoutName.hint = "Email"
             builder.setPositiveButton("Invite") { _, _ ->
                 if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrBlank()){
-                    viewModel.setMessage("Email address cannot be empty")
+                    viewModel.setMessage("Email address can't be empty")
                 }else{
                     viewModel.homeWorkspace.value?.let {
                         viewModel.inviteMember(it.workspace, createBoardLayoutBinding.createBoardLayoutName.text.toString().trim())
@@ -151,7 +151,7 @@ class ManageWorkspaceFragment: DataBindingFragment<ManageWorkspaceFragmentBindin
 
     private fun changeWorkspaceName(name: String?){
         if(name.isNullOrBlank()){
-            viewModel.postMessage("Name can not be empty")
+            viewModel.postMessage("Name can't be empty")
         }else{
             viewModel.changeName(name.trim(), args.workspaceId)
         }
@@ -159,7 +159,7 @@ class ManageWorkspaceFragment: DataBindingFragment<ManageWorkspaceFragmentBindin
 
     private fun changeWorkspaceDesc(name: String?){
         if(name.isNullOrBlank()){
-            viewModel.postMessage("Name can not be empty")
+            viewModel.postMessage("Name can't be empty")
         }else{
             viewModel.changeDesc(name.trim(), args.workspaceId)
         }

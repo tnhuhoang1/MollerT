@@ -5,7 +5,6 @@ import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.model.*
 import com.tnh.mollert.datasource.remote.model.RemoteActivity
 import com.tnh.mollert.utils.FirestoreAction
-import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import kotlinx.coroutines.launch
 
@@ -15,7 +14,7 @@ class BoardCardHelper(
 ) {
 
 
-    suspend fun achieveCard(
+    suspend fun archiveCard(
         board: Board,
         card: Card,
         email: String,
@@ -27,12 +26,12 @@ class BoardCardHelper(
             if(firestore.mergeDocument(
                     doc,
                     mapOf(
-                        "status" to Card.STATUS_ACHIEVED,
+                        "status" to Card.STATUS_ARCHIVED,
                     )
                 )){
                 val activityId = "activity_${System.currentTimeMillis()}"
                 val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
-                val message = MessageMaker.getCardAchievedMessage(card.cardId, card.cardName, board.boardId, board.boardName)
+                val message = MessageMaker.getCardArchivedMessage(card.cardId, card.cardName, board.boardId, board.boardName)
                 val remoteActivity = RemoteActivity(
                     activityId,
                     email,

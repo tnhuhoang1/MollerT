@@ -274,8 +274,8 @@ object MessageMaker{
         return "set date on card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
     }
 
-    fun getCardAchievedMessage(cardId: String, cardName: String, boardId: String, boardName: String): String{
-        return "achieved card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
+    fun getCardArchivedMessage(cardId: String, cardName: String, boardId: String, boardName: String): String{
+        return "archived card ${getEncodedCard(cardId, cardName)} in board ${getEncodedBoard(boardId, boardName)}"
     }
 
     fun getActiveCardMessage(cardId: String, cardName: String, boardId: String, boardName: String): String{

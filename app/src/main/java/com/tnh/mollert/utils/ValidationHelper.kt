@@ -10,7 +10,6 @@ class ValidationHelper {
         if( password.isEmpty() || password.length < 7 ) {
             return false
         }
-
         return true
     }
     companion object {

@@ -54,6 +54,7 @@ class AddEditLabelViewModel @Inject constructor(
                     remoteModel
                 )){
                 notifyMember(boardId, labelDoc.path, "Edit label successfully")
+                dispatchClickEvent(EVENT_EDIT_OK)
             }
         }
     }
@@ -78,11 +79,10 @@ class AddEditLabelViewModel @Inject constructor(
                         val tracking = firestore.getTrackingDoc(mem.email)
                         if(firestore.insertToArrayField(tracking, "delLabels", labelDoc.path)){
                             repository.labelDao.getLabelById(labelId)?.let { label->
-                                if(repository.labelDao.deleteOne(label) > 0){
-                                    postMessage("Label deleted")
-                                    dispatchClickEvent(EVENT_DELETE_OK)
-                                }
+                                repository.labelDao.deleteOne(label)
                             }
+                            postMessage("Label deleted")
+                            dispatchClickEvent(EVENT_DELETE_OK)
                         }
                     }
                 }
@@ -96,6 +96,7 @@ class AddEditLabelViewModel @Inject constructor(
         const val EVENT_BACK = "back"
         const val EVENT_OK = "ok"
         const val EVENT_DELETE_OK = "delete_ok"
+        const val EVENT_EDIT_OK = "edit_ok"
         const val EVENT_ADD_OK = "add_ok"
         const val MODE_CREATE = "create"
         const val MODE_EDIT = "edit"

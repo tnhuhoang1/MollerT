@@ -257,4 +257,26 @@
             android:name="boardId"
             app:argType="string" />
     </fragment>
+
+    <action android:id="@+id/action_global_home"
+        app:popUpTo="@id/homeFragment"
+        app:popUpToInclusive="true"
+        app:destination="@id/homeFragment"
+        app:launchSingleTop="true"
+        />
+    <action android:id="@+id/action_global_deadline"
+        app:popUpTo="@id/homeFragment"
+        app:destination="@id/calendarFragment"
+        app:launchSingleTop="true"
+        />
+    <action android:id="@+id/action_global_notification"
+        app:popUpTo="@id/homeFragment"
+        app:destination="@id/notificationFragment"
+        app:launchSingleTop="true"
+        />
+    <action android:id="@+id/action_global_profile"
+        app:popUpTo="@id/homeFragment"
+        app:destination="@id/profileFragment"
+        app:launchSingleTop="true"
+        />
 </navigation>

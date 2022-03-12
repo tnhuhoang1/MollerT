@@ -5,32 +5,21 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.bumptech.glide.Glide
-import com.google.firebase.auth.EmailAuthCredential
-import com.google.firebase.auth.EmailAuthProvider
-import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.EditProfileFragmentBinding
-import com.tnh.mollert.datasource.local.model.Member
-import com.tnh.mollert.datasource.remote.model.RemoteMember
 import com.tnh.mollert.profile.ProfileViewModel
 import com.tnh.mollert.utils.LoadingModal
-import com.tnh.mollert.utils.ValidationHelper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.logVar
-import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.hideKeyboard
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.channels.ActorScope
+import kotlinx.coroutines.withTimeoutOrNull
 
 @AndroidEntryPoint
 class EditProfileFragment :
@@ -88,38 +77,96 @@ class EditProfileFragment :
                 loadingModal.dismiss()
             }
         }
-
     }
 
     private fun onSaveButtonClicked() {
-        viewModel.showProcess()
-        if (!this.isValidInput()) {
-            viewModel.hideProcess()
-            return
-        }
         binding.root.hideKeyboard()
         val bio = binding.editProfileFragmentBio.text.toString()
         val name = binding.editProfileFragmentName.text.toString()
         val newPassword = binding.editProfileFragmentPassword.text.toString()
         val oldPassword = binding.editProfileFragmentOldPassword.text.toString()
-
-        // Change password
-        if (newPassword.isNotEmpty() && oldPassword.isNotEmpty()) {
-            lifecycleScope.launchWhenResumed {
-                if(viewModel.changePassword(oldPassword, newPassword)){
-                    viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
-                }
-                viewModel.hideProcess()
+        when(viewModel.isValidInput(name, bio, oldPassword, newPassword)){
+            "nothing" ->{
                 navigateToProfile()
             }
-        }else{
-            // Save user info
-            lifecycleScope.launchWhenResumed {
-                viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
-                viewModel.hideProcess()
-                navigateToProfile()
+            "info"->{
+                lifecycleScope.launchWhenResumed {
+                    withTimeoutOrNull(15000){
+                        viewModel.showProcess()
+                        val infoResult = viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
+                        viewModel.hideProcess()
+                        if(infoResult){
+                            viewModel.postMessage("Change profile successfully")
+                            navigateToProfile()
+                        }else{
+                            viewModel.postMessage("Something went wrong")
+                        }
+                    }?: kotlin.run {
+                        viewModel.hideProcess()
+                        viewModel.postMessage("Something went wrong")
+                    }
+                }
+            }
+            "password"->{
+                lifecycleScope.launchWhenResumed {
+                    viewModel.showProcess()
+                    val result = viewModel.changePassword(oldPassword, newPassword)
+                    viewModel.hideProcess()
+                    if(result.isEmpty()){
+                        viewModel.postMessage("Change password successfully")
+                        navigateToProfile()
+                    }else{
+                        viewModel.postMessage(result)
+                    }
+                }
+            }
+            "info_password"->{
+                lifecycleScope.launchWhenResumed {
+                    withTimeoutOrNull(15000){
+                        viewModel.showProcess()
+                        val result = viewModel.changePassword(oldPassword, newPassword)
+                        if(result.isEmpty()){
+                            val infoResult = viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
+                            if(infoResult){
+                                viewModel.hideProcess()
+                                viewModel.postMessage("Edit profile successfully")
+                                navigateToProfile()
+                            }else{
+                                viewModel.hideProcess()
+                                viewModel.postMessage("Something went wrong")
+                            }
+                        }else{
+                            viewModel.hideProcess()
+                            viewModel.postMessage(result)
+                        }
+                    }?: kotlin.run {
+                        viewModel.hideProcess()
+                        viewModel.postMessage("Something went wrong")
+                    }
+                }
+            }
+            else->{
+                return
             }
         }
+
+//        // Change password
+//        if (newPassword.isNotEmpty() && oldPassword.isNotEmpty()) {
+//            lifecycleScope.launchWhenResumed {
+//                if(viewModel.changePassword(oldPassword, newPassword)){
+//                    viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
+//                }
+//                viewModel.hideProcess()
+//                navigateToProfile()
+//            }
+//        }else{
+//            // Save user info
+//            lifecycleScope.launchWhenResumed {
+//                viewModel.saveMemberInfoToFirestore(name, bio, requireContext().contentResolver)
+//                viewModel.hideProcess()
+//                navigateToProfile()
+//            }
+//        }
     }
 
     private fun onChangeImageClicked() {
@@ -141,29 +188,4 @@ class EditProfileFragment :
         findNavController().navigateUp()
     }
 
-    private fun isValidInput(): Boolean {
-        if (binding.editProfileFragmentName.text.toString().isEmpty()) {
-            viewModel.setMessage("Profile name invalid, please try again")
-            return false
-        }
-
-        val password = binding.editProfileFragmentOldPassword.text.toString()
-        val oldPassword = binding.editProfileFragmentPassword.text.toString()
-
-        // If user change password
-        if (password.isNotEmpty()) {
-            if (!ValidationHelper.getInstance().isValidPassword(password)) {
-                viewModel.setMessage("Password invalid, please try again")
-                return false
-            }
-        }
-
-        if (oldPassword.isNotEmpty()) {
-            if (!ValidationHelper.getInstance().isValidPassword(oldPassword)) {
-                viewModel.setMessage("Old Password invalid, please try again")
-                return false
-            }
-        }
-        return true
-    }
 }

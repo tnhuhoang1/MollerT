@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <include layout="@layout/two_action_toolbar"
-            android:id="@+id/achieved_card_dialog_toolbar"
+            android:id="@+id/archived_card_dialog_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
@@ -19,24 +19,24 @@
             />
         <com.google.android.material.textview.MaterialTextView
             android:visibility="gone"
-            android:id="@+id/achieved_card_dialog_no_content"
+            android:id="@+id/archived_card_dialog_no_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:text="There is no achieved card"
+            android:text="There is no archived card"
             style="@style/TextAppearance.MaterialComponents.Headline6"
-            app:layout_constraintTop_toBottomOf="@id/achieved_card_dialog_toolbar"
+            app:layout_constraintTop_toBottomOf="@id/archived_card_dialog_toolbar"
             app:layout_constraintBottom_toBottomOf="parent"
             />
         <androidx.recyclerview.widget.RecyclerView
             android:elevation="@dimen/dimen_8"
             android:layout_marginHorizontal="@dimen/dimen_8"
-            android:id="@+id/achieved_card_dialog_recycler"
+            android:id="@+id/archived_card_dialog_recycler"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/achieved_card_dialog_toolbar"
+            app:layout_constraintTop_toBottomOf="@id/archived_card_dialog_toolbar"
             android:layout_width="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_height="0dp"/>

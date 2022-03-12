@@ -54,7 +54,7 @@ class ManageWorkspaceViewModel @Inject constructor(
             UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
                 val email = member.email
                 if (email == otherEmail) {
-                    postMessage("You can not invite yourself")
+                    postMessage("You can't invite yourself")
                     cancel()
                 }
                 if (!Patterns.EMAIL_ADDRESS.matcher(otherEmail).matches()) {

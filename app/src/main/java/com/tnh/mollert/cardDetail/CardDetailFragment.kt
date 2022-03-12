@@ -166,9 +166,9 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
                     activityDialog.setTitle("Card activities")
                     activityDialog.showFullscreen()
                 }
-                R.id.card_detail_menu_achieved->{
+                R.id.card_detail_menu_archived->{
                     if(optionMenu.getCardStatus() == Card.STATUS_ACTIVE){
-                        viewModel.achieveCard(args.boardId)
+                        viewModel.archiveCard(args.boardId)
                     }else{
                         viewModel.activateCard(args.boardId)
                     }
@@ -211,7 +211,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             dialogBinding.createBoardLayoutName.hint = "Work name"
             builder.setPositiveButton("OK") { _, _ ->
                 if(dialogBinding.createBoardLayoutName.text.isNullOrBlank()){
-                    viewModel.setMessage("Work name cannot be empty")
+                    viewModel.setMessage("Work name can't be empty")
                 }else{
                     viewModel.addWork(args.boardId, args.cardId, dialogBinding.createBoardLayoutName.text.toString().trim())
                 }
@@ -224,7 +224,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             dialogBinding.createBoardLayoutName.hint = "Task name"
             builder.setPositiveButton("OK") { _, _ ->
                 if(dialogBinding.createBoardLayoutName.text.isNullOrBlank()){
-                    viewModel.setMessage("Task name cannot be empty")
+                    viewModel.setMessage("Task name can't be empty")
                 }else{
                     viewModel.addTask(args.boardId, workId, dialogBinding.createBoardLayoutName.text.toString().trim())
                 }
@@ -238,7 +238,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             dialogBinding.createBoardLayoutName.hint = "New name"
             builder.setPositiveButton("OK") { _, _ ->
                 if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
-                    viewModel.setMessage("Card name cannot be empty")
+                    viewModel.setMessage("Card name can't be empty")
                 }else{
                     viewModel.changeCardName(args.boardId, dialogBinding.createBoardLayoutName.text.toString())
                 }
@@ -251,7 +251,7 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             dialogBinding.createBoardLayoutName.hint = "Link"
             builder.setPositiveButton("OK") { _, _ ->
                 if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
-                    viewModel.setMessage("Link cannot be empty")
+                    viewModel.setMessage("Link can't be empty")
                 }else{
                     if(Patterns.WEB_URL.matcher(dialogBinding.createBoardLayoutName.text.toString()).matches()){
                         viewModel.addLinkAttachment(args.boardId, args.cardId, dialogBinding.createBoardLayoutName.text.toString())

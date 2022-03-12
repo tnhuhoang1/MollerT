@@ -187,9 +187,16 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
                     }
                 }
                 lifecycleScope.launchWhenResumed {
-                    searchBoardAdapter.submitList(viewModel.searchBoard(search))
-                    searchDialog.setBoardAdapter(searchBoardAdapter)
-                    searchDialog.show()
+                    viewModel.searchBoard(search).also {
+                        if(it.isEmpty()){
+                            searchDialog.showNoResult()
+                        }else{
+                            searchDialog.hideNoResult()
+                        }
+                        searchBoardAdapter.submitList(it)
+                        searchDialog.setBoardAdapter(searchBoardAdapter)
+                        searchDialog.show()
+                    }
                 }
             }
         }
@@ -202,7 +209,7 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         }
         createBoardDialog.onConfirmClicked = { name, vis, url ->
             if(name.isBlank()){
-                viewModel.setMessage("Board name cannot be empty")
+                viewModel.setMessage("Board name can't be empty")
             }else{
                 if(vis == "null"){
                     viewModel.setMessage("Please select visibility")
@@ -223,7 +230,7 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
             createBoardLayoutBinding.createBoardLayoutName.hint = "Email"
             builder.setPositiveButton("Invite") { _, _ ->
                 if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrBlank()){
-                    viewModel.setMessage("Email address cannot be empty")
+                    viewModel.setMessage("Email address can't be empty")
                 }else{
                     viewModel.inviteMember(ws, createBoardLayoutBinding.createBoardLayoutName.text.toString().trim())
                 }

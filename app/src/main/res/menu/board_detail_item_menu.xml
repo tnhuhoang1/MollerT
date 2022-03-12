@@ -17,8 +17,8 @@
                 android:title="Due date"/>
         </menu>
     </item>
-    <item android:id="@+id/board_detail_item_menu_achieved"
-        android:title="Achieve list"
+    <item android:id="@+id/board_detail_item_menu_archived"
+        android:title="Archive list"
         />
     <item
         android:id="@+id/board_detail_item_menu_delete"

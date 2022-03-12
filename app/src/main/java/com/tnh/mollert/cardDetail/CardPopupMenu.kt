@@ -17,9 +17,9 @@ class CardPopupMenu(
     fun setCardWithMembers(cardWithMembers: CardWithMembers){
         this.cardWithMembers = cardWithMembers
         this.cardWithMembers?.let { c ->
-            menu.findItem(R.id.card_detail_menu_achieved)?.let { menuItem ->
+            menu.findItem(R.id.card_detail_menu_archived)?.let { menuItem ->
                 if(c.card.cardStatus == Card.STATUS_ACTIVE){
-                    menuItem.title = "Achieve card"
+                    menuItem.title = "Archive card"
                     menu.findItem(R.id.card_detail_menu_delete)?.let {
                         it.isVisible = false
                     }

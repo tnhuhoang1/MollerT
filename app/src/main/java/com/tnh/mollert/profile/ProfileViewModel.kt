@@ -1,25 +1,19 @@
 package com.tnh.mollert.profile
 
 import android.content.ContentResolver
-import androidx.core.net.toUri
-import androidx.lifecycle.*
-import com.google.firebase.auth.EmailAuthProvider
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.asLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.datasource.AppRepository
-import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.model.Member
-import com.tnh.mollert.datasource.local.relation.MemberBoardRel
-import com.tnh.mollert.datasource.remote.model.RemoteMember
-import com.tnh.mollert.utils.FirestoreHelper
-import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
-import com.tnh.mollert.utils.safeResume
+import com.tnh.mollert.utils.ValidationHelper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
-import com.tnh.tnhlibrary.trace
+import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
 
 @HiltViewModel
@@ -55,27 +49,72 @@ class ProfileViewModel @Inject constructor(
 
     suspend fun getBoardByEmail(email: String) = repository.getBoardByEmail(email)
 
-    suspend fun saveMemberInfoToFirestore(name: String, bio: String, contentResolver: ContentResolver) {
+    suspend fun saveMemberInfoToFirestore(name: String, bio: String, contentResolver: ContentResolver): Boolean{
         if(email.isNotEmpty()){
-            val avatarUri = editAvatar.value ?: ""
-            val avatar: String = repository.uploadAvatar(email, avatarUri, contentResolver)
-            repository.saveMemberInfoToFirestore(email, name, avatar, bio){
-                postMessage("Change profile successfully")
+            var avatar: String = member.value?.avatar.toString()
+            val editAvatar = editAvatar.value.toString()
+            if(editAvatar.isNotEmpty() && editAvatar != avatar) {
+                val newAvatar = repository.uploadAvatar(email, editAvatar, contentResolver)
+                if(newAvatar.isNotEmpty()){
+                    avatar = newAvatar
+                }
             }
-        }
-    }
-
-    suspend fun changePassword(oldPassword: String, newPassword: String): Boolean {
-        memberEmail.value?.let { email->
-            if(repository.changePassword(email, oldPassword, newPassword).isEmpty()){
-                return true
-            }
+            return repository.saveMemberInfoToFirestore(email, name, avatar, bio)
         }
         return false
     }
 
-    private suspend fun notifyInfoChanged(email: String) {
-        repository.notifyInfoChanged(email)
+    suspend fun changePassword(oldPassword: String, newPassword: String): String {
+        memberEmail.value?.let { email->
+            return repository.changePassword(email, oldPassword, newPassword)
+        }
+        return ""
+    }
+
+    fun isValidInput(
+        name: String,
+        bio: String,
+        oldPassword: String,
+        newPassword: String,
+    ): String {
+        var event = "nothing"
+        if(memberName.value.toString() != name || bio != this.bio.value.toString() || member.value?.avatar != editAvatar.value){
+            event = "info"
+        }
+        if (name.isBlank()) {
+            postMessage("Your name can't be empty")
+            return ""
+        }
+
+        // If user change password
+        if ((oldPassword.isBlank() && oldPassword.isNotBlank()) ||
+                oldPassword.isNotBlank() && newPassword.isBlank()) {
+            postMessage("You need old password and new password to change password")
+            return ""
+        }else if(oldPassword.isNotBlank() && newPassword.isNotBlank()){
+            if (ValidationHelper.getInstance().isValidPassword(oldPassword) && ValidationHelper.getInstance().isValidPassword(oldPassword)){
+                if(event == "info"){
+                    event = "info_password"
+                }else{
+                    event = "password"
+                }
+            }else{
+                postMessage("Invalid password, please try again")
+                return ""
+
+            }
+        }
+        return event
+    }
+
+    suspend fun logout(prefManager: PrefManager){
+        UserWrapper.getInstance()?.currentUserEmail?.let { email->
+            prefManager.putString("$email+sync+all", "")
+            getBoardByEmail(email).forEach {
+                prefManager.putString("$email+${it.boardId}", "")
+            }
+            FirebaseAuth.getInstance().signOut()
+        }
     }
 
     companion object {

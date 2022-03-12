@@ -21,6 +21,6 @@ data class Card(
 ) {
     companion object{
         const val STATUS_ACTIVE = "active"
-        const val STATUS_ACHIEVED = "achieved"
+        const val STATUS_ARCHIVED = "archived"
     }
 }

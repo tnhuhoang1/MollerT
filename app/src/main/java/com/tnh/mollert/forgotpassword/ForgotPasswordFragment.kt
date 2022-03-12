@@ -4,13 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.ForgotPasswordFragmentBinding
 import com.tnh.mollert.utils.LoadingModal
-import com.tnh.mollert.utils.ValidationHelper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
+import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 
 class ForgotPasswordFragment :
@@ -39,6 +38,18 @@ class ForgotPasswordFragment :
                 }
             }
         }
+
+        eventObserve(viewModel.message){
+            binding.root.showSnackBar(it)
+        }
+
+        safeObserve(viewModel.progress){
+            if(it){
+                loading.show()
+            }else{
+                loading.dismiss()
+            }
+        }
     }
 
     private fun navigateToSignIn() {
@@ -51,29 +62,8 @@ class ForgotPasswordFragment :
 
     private fun onSendEmailClicked() {
         val email = binding.forgotPasswordFragmentEmail.text.toString().trim()
-        if (!ValidationHelper.getInstance().isValidEmail(email)) {
-            binding.forgotPasswordFragmentEmail.setText("")
-            binding.root.showSnackBar("Email invalid, please try again")
-            return
+        viewModel.forgotPassword(email){
+            navigateToSignIn()
         }
-        loading.show()
-
-        activity?.let {
-            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
-                .addOnCompleteListener(it) { task ->
-                    if (task.isSuccessful) {
-                        // Success
-                        loading.dismiss()
-                        binding.root.showSnackBar("Reset password successfully, please check your email")
-                        this.navigateToSignIn()
-                    } else {
-                        loading.dismiss()
-                        binding.root.showSnackBar("Something went wrong, please try again or check your internet connection")
-                    }
-                }.addOnFailureListener {
-                    loading.dismiss()
-                    binding.root.showSnackBar("Something went wrong, please try again")
-                }
-        }?: loading.show()
     }
 }

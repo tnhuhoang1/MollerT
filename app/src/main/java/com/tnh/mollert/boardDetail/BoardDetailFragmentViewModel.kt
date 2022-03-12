@@ -42,7 +42,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
 
     var isOwner: Boolean = false
 
-    var cardAchieved: LiveData<kotlin.collections.List<Card>> = MutableLiveData(null)
+    var cardArchived: LiveData<kotlin.collections.List<Card>> = MutableLiveData(null)
 
     var memberAndActivity: LiveData<kotlin.collections.List<MemberAndActivity>> = MutableLiveData(null)
     var boardDoc: DocumentReference? = null
@@ -55,7 +55,7 @@ class BoardDetailFragmentViewModel @Inject constructor(
     fun getAllList(boardId: String){
         boardWithLists = repository.local.appDao.getBoardWithLists(boardId).asLiveData()
         memberAndActivity = repository.local.appDao.getMemberAndActivityByBoardIdFlow(boardId).asLiveData()
-        cardAchieved = repository.local.cardDao.getCardsWithBoardId(boardId, Card.STATUS_ACHIEVED).asLiveData()
+        cardArchived = repository.local.cardDao.getCardsWithBoardId(boardId, Card.STATUS_ARCHIVED).asLiveData()
         viewModelScope.launch {
             repository.getBoardOwner(boardId)?.let { member->
                 UserWrapper.getInstance()?.currentUserEmail?.let { email->
@@ -198,17 +198,17 @@ class BoardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun achieveList(listId: String){
+    fun archiveList(listId: String){
         boardWithLists.value?.let { b->
             viewModelScope.launch {
                 showProgress()
-                repository.achieveList(
+                repository.archiveList(
                     b,
                     listId,
                     email,
                     boardCardHelper,
                 ) {
-                    postMessage("Cards are achieved")
+                    postMessage("Cards are archived")
                 }
                 hideProgress()
             }

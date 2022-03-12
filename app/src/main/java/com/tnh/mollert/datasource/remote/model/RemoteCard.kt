@@ -41,6 +41,6 @@ data class RemoteCard(
 
     companion object{
         const val STATUS_ACTIVE = Card.STATUS_ACTIVE
-        const val STATUS_ACHIEVED = Card.STATUS_ACHIEVED
+        const val STATUS_ARCHIVED = Card.STATUS_ARCHIVED
     }
 }

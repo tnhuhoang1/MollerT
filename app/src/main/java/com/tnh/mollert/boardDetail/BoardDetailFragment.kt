@@ -37,8 +37,8 @@ import javax.inject.Inject
 class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.layout.board_detail_fragment) {
     val viewModel by viewModels<BoardDetailFragmentViewModel>()
     private lateinit var boardDetailAdapter: BoardDetailAdapter
-    private val achievedCardDialog by lazy {
-        AchievedCardDialog(requireContext(), viewGroup)
+    private val archivedCardDialog by lazy {
+        ArchivedCardDialog(requireContext(), viewGroup)
     }
     private val args: BoardDetailFragmentArgs by navArgs()
     private var viewGroup: ViewGroup? = null
@@ -129,8 +129,8 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                     activityDialog.setTitle("Board activities")
                     activityDialog.show()
                 }
-                R.id.board_detail_menu_achieved_cards->{
-                    showAchievedDialog()
+                R.id.board_detail_menu_archived_cards->{
+                    showArchivedDialog()
                 }
                 R.id.board_detail_menu_leave->{
                     viewModel.leaveBoard(args.workspaceId, args.boardId, prefManager){
@@ -197,7 +197,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             createBoardLayoutBinding.createBoardLayoutName.filters = arrayOf(SpecialCharFilter())
             builder.setPositiveButton("Invite") { _, _ ->
                 if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrBlank()){
-                    viewModel.setMessage("Email address cannot be empty")
+                    viewModel.setMessage("Email address can't be empty")
                 }else{
                     viewModel.inviteMemberToBoard(createBoardLayoutBinding.createBoardLayoutName.text.toString().trim(), args.workspaceId)
                 }
@@ -211,7 +211,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             createBoardLayoutBinding.createBoardLayoutName.hint = "List name"
             builder.setPositiveButton("OK") { _, _ ->
                 if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrBlank()){
-                    viewModel.setMessage("List name cannot be empty")
+                    viewModel.setMessage("List name can't be empty")
                 }else{
                     viewModel.changeListName(createBoardLayoutBinding.createBoardLayoutName.text.toString().trim(), args.workspaceId, args.boardId, list)
                 }
@@ -225,7 +225,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             createBoardLayoutBinding.createBoardLayoutName.hint = "Board name"
             builder.setPositiveButton("OK") { _, _ ->
                 if(createBoardLayoutBinding.createBoardLayoutName.text.isNullOrBlank()){
-                    viewModel.setMessage("Board name cannot be empty")
+                    viewModel.setMessage("Board name can't be empty")
                 }else{
                     viewModel.changeBoardName(createBoardLayoutBinding.createBoardLayoutName.text.toString().trim(), args.workspaceId, args.boardId)
                 }
@@ -233,16 +233,16 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
         }
     }
 
-    private fun showAchievedDialog(){
-        achievedCardDialog.setOnCardClicked(){ listId, cardId ->
+    private fun showArchivedDialog(){
+        archivedCardDialog.setOnCardClicked(){ listId, cardId ->
             try {
-                achievedCardDialog.dismiss()
+                archivedCardDialog.dismiss()
                 navigateToCard(args.workspaceId, args.boardId, listId, cardId)
             }catch (e: Exception){
                 trace(e)
             }
         }
-        achievedCardDialog.showFullscreen()
+        archivedCardDialog.showFullscreen()
     }
 
 
@@ -267,11 +267,11 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             navigateToCard(args.workspaceId, args.boardId, listId, cardId)
         }
 
-        boardDetailAdapter.onAchieveListClicked = { list->
+        boardDetailAdapter.onArchiveListClicked = { list->
             AlertDialog.Builder(requireContext()).apply {
-                setTitle("This will make all cards in this list achieved")
+                setTitle("This will make all cards in this list archived")
                 setPositiveButton("OK"){_, _->
-                    viewModel.achieveList(list.listId)
+                    viewModel.archiveList(list.listId)
                 }
                 setNegativeButton("CANCEL"){_, _->
 
@@ -301,6 +301,11 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
                 lifecycleScope.launchWhenResumed {
                     viewModel.searchCard(binding.boardDetailFragmentSearchInput.text.toString(), args.boardId).let { listCard ->
                         searchDialog.setCardAdapter(searchCardAdapter)
+                        if(listCard.isEmpty()){
+                            searchDialog.showNoResult()
+                        }else{
+                            searchDialog.hideNoResult()
+                        }
                         searchCardAdapter.submitList(listCard)
                         searchCardAdapter.setRootClickListener{ card, _, _ ->
                             navigateToCard(args.workspaceId, args.boardId, card.listIdPar, card.cardId)
@@ -333,7 +338,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             dialogBinding.createBoardLayoutName.hint = "List name"
             builder.setPositiveButton("OK") { _, _ ->
                 if(dialogBinding.createBoardLayoutName.text.isNullOrEmpty()){
-                    viewModel.setMessage("List name cannot be empty")
+                    viewModel.setMessage("List name can't be empty")
                 }else{
                     viewModel.createNewList(args.workspaceId, args.boardId, dialogBinding.createBoardLayoutName.text.toString())
                 }
@@ -347,7 +352,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             dialogBinding.createBoardLayoutName.requestFocus()
             builder.setPositiveButton("OK") { _, _ ->
                 if(dialogBinding.createBoardLayoutName.text.isNullOrBlank()){
-                    viewModel.setMessage("Card name cannot be empty")
+                    viewModel.setMessage("Card name can't be empty")
                 }else{
                     viewModel.createNewCard(args.workspaceId, args.boardId, listId, dialogBinding.createBoardLayoutName.text.toString().trim())
                 }
@@ -396,8 +401,8 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             }
         }
 
-        safeObserve(viewModel.cardAchieved){
-            achievedCardDialog.submitList(it)
+        safeObserve(viewModel.cardArchived){
+            archivedCardDialog.submitList(it)
         }
     }
 }

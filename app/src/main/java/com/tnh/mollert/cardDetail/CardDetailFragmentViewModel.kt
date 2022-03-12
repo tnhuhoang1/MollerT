@@ -520,18 +520,18 @@ class CardDetailFragmentViewModel @Inject constructor(
         }
     }
 
-    fun achieveCard(boardId: String){
+    fun archiveCard(boardId: String){
         cardDoc?.let { doc->
             viewModelScope.launch {
                 if(firestore.mergeDocument(
                         doc,
                         mapOf(
-                            "status" to Card.STATUS_ACHIEVED,
+                            "status" to Card.STATUS_ARCHIVED,
                         )
                     )){
                     val activityId = "activity_${System.currentTimeMillis()}"
                     val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
-                    val message = MessageMaker.getCardAchievedMessage(_cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                    val message = MessageMaker.getCardArchivedMessage(_cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
                     val remoteActivity = RemoteActivity(
                         activityId,
                         email,
@@ -560,7 +560,7 @@ class CardDetailFragmentViewModel @Inject constructor(
                                 activityDoc.path
                             )
                         }
-                        postMessage("Card achieved")
+                        postMessage("Card archived")
                     }
                 }
             }

@@ -4,19 +4,14 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.transition.MaterialSharedAxis
-import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.R
-import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
-import dagger.hilt.android.AndroidEntryPoint
 import com.tnh.mollert.databinding.LoginFragmentBinding
 import com.tnh.mollert.utils.LoadingModal
-import com.tnh.mollert.utils.ValidationHelper
+import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
-import com.tnh.tnhlibrary.logAny
-import com.tnh.tnhlibrary.toast.showToast
-import com.tnh.tnhlibrary.trace
+import com.tnh.tnhlibrary.liveData.utils.safeObserve
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fragment) {
@@ -47,6 +42,18 @@ class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fr
                 }
             }
         }
+
+        eventObserve(viewModel.message){
+            binding.root.showSnackBar(it)
+        }
+
+        safeObserve(viewModel.progress){
+            if(it){
+                loadingModal.show()
+            }else{
+                loadingModal.dismiss()
+            }
+        }
     }
 
     private fun navigateToRegister() {
@@ -62,51 +69,14 @@ class LoginFragment: DataBindingFragment<LoginFragmentBinding>(R.layout.login_fr
         findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToForgotPasswordFragment())
     }
 
-    private fun clearInputText() {
-        binding.loginFragmentEmail.setText("")
-        binding.loginFragmentPassword.setText("")
-    }
-
-    private fun isValidInput(): Boolean {
+    private fun onLoginBtnClicked() {
         val password = binding.loginFragmentPassword.text.toString().trim()
         val email = binding.loginFragmentEmail.text.toString().trim()
-        if (!ValidationHelper.getInstance().isValidPassword(password)
-            || !ValidationHelper.getInstance().isValidEmail(email)
-        ) {
-            this.clearInputText()
-            binding.root.showSnackBar("Email or password invalid, please try again")
-            return false
-        }
-        return true
-    }
-
-    private fun onLoginBtnClicked() {
-        if (!this.isValidInput()) {
+        if(!viewModel.isValidInput(email, password)){
             return
         }
-
-        loadingModal.show()
-
-        activity?.let {
-            loadingModal.show()
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(
-                binding.loginFragmentEmail.text.toString(),
-                binding.loginFragmentPassword.text.toString()
-            )
-                .addOnCompleteListener(it) { task ->
-                    if (task.isSuccessful) {
-                        // Login Success
-                        loadingModal.dismiss()
-                        this.navigateToHome()
-                    } else {
-                        this.clearInputText()
-                        binding.root.showSnackBar("Email or password invalid, please try again")
-                        loadingModal.dismiss()
-                        // Login failure
-                    }
-                }.addOnFailureListener { e->
-                    trace(e)
-                }
+        viewModel.login(email, password){
+            this.navigateToHome()
         }
     }
 }

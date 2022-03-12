@@ -7,13 +7,12 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tnh.mollert.R
-import com.tnh.mollert.databinding.AchievedCardDialogBinding
-import com.tnh.mollert.databinding.BoardDescBinding
+import com.tnh.mollert.databinding.ArchivedCardDialogBinding
 import com.tnh.mollert.datasource.local.model.Card
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 
-class AchievedCardDialog(
+class ArchivedCardDialog(
     context: Context,
     container: ViewGroup?
 ): BottomSheetDialog(context) {
@@ -21,11 +20,11 @@ class AchievedCardDialog(
 
 
     val binding =
-        AchievedCardDialogBinding.inflate(LayoutInflater.from(context), container, false)
+        ArchivedCardDialogBinding.inflate(LayoutInflater.from(context), container, false)
     init {
         binding.root.layoutParams.height = Resources.getSystem().displayMetrics.heightPixels
-        binding.achievedCardDialogToolbar.apply {
-            twoActionToolbarTitle.text = "Achieved card"
+        binding.archivedCardDialogToolbar.apply {
+            twoActionToolbarTitle.text = "Archived card"
             twoActionToolbarStartIcon.setImageResource(R.drawable.vd_close_circle)
             twoActionToolbarStartIcon.show()
 
@@ -33,7 +32,7 @@ class AchievedCardDialog(
                 dismiss()
             }
         }
-        binding.achievedCardDialogRecycler.adapter = adapter
+        binding.archivedCardDialogRecycler.adapter = adapter
         setContentView(binding.root)
     }
 
@@ -42,16 +41,16 @@ class AchievedCardDialog(
     }
 
     fun setTitle(title: String){
-        binding.achievedCardDialogToolbar.twoActionToolbarTitle.text = title
+        binding.archivedCardDialogToolbar.twoActionToolbarTitle.text = title
     }
 
     fun submitList(list: List<Card>){
         if(list.isEmpty()){
-            binding.achievedCardDialogNoContent.show()
-            binding.achievedCardDialogRecycler.gone()
+            binding.archivedCardDialogNoContent.show()
+            binding.archivedCardDialogRecycler.gone()
         }else{
-            binding.achievedCardDialogNoContent.gone()
-            binding.achievedCardDialogRecycler.show()
+            binding.archivedCardDialogNoContent.gone()
+            binding.archivedCardDialogRecycler.show()
         }
         adapter.submitList(list)
     }

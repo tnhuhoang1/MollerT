@@ -2,8 +2,6 @@ package com.tnh.mollert.cardDetail.label
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.transition.Slide
-import android.view.Gravity
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -81,7 +79,7 @@ class AddEditLabelFragment: DataBindingFragment<AddLabelBinding>(R.layout.add_la
                         editLabel()
                     }
                 }
-                AddEditLabelViewModel.EVENT_DELETE_OK, AddEditLabelViewModel.EVENT_ADD_OK ->{
+                AddEditLabelViewModel.EVENT_DELETE_OK, AddEditLabelViewModel.EVENT_ADD_OK, AddEditLabelViewModel.EVENT_EDIT_OK ->{
                     findNavController().navigateUp()
                 }
             }

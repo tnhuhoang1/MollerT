@@ -13,6 +13,7 @@ import com.tnh.mollert.datasource.local.model.MessageMaker
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
+import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.show
 import com.tnh.tnhlibrary.view.snackbar.showSnackBar
 import dagger.hilt.android.AndroidEntryPoint
@@ -76,16 +77,28 @@ class NotificationFragment: DataBindingFragment<NotificationFragmentBinding>(R.l
             viewModel.memberAndActivity.collectLatest {list->
                 if(viewModel.notificationType == "all"){
                     viewModel.getMemberBoardRelByEmail().let { listMemberBoardRel->
-                        adapter.submitList(list.filter { memberAndActivity->
+                        list.filter { memberAndActivity->
                             listMemberBoardRel.forEach { memberBoardRel ->
                                 if(memberAndActivity.activity.boardId == memberBoardRel.boardId){
                                     return@filter true
                                 }
                             }
                             return@filter false
-                        })
+                        }.also {
+                            if(it.isEmpty()){
+                                binding.notificationFragmentNoContent.show()
+                            }else{
+                                binding.notificationFragmentNoContent.gone()
+                            }
+                            adapter.submitList(it)
+                        }
                     }
                 }else{
+                    if(list.isEmpty()){
+                        binding.notificationFragmentNoContent.show()
+                    }else{
+                        binding.notificationFragmentNoContent.gone()
+                    }
                     adapter.submitList(list)
                 }
             }

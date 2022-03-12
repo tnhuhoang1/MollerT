@@ -5,7 +5,6 @@ import android.util.Patterns
 import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
@@ -19,15 +18,12 @@ import com.tnh.mollert.datasource.local.relation.MemberCardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.home.CreateBoardDialog
-import com.tnh.mollert.profile.ProfileViewModel
 import com.tnh.mollert.utils.*
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 class AppRepository private constructor(
@@ -531,25 +527,25 @@ class AppRepository private constructor(
                         }
                         .addOnFailureListener { error ->
                             trace(error)
-                            cont.safeResume { "Change password failure" }
+                            cont.safeResume { "Failed to change password" }
                         }
                 }
                 .addOnFailureListener { e ->
                     trace(e)
-                    cont.safeResume { "Old password invalid, please try again" }
+                    cont.safeResume { "Your old password is incorrect" }
                 }
         }
     }
 
-    suspend fun saveMemberInfoToFirestore(email: String, name: String, avatar: String, bio: String, onSuccess: () -> Unit) {
+    suspend fun saveMemberInfoToFirestore(email: String, name: String, avatar: String, bio: String): Boolean {
         val remoteMember =  RemoteMember(email, name, avatar, bio).info()
         val doc = getMemberDoc(email)
         if (firestore.mergeDocument(doc, remoteMember)) {
             // succeeded
             notifyInfoChanged(email)
-            onSuccess()
+            return true
         } else {
-            // failed
+            return false
         }
     }
 
@@ -886,7 +882,7 @@ class AppRepository private constructor(
         }
     }
 
-    suspend fun achieveList(
+    suspend fun archiveList(
         boardWithLists: BoardWithLists,
         listId: String,
         email: String,
@@ -896,7 +892,7 @@ class AppRepository private constructor(
         boardWithLists.board.let { b->
             val cards = local.cardDao.getActiveCardsByListId(listId)
             cards.forEach {
-                boardCardHelper.achieveCard(
+                boardCardHelper.archiveCard(
                     b,
                     it,
                     email
@@ -971,7 +967,7 @@ class AppRepository private constructor(
         UserWrapper.getInstance()?.getCurrentUser()?.let { member ->
             val email = member.email
             if (email == otherEmail) {
-                return ("You can not invite yourself")
+                return ("You can't invite yourself")
             }
             if (!Patterns.EMAIL_ADDRESS.matcher(otherEmail).matches()) {
                 return ("Invalid email address")

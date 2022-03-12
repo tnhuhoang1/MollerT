@@ -3,10 +3,8 @@ package com.tnh.mollert.profile
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseAuth
 import com.tnh.mollert.R
 import com.tnh.mollert.databinding.ProfileFragmentBinding
-import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
@@ -63,18 +61,13 @@ class ProfileFragment: DataBindingFragment<ProfileFragmentBinding>(R.layout.prof
         eventObserve(viewModel.message){
             binding.root.showSnackBar(it)
         }
+
     }
 
     private fun onLogoutButtonClicked() {
         lifecycleScope.launchWhenCreated {
-            UserWrapper.getInstance()?.currentUserEmail?.let { email->
-                prefManager.putString("$email+sync+all", "")
-                viewModel.getBoardByEmail(email).forEach {
-                    prefManager.putString("$email+${it.boardId}", "")
-                }
-                FirebaseAuth.getInstance().signOut()
-                navigateToSplash()
-            }
+            viewModel.logout(prefManager)
+            navigateToSplash()
         }
     }
 }

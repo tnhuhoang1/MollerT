@@ -17,7 +17,7 @@
     <item android:title="Activities"
         android:id="@+id/card_detail_menu_activity"
         />
-    <item android:id="@+id/card_detail_menu_achieved"
+    <item android:id="@+id/card_detail_menu_archived"
         android:title="Archive"
         />
     <item android:id="@+id/card_detail_menu_delete"
