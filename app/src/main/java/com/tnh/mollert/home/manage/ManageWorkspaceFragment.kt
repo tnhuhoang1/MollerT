@@ -17,7 +17,6 @@ import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.tnhlibrary.dataBinding.DataBindingFragment
 import com.tnh.tnhlibrary.liveData.utils.eventObserve
 import com.tnh.tnhlibrary.liveData.utils.safeObserve
-import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.hideKeyboard
 import com.tnh.tnhlibrary.view.show
@@ -150,19 +149,11 @@ class ManageWorkspaceFragment: DataBindingFragment<ManageWorkspaceFragmentBindin
 
 
     private fun changeWorkspaceName(name: String?){
-        if(name.isNullOrBlank()){
-            viewModel.postMessage("Name can't be empty")
-        }else{
-            viewModel.changeName(name.trim(), args.workspaceId)
-        }
+        viewModel.changeName(name?.trim().toString(), args.workspaceId)
     }
 
     private fun changeWorkspaceDesc(name: String?){
-        if(name.isNullOrBlank()){
-            viewModel.postMessage("Name can't be empty")
-        }else{
-            viewModel.changeDesc(name.trim(), args.workspaceId)
-        }
+        viewModel.changeDesc(name?.trim().toString(), args.workspaceId)
     }
 
     private fun setupObserver(){
@@ -178,6 +169,9 @@ class ManageWorkspaceFragment: DataBindingFragment<ManageWorkspaceFragmentBindin
 
         eventObserve(viewModel.message){
             binding.root.showSnackBar(it)
+        }
+        safeObserve(viewModel.progress){
+            
         }
     }
 

@@ -134,7 +134,9 @@ class HomeViewModel @Inject constructor(
 
     fun reopenBoard(workspaceId: String, boardId: String){
         viewModelScope.launch {
-            repository.reopenBoard(workspaceId, boardId)
+            repository.reopenBoard(workspaceId, boardId){
+                postMessage("Reopen board successfully")
+            }
         }
     }
 

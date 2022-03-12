@@ -11,7 +11,9 @@ import com.tnh.mollert.datasource.local.model.Activity
 import com.tnh.mollert.datasource.local.model.MessageMaker
 import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
-import com.tnh.mollert.datasource.remote.model.*
+import com.tnh.mollert.datasource.remote.model.RemoteActivity
+import com.tnh.mollert.datasource.remote.model.RemoteMember
+import com.tnh.mollert.datasource.remote.model.toMember
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
@@ -105,6 +107,10 @@ class ManageWorkspaceViewModel @Inject constructor(
     }
 
     fun changeName(name: String, workspaceId: String){
+        if(name.isBlank()){
+            postMessage("Name can't be empty")
+            return
+        }
         showProgress()
         val workspaceDoc = firestore.getWorkspaceDoc(workspaceId)
         viewModelScope.launch {
@@ -128,25 +134,28 @@ class ManageWorkspaceViewModel @Inject constructor(
     }
 
     fun changeDesc(desc: String, workspaceId: String) {
-        showProgress()
-        val workspaceDoc = firestore.getWorkspaceDoc(workspaceId)
-        viewModelScope.launch {
-            val data = mapOf<String, Any>(
-                "desc" to desc
-            )
-            if(firestore.mergeDocument(workspaceDoc, data)){
-                repository.appDao.getWorkspaceWithMembersNoFlow(workspaceId)?.members?.let { members->
-                    "Notify to other members (${members.size}) about info changed".logAny()
-                    members.forEach {
-                        val trackingLoc = firestore.getTrackingDoc(it.email)
-                        firestore.insertToArrayField(trackingLoc, "workspaces", mapOf(
-                            "what" to "info",
-                            "ref" to workspaceDoc.path
-                        ))
+        if(desc != homeWorkspace.value?.workspace?.workspaceDesc){
+            showProgress()
+            val workspaceDoc = firestore.getWorkspaceDoc(workspaceId)
+            viewModelScope.launch {
+                val data = mapOf<String, Any>(
+                    "desc" to desc
+                )
+                if(firestore.mergeDocument(workspaceDoc, data)){
+                    repository.appDao.getWorkspaceWithMembersNoFlow(workspaceId)?.members?.let { members->
+                        "Notify to other members (${members.size}) about info changed".logAny()
+                        members.forEach {
+                            val trackingLoc = firestore.getTrackingDoc(it.email)
+                            firestore.insertToArrayField(trackingLoc, "workspaces", mapOf(
+                                "what" to "info",
+                                "ref" to workspaceDoc.path
+                            ))
+                        }
                     }
                 }
+                hideProgress()
             }
-            hideProgress()
         }
+
     }
 }

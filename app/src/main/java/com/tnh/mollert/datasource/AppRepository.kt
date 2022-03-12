@@ -137,7 +137,8 @@ class AppRepository private constructor(
         if(firestore.mergeDocument(
                 boardDoc,
                 mapOf("boardStatus" to Board.STATUS_OPEN)
-            )){
+        )){
+            onSuccess()
             "reopening board".logAny()
             // notify all members in workspace
             local.appDao.getWorkspaceWithMembersNoFlow(workspaceId)?.members?.let { listMember->

@@ -65,22 +65,27 @@ class AddWorkspaceViewModel @Inject constructor(
      *
      */
     fun addWorkspace(name: String, type: String, desc: String){
-        viewModelScope.launch {
-            showProgress()
-            repository.addWorkspace(
-                name,
-                type,
-                desc,
-                {
-                    onCreateFailed("Something went wrong")
-                },
-                {
-                    onCreateSuccess("Create workspace successfully")
-                }
+        if(name.isBlank() || type.isEmpty()){
+            postMessage("Please fill out the required fields")
+        }else{
+            viewModelScope.launch {
+                showProgress()
+                repository.addWorkspace(
+                    name,
+                    type,
+                    desc,
+                    {
+                        onCreateFailed("Something went wrong")
+                    },
+                    {
+                        onCreateSuccess("Create workspace successfully")
+                    }
 
-            )
-            hideProgress()
+                )
+                hideProgress()
+            }
         }
+
     }
 
     private fun onCreateFailed(mess: String){

@@ -1,6 +1,11 @@
 package com.tnh.mollert
 
+import android.content.ComponentName
+import android.content.Intent
+import android.os.Bundle
+import androidx.annotation.StyleRes
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
@@ -9,6 +14,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions.actionOnItemAtPosition
+import androidx.test.espresso.core.internal.deps.dagger.internal.Preconditions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -19,6 +25,7 @@ import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.datasource.local.relation.CardLabelRel
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberCardRel
+import com.tnh.mollert.login.LoginFragment
 import com.tnh.mollert.utils.LabelPreset
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -499,33 +506,3 @@ class MainActivityTestHasUser : ActivityTestWithDataBindingIdlingResources() {
         sleep(300)
     }
 }
-
-//inline fun <reified T : Fragment> launchFragmentInHiltContainer(
-//    fragmentArgs: Bundle? = null,
-//    @StyleRes themeResId: Int = androidx.fragment.testing.R.style.FragmentScenarioEmptyFragmentActivityTheme,
-//    crossinline action: Fragment.() -> Unit = {}
-//) {
-//    val startActivityIntent = Intent.makeMainActivity(
-//        ComponentName(
-//            ApplicationProvider.getApplicationContext(),
-//            Hilt_MainActivity::class.java
-//        )
-//    ).putExtra(
-//        "androidx.fragment.app.testing.FragmentScenario.EmptyFragmentActivity.THEME_EXTRAS_BUNDLE_KEY",
-//        themeResId
-//    )
-//
-//    ActivityScenario.launch<Hilt_MainActivity>(startActivityIntent).onActivity { activity ->
-//        val fragment: Fragment = activity.supportFragmentManager.fragmentFactory.instantiate(
-//            Preconditions.checkNotNull(T::class.java.classLoader),
-//            T::class.java.name
-//        )
-//        fragment.arguments = fragmentArgs
-//        activity.supportFragmentManager
-//            .beginTransaction()
-//            .add(android.R.id.content, fragment, "")
-//            .commitNow()
-//
-//        fragment.action()
-//    }
-//}
