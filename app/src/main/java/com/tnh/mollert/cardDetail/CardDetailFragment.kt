@@ -432,6 +432,14 @@ class CardDetailFragment: DataBindingFragment<CardDetailFragmentBinding>(R.layou
             requireActivity().showSnackbar(it)
         }
 
+        safeObserve(viewModel.process){
+            if(it){
+                loadingModal.show()
+            }else{
+                loadingModal.dismiss()
+            }
+        }
+
         safeObserve(viewModel.labels){
             requireActivity().runOnUiThread {
                 labelPickerDialog.submitList(it)

@@ -16,10 +16,12 @@ import com.tnh.mollert.datasource.remote.model.*
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
+import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.logAny
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
 import javax.inject.Inject
 
 @HiltViewModel
@@ -58,6 +60,17 @@ class CardDetailFragmentViewModel @Inject constructor(
 
     suspend fun getCardWithLabels(cardId: String): CardWithLabels{
         return repository.appDao.getCardWithLabels(cardId)
+    }
+
+    private val _process = MutableLiveData(false)
+    val process = _process.toLiveData()
+
+    fun showProcess(){
+        _process.postValue(true)
+    }
+
+    fun hideProcess(){
+        _process.postValue(false)
     }
 
     private var cardDoc: DocumentReference? = null
@@ -235,46 +248,53 @@ class CardDetailFragmentViewModel @Inject constructor(
     fun changeCardCover(boardId: String, contentResolver: ContentResolver, uri: Uri, cardId: String){
         cardDoc?.let { doc->
             viewModelScope.launch {
-                storage.uploadCardCover(contentResolver, uri, cardId)?.let { url->
-                    if(firestore.mergeDocument(
-                        doc,
-                        mapOf("cover" to url.toString())
-                    )){
-                        val activityId = "activity_${System.currentTimeMillis()}"
-                        val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
-                        val message = MessageMaker.getChangedCardCoverMessage(_cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
-                        val remoteActivity = RemoteActivity(
-                            activityId,
-                            email,
-                            boardId,
-                            _cardId,
-                            message,
-                            false,
-                            Activity.TYPE_ACTION,
-                            System.currentTimeMillis()
-                        )
-                        firestore.addDocument(activityDoc, remoteActivity)
+                withTimeoutOrNull(15000){
+                    showProcess()
+                    storage.uploadCardCover(contentResolver, uri, cardId)?.let { url->
+                        if(firestore.mergeDocument(
+                                doc,
+                                mapOf("cover" to url.toString())
+                            )){
+                            val activityId = "activity_${System.currentTimeMillis()}"
+                            val activityDoc = firestore.getActivityDoc(boardDoc, activityId)
+                            val message = MessageMaker.getChangedCardCoverMessage(_cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                            val remoteActivity = RemoteActivity(
+                                activityId,
+                                email,
+                                boardId,
+                                _cardId,
+                                message,
+                                false,
+                                Activity.TYPE_ACTION,
+                                System.currentTimeMillis()
+                            )
+                            firestore.addDocument(activityDoc, remoteActivity)
 
-                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
-                            listMember.forEach { mem->
+                            repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                                listMember.forEach { mem->
 
-                                firestore.insertToArrayField(
-                                    firestore.getTrackingDoc(mem.email),
-                                    "cards",
-                                    mapOf(
-                                        "what" to "info",
-                                        "ref" to doc.path
+                                    firestore.insertToArrayField(
+                                        firestore.getTrackingDoc(mem.email),
+                                        "cards",
+                                        mapOf(
+                                            "what" to "info",
+                                            "ref" to doc.path
+                                        )
                                     )
-                                )
-                                firestore.insertToArrayField(
-                                    firestore.getTrackingDoc(mem.email),
-                                    "activities",
-                                    activityDoc.path
-                                )
+                                    firestore.insertToArrayField(
+                                        firestore.getTrackingDoc(mem.email),
+                                        "activities",
+                                        activityDoc.path
+                                    )
+                                }
+                                postMessage("Change cover successfully")
                             }
-                            postMessage("Change cover successfully")
                         }
-                    }
+                        hideProcess()
+                    } ?: hideProcess()
+                }?: kotlin.run {
+                    hideProcess()
+                    postMessage("Something went wrong, please try again")
                 }
             }
         }
@@ -935,42 +955,50 @@ class CardDetailFragmentViewModel @Inject constructor(
     fun deleteActivity(workspaceId: String, boardId: String, activity: Activity) {
         val activityDoc = firestore.getActivityDoc(workspaceId, boardId, activity.activityId)
         viewModelScope.launch {
-            if(firestore.deleteDocument(
-                    activityDoc,
-                )){
-                if(repository.activityDao.deleteOne(activity) > 0){
-                    repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
-                        val activityId = "activity_${System.currentTimeMillis()}"
-                        val activityDoc1 = firestore.getActivityDoc(boardDoc, activityId)
-                        val message = MessageMaker.getDelCommendMessage(_cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
-                        val remoteActivity = RemoteActivity(
-                            activityId,
-                            email,
-                            boardId,
-                            _cardId,
-                            message,
-                            false,
-                            Activity.TYPE_ACTION,
-                            System.currentTimeMillis()
-                        )
-                        firestore.addDocument(activityDoc1, remoteActivity)
+            withTimeoutOrNull(15000){
+                showProcess()
+                if(firestore.deleteDocument(
+                        activityDoc,
+                    )){
+                    if(repository.activityDao.deleteOne(activity) > 0){
+                        repository.appDao.getBoardWithMembers(boardId)?.members?.let { listMember->
+                            val activityId = "activity_${System.currentTimeMillis()}"
+                            val activityDoc1 = firestore.getActivityDoc(boardDoc, activityId)
+                            val message = MessageMaker.getDelCommendMessage(_cardId, card.value?.cardName.toString(), boardId, board?.boardName.toString())
+                            val remoteActivity = RemoteActivity(
+                                activityId,
+                                email,
+                                boardId,
+                                _cardId,
+                                message,
+                                false,
+                                Activity.TYPE_ACTION,
+                                System.currentTimeMillis()
+                            )
+                            firestore.addDocument(activityDoc1, remoteActivity)
 
-                        listMember.forEach { mem->
-                            firestore.insertToArrayField(
-                                firestore.getTrackingDoc(mem.email),
-                                "delActivities",
-                                activityDoc.path
-                            )
-                            firestore.insertToArrayField(
-                                firestore.getTrackingDoc(mem.email),
-                                "activities",
-                                activityDoc1.path
-                            )
+                            listMember.forEach { mem->
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "delActivities",
+                                    activityDoc.path
+                                )
+                                firestore.insertToArrayField(
+                                    firestore.getTrackingDoc(mem.email),
+                                    "activities",
+                                    activityDoc1.path
+                                )
+                            }
+                            postMessage("Delete comment successfully")
                         }
-                        postMessage("Delete comment successfully")
                     }
                 }
+                hideProcess()
+            } ?: kotlin.run {
+                hideProcess()
+                postMessage("Something went wrong, please try again")
             }
+
         }
     }
 

@@ -17,7 +17,7 @@ class LoginFragmentViewModel @Inject constructor(): BaseViewModel() {
 
     fun isValidInput(email: String, password: String): Boolean {
         if(email.isEmpty() || password.isEmpty()){
-            postMessage("Please fill out the form")
+            postMessage("Please fill out the form to continue")
             return false
         }
         if(!ValidationHelper.getInstance().isValidEmail(email)){
@@ -63,7 +63,7 @@ class LoginFragmentViewModel @Inject constructor(): BaseViewModel() {
                                     postMessage("Network error")
                                 }
                                 else -> {
-                                    postMessage(message)
+                                    postMessage("Incorrect password")
                                 }
                             }
                         }
