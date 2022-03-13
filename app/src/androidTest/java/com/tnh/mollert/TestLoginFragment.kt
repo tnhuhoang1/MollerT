@@ -1,5 +1,6 @@
 package com.tnh.mollert
 
+import android.view.Menu
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
@@ -51,29 +52,6 @@ class TestLoginFragment : ActivityTestWithDataBindingIdlingResources() {
         super.tearDown()
         dataSource.close()
         FirebaseAuth.getInstance().signOut()
-    }
-
-
-    @Test
-    fun login_with_no_input() = mainCoroutine.runBlockingTest{
-        launchTestFragmentWithContainer(R.id.loginFragment){
-            onView(withId(R.id.login_fragment_sign_in)).perform(click())
-            onView(withText("Please fill out the form to continue")).check(matches(isDisplayed()))
-        }
-    }
-
-    @Test
-    fun login_with_correct_member() = mainCoroutine.runBlockingTest{
-        launchTestFragmentWithContainer(R.id.loginFragment){
-            dataSource.memberDao.insertOne(Member("h@1.1", "Hoang", "", ""))
-            onView(withId(R.id.login_fragment_email)).perform(scrollTo(), typeText("h@1.1"))
-            onView(withId(R.id.login_fragment_password)).perform(scrollTo(), typeText("12345678"))
-            closeSoftKeyboard()
-            onView(withId(R.id.login_fragment_sign_in)).perform(scrollTo(), click())
-            sleep(1000)
-            onView(withText("Incorrect password")).check(matches(isDisplayed()))
-//            onView(withId(R.id.home_fragment_search_input)).check(matches(isDisplayed()))
-        }
     }
 
 }
