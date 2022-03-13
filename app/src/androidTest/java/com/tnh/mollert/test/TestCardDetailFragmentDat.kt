@@ -3,6 +3,7 @@ package com.tnh.mollert.test
 import android.os.Bundle
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -10,8 +11,7 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.firebase.auth.FirebaseAuth
-import com.tnh.mollert.ActivityTestWithDataBindingIdlingResources
-import com.tnh.mollert.MainCoroutineRule
+import com.tnh.mollert.*
 import com.tnh.mollert.R
 import com.tnh.mollert.cardDetail.CardDetailFragmentArgs
 import com.tnh.mollert.datasource.DataSource
@@ -19,7 +19,6 @@ import com.tnh.mollert.datasource.local.model.*
 import com.tnh.mollert.datasource.local.model.List
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
-import com.tnh.mollert.withRecyclerView
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.*
@@ -61,14 +60,14 @@ class TestCardDetailFragmentDat : ActivityTestWithDataBindingIdlingResources() {
         FirebaseAuth.getInstance().signOut()
     }
 
-    val member = Member("dat@test.com","dat")
-    val workspace = Workspace("board_id","board_name")
-    val memberWorkSpace = MemberWorkspaceRel(member.email,workspace.workspaceId)
-    val board = Board("board_id","board_name",workspace.workspaceId)
-    val memberBoardRel = MemberBoardRel(member.email, board.boardId, MemberBoardRel.ROLE_OWNER)
-    val list = List("list_id","list_name",board.boardId, List.STATUS_ACTIVE,0)
-    val card = Card("card_id","card_name",0,list.listId,0L, Card.STATUS_ACTIVE)
-
+    private val member = Member("dat@test.com","dat")
+    private val workspace = Workspace("board_id","board_name")
+    private val memberWorkSpace = MemberWorkspaceRel(member.email,workspace.workspaceId)
+    private val board = Board("board_id","board_name",workspace.workspaceId)
+    private val memberBoardRel = MemberBoardRel(member.email, board.boardId, MemberBoardRel.ROLE_OWNER)
+    private val list = List("list_id","list_name",board.boardId, List.STATUS_ACTIVE,0)
+    private val card = Card("card_id","card_name",0,list.listId,0L, Card.STATUS_ACTIVE)
+    private val comment = Activity("activity_id","h@1.1",board.boardId,card.cardId,MessageMaker.getCommentMessage(card.cardId,card.cardName,"Hello, i'm Dat"),false,Activity.TYPE_COMMENT)
     private fun initArgs(): Bundle {
         mainCoroutine.runBlockingTest {
             dataSource.memberDao.insertOne(member)
@@ -84,24 +83,16 @@ class TestCardDetailFragmentDat : ActivityTestWithDataBindingIdlingResources() {
 
     @Test
     fun runTest(){
-        test_work_function()
-        test_link_attachment()
-    }
-
-
-    fun test_work_function() {
         val args = initArgs()
         add_work_with_no_name(args)
         add_work_success(args)
         delete_work(args)
-    }
-
-    fun test_link_attachment() {
-        val args = initArgs()
         add_link_attachment_null(args)
         add_link_attachment_with_wrong_url(args)
         add_link_attachment_success(args)
         delete_link_attachment(args)
+        add_comment(args)
+        delete_comment(args)
     }
 
     private fun add_work_with_no_name(args: Bundle) = mainCoroutine.runBlockingTest {
@@ -173,6 +164,25 @@ class TestCardDetailFragmentDat : ActivityTestWithDataBindingIdlingResources() {
             onView(withText("DELETE")).perform(click())
             sleep(1000)
             onView(withText("Delete attachment successfully")).check(matches(isDisplayed()))
+        }
+    }
+
+    private fun add_comment(args: Bundle) = mainCoroutine.runBlockingTest {
+        launchTestFragmentWithContainer(R.id.cardDetailFragment,args) {
+            onView(withHint("Comment")).perform(typeText("Hello, i'm Dat"))
+            closeSoftKeyboard()
+            onView(withId(R.id.card_detail_fragment_send)).perform(click())
+            dataSource.activityDao.insertOne(comment)
+            onView(withText("Hello, i'm Dat")).check(matches(isDisplayed()))
+        }
+    }
+
+    private fun delete_comment(args: Bundle) = mainCoroutine.runBlockingTest {
+        dataSource.activityDao.insertOne(comment)
+        launchTestFragmentWithContainer(R.id.cardDetailFragment,args) {
+            onView(withText("Hello, i'm Dat")).perform(longClick())
+            onView(withText("DELETE")).perform(longClick())
+            onView(withText("Delete comment successfully")).check(matches(isDisplayed()))
         }
     }
 }
