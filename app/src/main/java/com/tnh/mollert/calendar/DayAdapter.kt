@@ -18,9 +18,12 @@ class DayAdapter: SimpleDataBindingListAdapter<DayWithDeadline, DayItemBinding>(
             if(item.dayNumber == System.currentTimeMillis().getDate("dd")){
                 dayItemDayName.setTextColor(Color.parseColor("#3D49CB"))
                 dayItemCircle.setBackgroundColor(Color.parseColor("#3D49CB"))
-            }else{
+            }else if(item.dayNumber > System.currentTimeMillis().getDate("dd")){
                 dayItemDayName.setTextColor(Color.parseColor("#313A46"))
                 dayItemCircle.setBackgroundColor(Color.parseColor("#313A46"))
+            }else{
+                dayItemDayName.setTextColor(Color.parseColor("#DF4146"))
+                dayItemCircle.setBackgroundColor(Color.parseColor("#DF4146"))
             }
             val adapter = DeadlineAdapter()
             dayItemRecycler.adapter = adapter

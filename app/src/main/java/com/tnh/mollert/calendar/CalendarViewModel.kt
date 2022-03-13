@@ -29,7 +29,7 @@ class CalendarViewModel @Inject constructor(
 
             }
             email = it
-            cardHasDate = repository.cardDao.getCardHasDateFlow(email, currentTime).asLiveData()
+            cardHasDate = repository.cardDao.getCardHasDateFlow(email).asLiveData()
         }
     }
 

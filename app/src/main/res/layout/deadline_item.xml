@@ -17,6 +17,7 @@
         app:cardCornerRadius="@dimen/dimen_4"
         android:layout_height="wrap_content">
         <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/deadline_item_width"
             android:layout_width="match_parent"
             android:orientation="vertical"
             android:background="@drawable/blue_stroke_shape"
