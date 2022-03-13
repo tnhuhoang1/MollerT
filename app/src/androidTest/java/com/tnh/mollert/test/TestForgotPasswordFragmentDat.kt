@@ -1,4 +1,4 @@
-package com.tnh.mollert
+package com.tnh.mollert.test
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
@@ -10,6 +10,9 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.firebase.auth.FirebaseAuth
+import com.tnh.mollert.ActivityTestWithDataBindingIdlingResources
+import com.tnh.mollert.MainCoroutineRule
+import com.tnh.mollert.R
 import com.tnh.mollert.datasource.DataSource
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -25,7 +28,7 @@ import org.junit.runner.RunWith
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
-class TestForgotPasswordFragment : ActivityTestWithDataBindingIdlingResources() {
+class TestForgotPasswordFragmentDat : ActivityTestWithDataBindingIdlingResources() {
     @get:Rule(order = 0)
     var hiltRule = HiltAndroidRule(this)
 
@@ -52,6 +55,7 @@ class TestForgotPasswordFragment : ActivityTestWithDataBindingIdlingResources() 
         dataSource.close()
         FirebaseAuth.getInstance().signOut()
     }
+
     @Test
     fun test_all() {
         forgot_password_with_no_input()
@@ -87,6 +91,7 @@ class TestForgotPasswordFragment : ActivityTestWithDataBindingIdlingResources() 
             onView(withId(R.id.forgot_password_fragment_email)).perform(typeText("datDay@1.1"))
             closeSoftKeyboard()
             onView(withId(R.id.forgot_password_fragment_sign_in)).perform(click())
+            sleep(1000)
             onView(withText("This email isn’t linked to any account")).check(matches(isDisplayed()))
         }
     }
@@ -96,7 +101,7 @@ class TestForgotPasswordFragment : ActivityTestWithDataBindingIdlingResources() 
             onView(withId(R.id.forgot_password_fragment_email)).perform(typeText("dat@1.1"))
             closeSoftKeyboard()
             onView(withId(R.id.forgot_password_fragment_sign_in)).perform(click())
-            sleep(1000)
+            sleep(1500)
             onView(withId(R.id.login_fragment_title)).check(matches(isDisplayed()))
             onView(withText("Reset password successfully, please check your email")).check(matches(isDisplayed()))
         }

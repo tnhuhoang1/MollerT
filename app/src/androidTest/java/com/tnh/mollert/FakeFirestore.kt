@@ -64,7 +64,7 @@ class FakeFirestore @Inject constructor(): FirestoreAction {
     }
 
     override suspend fun deleteDocument(document: DocumentReference): Boolean {
-        TODO("Not yet implemented")
+        return true
     }
 
     override fun insertToArrayField(

@@ -1,22 +1,25 @@
-package com.tnh.mollert
+package com.tnh.mollert.test
 
 import android.os.Bundle
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.espresso.Espresso.closeSoftKeyboard
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.firebase.auth.FirebaseAuth
+import com.tnh.mollert.ActivityTestWithDataBindingIdlingResources
+import com.tnh.mollert.MainCoroutineRule
+import com.tnh.mollert.R
 import com.tnh.mollert.cardDetail.CardDetailFragmentArgs
 import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.local.model.*
 import com.tnh.mollert.datasource.local.model.List
+import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
+import com.tnh.mollert.withRecyclerView
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.*
@@ -29,7 +32,7 @@ import org.junit.runner.RunWith
 @LargeTest
 @RunWith(AndroidJUnit4::class)
 @HiltAndroidTest
-class TestCardDetailFragment : ActivityTestWithDataBindingIdlingResources() {
+class TestCardDetailFragmentDat : ActivityTestWithDataBindingIdlingResources() {
     @get:Rule(order = 0)
     var hiltRule = HiltAndroidRule(this)
 
@@ -47,6 +50,7 @@ class TestCardDetailFragment : ActivityTestWithDataBindingIdlingResources() {
         runBlocking {
             coroutineScope {
                 dataSource = DataSource.enableTest(ApplicationProvider.getApplicationContext())
+                loginWithTestAccount()
             }
         }
     }
@@ -57,13 +61,15 @@ class TestCardDetailFragment : ActivityTestWithDataBindingIdlingResources() {
         FirebaseAuth.getInstance().signOut()
     }
 
+    val member = Member("dat@test.com","dat")
+    val workspace = Workspace("board_id","board_name")
+    val memberWorkSpace = MemberWorkspaceRel(member.email,workspace.workspaceId)
+    val board = Board("board_id","board_name",workspace.workspaceId)
+    val memberBoardRel = MemberBoardRel(member.email, board.boardId, MemberBoardRel.ROLE_OWNER)
+    val list = List("list_id","list_name",board.boardId, List.STATUS_ACTIVE,0)
+    val card = Card("card_id","card_name",0,list.listId,0L, Card.STATUS_ACTIVE)
+
     private fun initArgs(): Bundle {
-        val member = Member("dat@test.com","dat")
-        val workspace = Workspace("board_id","board_name")
-        val memberWorkSpace = MemberWorkspaceRel(member.email,workspace.workspaceId)
-        val board = Board("board_id","board_name",workspace.workspaceId)
-        val list = List("list_id","list_name",board.boardId, List.STATUS_ACTIVE,0)
-        val card = Card("card_id","card_name",0,list.listId,0L, Card.STATUS_ACTIVE)
         mainCoroutine.runBlockingTest {
             dataSource.memberDao.insertOne(member)
             dataSource.memberWorkspaceDao.insertOne(memberWorkSpace)
@@ -71,19 +77,25 @@ class TestCardDetailFragment : ActivityTestWithDataBindingIdlingResources() {
             dataSource.boardDao.insertOne(board)
             dataSource.listDao.insertOne(list)
             dataSource.cardDao.insertOne(card)
+            dataSource.memberBoardDao.insertOne(memberBoardRel)
         }
         return CardDetailFragmentArgs.Builder(workspace.workspaceId,board.boardId,list.listId,card.cardId).build().toBundle()
     }
 
     @Test
+    fun runTest(){
+        test_work_function()
+        test_link_attachment()
+    }
+
+
     fun test_work_function() {
         val args = initArgs()
         add_work_with_no_name(args)
         add_work_success(args)
-        //delete_work(args) error "Animations may only be started on the main thread"
+        delete_work(args)
     }
 
-    @Test
     fun test_link_attachment() {
         val args = initArgs()
         add_link_attachment_null(args)
@@ -101,12 +113,14 @@ class TestCardDetailFragment : ActivityTestWithDataBindingIdlingResources() {
     }
 
     private fun add_work_success(args: Bundle) = mainCoroutine.runBlockingTest {
+        val work = Work("work_id", "Work name", card.cardId)
         launchTestFragmentWithContainer(R.id.cardDetailFragment,args) {
             onView(withId(R.id.card_detail_fragment_checked_list)).perform(click())
             onView(withHint("Work name")).perform(typeText("test_work"))
             onView(withText("OK")).perform(click())
-            sleep(1500)
+            dataSource.workDao.insertOne(work)
             onView(withText("Add work successfully")).check(matches(isDisplayed()))
+            onView(withText(work.workName)).check(matches(isDisplayed()))
         }
     }
 

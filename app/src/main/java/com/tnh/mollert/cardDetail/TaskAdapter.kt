@@ -25,10 +25,12 @@ class TaskAdapter(private val taskDao: TaskDao): SimpleDataBindingListAdapter<Ta
         job = scope?.launch {
             taskDao.getTasksByWorkId(workId).collectLatest { listTask->
                 withContext(Dispatchers.Main){
-                    val progress = ((listTask.count { it.checked }.toFloat() / if(listTask.isEmpty()) 1 else listTask.size) * 100).toInt()
-                    workBinding.workItemProgress.progress = progress
-                    workBinding.workItemProgressLabel.text = "$progress%"
-                    submitList(listTask)
+                    workBinding.root.post {
+                        val progress = ((listTask.count { it.checked }.toFloat() / if(listTask.isEmpty()) 1 else listTask.size) * 100).toInt()
+                        workBinding.workItemProgress.progress = progress
+                        workBinding.workItemProgressLabel.text = "$progress%"
+                        submitList(listTask)
+                    }
                 }
             }
         }
