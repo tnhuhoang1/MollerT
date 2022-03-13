@@ -3,10 +3,10 @@ package com.tnh.mollert
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers
-import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
-import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
 import com.google.firebase.auth.FirebaseAuth
@@ -42,15 +42,12 @@ class TestRegisterFragment : ActivityTestWithDataBindingIdlingResources() {
     override fun setUp() {
         hiltRule.inject()
         super.setUp()
+        FirebaseAuth.getInstance().signOut()
         runBlocking {
             coroutineScope {
                 dataSource = DataSource.enableTest(ApplicationProvider.getApplicationContext())
-                loginWithTestAccount()
             }
         }
-
-
-
     }
 
     override fun tearDown() {
@@ -60,16 +57,85 @@ class TestRegisterFragment : ActivityTestWithDataBindingIdlingResources() {
     }
 
     @Test
-    fun login_no_input() = mainCoroutine.runBlockingTest{
-        // test login fragment
-        val workspace = Workspace("workspace_id", "workspace_name")
-        val board = Board("board_id", "board name", "workspace_id")
-
-        val args = BoardDetailFragmentArgs.Builder(workspace.workspaceId, board.boardId, board.boardName).build().toBundle()
-
-        launchTestFragmentWithContainer(R.id.boardDetailFragment, args){
-            onView(withText("board name")).check(matches(isDisplayed()))
+    fun register_with_no_input() = mainCoroutine.runBlockingTest{
+        launchTestFragmentWithContainer(R.id.registerFragment){
+            onView(withId(R.id.register_fragment_sign_up_button)).perform(scrollTo(), click())
             sleep(1000)
+            onView(withText("Please fill out the form to continue")).check(matches(isDisplayed()))
         }
     }
+
+    @Test
+    fun register_with_missing_input() = mainCoroutine.runBlockingTest{
+        launchTestFragmentWithContainer(R.id.registerFragment){
+            onView(withId(R.id.register_fragment_email)).perform(scrollTo(), typeText("dat@1.1"))
+            onView(withId(R.id.register_fragment_sign_up_button)).perform(scrollTo(), click())
+            onView(withText("Please fill out the form to continue")).check(matches(isDisplayed()))
+            onView(withId(R.id.register_fragment_password)).perform(scrollTo(), typeText("1234567"))
+            onView(withId(R.id.register_fragment_sign_up_button)).perform(scrollTo(), click())
+            onView(withText("Please fill out the form to continue")).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun register_with_invalid_password() = mainCoroutine.runBlockingTest{
+        launchTestFragmentWithContainer(R.id.registerFragment){
+            onView(withId(R.id.register_fragment_email)).perform(scrollTo(), typeText("dat@1.1"))
+            onView(withId(R.id.register_fragment_password)).perform(scrollTo(), typeText("123456"))
+            onView(withId(R.id.register_fragment_confirm_password)).perform(scrollTo(), typeText("123456"))
+            onView(withId(R.id.register_fragment_sign_up_button)).perform(scrollTo(), click())
+            sleep(1000)
+            onView(withText("Password invalid, please try again")).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun register_with_invalid_email() = mainCoroutine.runBlockingTest{
+        launchTestFragmentWithContainer(R.id.registerFragment){
+            onView(withId(R.id.register_fragment_email)).perform(scrollTo(), typeText("just some text"))
+            onView(withId(R.id.register_fragment_password)).perform(scrollTo(), typeText("1234567"))
+            onView(withId(R.id.register_fragment_confirm_password)).perform(scrollTo(), typeText("1234567"))
+            onView(withId(R.id.register_fragment_sign_up_button)).perform(scrollTo(), click())
+            sleep(1000)
+            onView(withText("Email invalid, please try again")).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun register_with_two_password_not_equal() = mainCoroutine.runBlockingTest{
+        launchTestFragmentWithContainer(R.id.registerFragment){
+            onView(withId(R.id.register_fragment_email)).perform(scrollTo(), typeText("dat@1.1"))
+            onView(withId(R.id.register_fragment_password)).perform(scrollTo(), typeText("1234567"))
+            onView(withId(R.id.register_fragment_confirm_password)).perform(scrollTo(), typeText("1111111"))
+            onView(withId(R.id.register_fragment_sign_up_button)).perform(scrollTo(), click())
+            sleep(1000)
+            onView(withText("Password and confirm password must be equal")).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun register_with_email_taken() = mainCoroutine.runBlockingTest{
+        launchTestFragmentWithContainer(R.id.registerFragment){
+            onView(withId(R.id.register_fragment_email)).perform(scrollTo(), typeText("dat@1.1"))
+            onView(withId(R.id.register_fragment_password)).perform(scrollTo(), typeText("1111111"))
+            onView(withId(R.id.register_fragment_confirm_password)).perform(scrollTo(), typeText("1111111"))
+            onView(withId(R.id.register_fragment_sign_up_button)).perform(scrollTo(), click())
+            sleep(1000)
+            onView(withText("The email address is already taken")).check(matches(isDisplayed()))
+        }
+    }
+
+    @Test
+    fun register_with_success() = mainCoroutine.runBlockingTest{
+        launchTestFragmentWithContainer(R.id.registerFragment){
+            onView(withId(R.id.register_fragment_email)).perform(scrollTo(), typeText("dattest@1.1"))
+            onView(withId(R.id.register_fragment_password)).perform(scrollTo(), typeText("1111111"))
+            onView(withId(R.id.register_fragment_confirm_password)).perform(scrollTo(), typeText("1111111"))
+            onView(withId(R.id.register_fragment_sign_up_button)).perform(scrollTo(), click())
+            sleep(1000)
+            onView(withText("Welcome!")).check(matches(isDisplayed()))
+        }
+    }
+
+
 }
