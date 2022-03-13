@@ -1,7 +1,7 @@
 package com.tnh.mollert
 
+import android.os.Bundle
 import android.view.View
-import android.widget.Toolbar
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.core.app.ApplicationProvider
@@ -12,7 +12,6 @@ import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.assertion.ViewAssertions.doesNotExist
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -32,7 +31,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
 import org.hamcrest.Matcher
-import org.hamcrest.Matchers.not
 
 
 @ExperimentalCoroutinesApi
@@ -68,86 +66,61 @@ val member = Member("h@1.1","Linh","","")
         FirebaseAuth.getInstance().signOut()
     }
 
-    @Test
-    fun check_add_List_success_in_board_detail_fragment() = mainCoroutine.runBlockingTest {
-        val workspace = Workspace("workspace_id","workspace_name")
-        val board = Board("board_id","board_name","workspace_id")
-        val memberWorkspaceRel = MemberWorkspaceRel(member.email,workspace.workspaceId)
-        // tao du lieu phai them cai nay vao
+    val list = List("list_id","meo meo","board_id",List.STATUS_ACTIVE,0)
+    val workspace = Workspace("workspace_id","workspace_name")
+    val board = Board("board_id","board_name","workspace_id")
+    val memberWorkspaceRel = MemberWorkspaceRel(member.email,workspace.workspaceId)
+    val card = Card("card_id","cardName_1",0,"list_id")
+    // tao du lieu phai them cai nay vao
+
+
+    //man hinh can doi so thi phai lam the nay
+    val boardArgs = BoardDetailFragmentArgs.Builder(workspace.workspaceId, board.boardId,board.boardName).build().toBundle()
+
+
+    fun setupData() = mainCoroutine.runBlockingTest{
+        dataSource.listDao.insertOne(list)
         dataSource.workspaceDao.insertOne(workspace)
         dataSource.boardDao.insertOne(board)
         dataSource.memberWorkspaceDao.insertOne(memberWorkspaceRel)
+    }
 
-        //man hinh can doi so thi phai lam the nay
-        val args = BoardDetailFragmentArgs.Builder(workspace.workspaceId, board.boardId,board.boardName).build().toBundle()
+    @Test
+    fun runTest(){
+        setupData()
+        check_add_List_success_in_board_detail_fragment(boardArgs)
+        check_add_List_with_empty_name_in_board_detail_fragment(boardArgs)
+        check_change_list_with_empty_name_in_board_detail_fragment(boardArgs)
+        check_change_list_name_success_in_board_detail_fragment(boardArgs)
+        check_archive_list_in_board_detail_fragment(boardArgs)
+        check_open_archived_card_with_no_card_in_board_detail_fragment(boardArgs)
+        check_open_archived_card_success_in_board_detail_fragment(boardArgs)
+        check_delete_list_in_board_detail_fragment(boardArgs)
+    }
 
-        launchTestFragmentWithContainer(R.id.boardDetailFragment,args){
+    fun check_add_List_success_in_board_detail_fragment(args: Bundle) = mainCoroutine.runBlockingTest {
+        dataSource.listDao.deleteOne(list)
+        launchTestFragmentWithContainer(R.id.boardDetailFragment, args){
             onView(withId(R.id.board_detail_fragment_new_list_button)).perform(click())
-            sleep(1000)
-
-            // bat edittext trong dialog bang hint
             onView(withHint("List name")).perform(typeText("meo meo"))
-            // bat button trong dialog bang text cua button do
             onView(withText("OK")).perform(click())
-            // ko co gi la tu dong ca phai insert vao thi moi len duoc
-            val list = List("list_id","meo meo","board_id",List.STATUS_ACTIVE,0)
             dataSource.listDao.insertOne(list)
-
-            sleep(3000)
+            sleep(100)
             onView(withText("meo meo")).check(matches(isDisplayed()))
-            sleep(1000)
+            dataSource.listDao.deleteOne(list)
         }
     }
 
-    @Test
-    fun check_add_List_with_empty_name_in_board_detail_fragment() = mainCoroutine.runBlockingTest {
-        val workspace = Workspace("workspace_id","workspace_name")
-        val board = Board("board_id","board_name","workspace_id")
-        val memberWorkspaceRel = MemberWorkspaceRel(member.email,workspace.workspaceId)
-        // tao du lieu phai them cai nay vao
-        dataSource.workspaceDao.insertOne(workspace)
-        dataSource.boardDao.insertOne(board)
-        dataSource.memberWorkspaceDao.insertOne(memberWorkspaceRel)
-
-        //man hinh can doi so thi phai lam the nay
-        val args = BoardDetailFragmentArgs.Builder(workspace.workspaceId, board.boardId,board.boardName).build().toBundle()
-
-        launchTestFragmentWithContainer(R.id.boardDetailFragment,args){
+    fun check_add_List_with_empty_name_in_board_detail_fragment(args: Bundle) = mainCoroutine.runBlockingTest {
+        launchTestFragmentWithContainer(R.id.boardDetailFragment, args){
             onView(withId(R.id.board_detail_fragment_new_list_button)).perform(click())
-            sleep(1000)
-
             onView(withText("OK")).perform(click())
-
-            sleep(1000)
             onView(withText("List name can't be empty")).check(matches(isDisplayed()))
-            // ko nen cho ngu qua lau ko no se loi bat ngo
-            //sleep(7000)
         }
     }
 
-    @Test
-    fun check_change_list_name_success_in_board_detail_fragment() = mainCoroutine.runBlockingTest {
-        val workspace = Workspace("workspace_id","workspace_name")
-        val board = Board("board_id","board_name","workspace_id")
-        val memberWorkspaceRel = MemberWorkspaceRel(member.email,workspace.workspaceId)
-        // tao du lieu phai them cai nay vao
-        dataSource.workspaceDao.insertOne(workspace)
-        dataSource.boardDao.insertOne(board)
-        dataSource.memberWorkspaceDao.insertOne(memberWorkspaceRel)
-
-        //man hinh can doi so thi phai lam the nay
-        val args = BoardDetailFragmentArgs.Builder(workspace.workspaceId, board.boardId,board.boardName).build().toBundle()
-
+    fun check_change_list_name_success_in_board_detail_fragment(args: Bundle) = mainCoroutine.runBlockingTest {
         launchTestFragmentWithContainer(R.id.boardDetailFragment,args){
-            onView(withId(R.id.board_detail_fragment_new_list_button)).perform(click())
-            sleep(1000)
-
-            // bat edittext trong dialog bang hint
-            onView(withHint("List name")).perform(typeText("meo meo"))
-            // bat button trong dialog bang text cua button do
-            onView(withText("OK")).perform(click())
-            // ko co gi la tu dong ca phai insert vao thi moi len duoc
-            val list = List("list_id","meo meo","board_id",List.STATUS_ACTIVE,0)
             dataSource.listDao.insertOne(list)
             onView(withId(R.id.board_detail_fragment_recyclerview)).perform(
                 RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
@@ -155,16 +128,13 @@ val member = Member("h@1.1","Linh","","")
                     clickOptionMenuInToolbar(R.id.board_detail_list_item_toolbar)
                 )
             )
-            sleep(1000)
             onView(withText("Change name")).perform(click())
-            //sleep(1000)
             onView(withHint("List name")).perform(typeText("gau gau"))
             onView(withText("OK")).perform(click())
-            val list1 = List("list_id","gau gau","board_id",List.STATUS_ACTIVE,0)
-            dataSource.listDao.insertOne(list1)
-            sleep(1000)
+            dataSource.listDao.insertOne(list.copy(listName = "gau gau"))
+            sleep(100)
             onView(withText("Change list name successfully")).check(matches(isDisplayed()))
-            sleep(1000)
+            dataSource.listDao.insertOne(list)
         }
     }
 
@@ -187,67 +157,24 @@ val member = Member("h@1.1","Linh","","")
         }
     }
 
-    @Test
-    fun check_change_list_with_empty_name_in_board_detail_fragment() = mainCoroutine.runBlockingTest {
-        val workspace = Workspace("workspace_id","workspace_name")
-        val board = Board("board_id","board_name","workspace_id")
-        val memberWorkspaceRel = MemberWorkspaceRel(member.email,workspace.workspaceId)
-        // tao du lieu phai them cai nay vao
-        dataSource.workspaceDao.insertOne(workspace)
-        dataSource.boardDao.insertOne(board)
-        dataSource.memberWorkspaceDao.insertOne(memberWorkspaceRel)
-
-        //man hinh can doi so thi phai lam the nay
-        val args = BoardDetailFragmentArgs.Builder(workspace.workspaceId, board.boardId,board.boardName).build().toBundle()
-
+    fun check_change_list_with_empty_name_in_board_detail_fragment(args: Bundle) = mainCoroutine.runBlockingTest {
+        dataSource.listDao.insertOne(list)
         launchTestFragmentWithContainer(R.id.boardDetailFragment,args){
-            onView(withId(R.id.board_detail_fragment_new_list_button)).perform(click())
-            sleep(1000)
-
-            // bat edittext trong dialog bang hint
-            onView(withHint("List name")).perform(typeText("meo meo"))
-            // bat button trong dialog bang text cua button do
-            onView(withText("OK")).perform(click())
-            // ko co gi la tu dong ca phai insert vao thi moi len duoc
-            val list = List("list_id","meo meo","board_id",List.STATUS_ACTIVE,0)
-            dataSource.listDao.insertOne(list)
             onView(withId(R.id.board_detail_fragment_recyclerview)).perform(
                 RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
                     0,
                     clickOptionMenuInToolbar(R.id.board_detail_list_item_toolbar)
                 )
             )
-            sleep(1000)
             onView(withText("Change name")).perform(click())
-            //sleep(1000)
-            //onView(withHint("List name")).perform(typeText("gau gau"))
             onView(withText("OK")).perform(click())
-            //val list1 = List("list_id","gau gau","board_id",List.STATUS_ACTIVE,0)
-            //dataSource.listDao.insertOne(list1)
-            sleep(1000)
+            sleep(100)
             onView(withText("List name can't be empty")).check(matches(isDisplayed()))
-            sleep(1000)
         }
     }
 
-    @Test
-    fun check_archive_list_in_board_detail_fragment() = mainCoroutine.runBlockingTest {
-        val workspace = Workspace("workspace_id","workspace_name")
-        val board = Board("board_id","board_name","workspace_id")
-        val memberWorkspaceRel = MemberWorkspaceRel(member.email,workspace.workspaceId)
-        // tao du lieu phai them cai nay vao
-        dataSource.workspaceDao.insertOne(workspace)
-        dataSource.boardDao.insertOne(board)
-        dataSource.memberWorkspaceDao.insertOne(memberWorkspaceRel)
-
-        //man hinh can doi so thi phai lam the nay
-        val args = BoardDetailFragmentArgs.Builder(workspace.workspaceId, board.boardId,board.boardName).build().toBundle()
-
-        val list = List("list_id","meo meo","board_id",List.STATUS_ACTIVE,0)
-        dataSource.listDao.insertOne(list)
-        val card = Card("card_id","cardName_1",0,"list_id")
+    fun check_archive_list_in_board_detail_fragment(args: Bundle) = mainCoroutine.runBlockingTest {
         dataSource.cardDao.insertOne(card)
-
         launchTestFragmentWithContainer(R.id.boardDetailFragment,args){
             onView(withId(R.id.board_detail_fragment_recyclerview)).perform(
                 RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
@@ -255,37 +182,19 @@ val member = Member("h@1.1","Linh","","")
                     clickOptionMenuInToolbar(R.id.board_detail_list_item_toolbar)
                 )
             )
-            sleep(2000)
+            sleep(100)
             onView(withText("Archive list")).perform(click())
-            sleep(1000)
+            sleep(100)
             onView(withText("OK")).perform(click())
-            val card = Card("card_id","cardName_1",0,"list_id", cardStatus = Card.STATUS_ARCHIVED)
-            dataSource.cardDao.insertOne(card)
-            sleep(1000)
-            onView(withText("cardName_1")).check(doesNotExist())
+            dataSource.cardDao.insertOne(card.copy(cardStatus = Card.STATUS_ARCHIVED))
+            sleep(100)
+            onView(withText(card.cardName)).check(doesNotExist())
             onView(withText("Cards are archived")).check(matches(isDisplayed()))
-            sleep(1000)
         }
     }
 
-    @Test
-    fun check_delete_list_in_board_detail_fragment() = mainCoroutine.runBlockingTest {
-        val workspace = Workspace("workspace_id","workspace_name")
-        val board = Board("board_id","board_name","workspace_id")
-        val memberWorkspaceRel = MemberWorkspaceRel(member.email,workspace.workspaceId)
-        // tao du lieu phai them cai nay vao
-        dataSource.workspaceDao.insertOne(workspace)
-        dataSource.boardDao.insertOne(board)
-        dataSource.memberWorkspaceDao.insertOne(memberWorkspaceRel)
-
-        //man hinh can doi so thi phai lam the nay
-        val args = BoardDetailFragmentArgs.Builder(workspace.workspaceId, board.boardId,board.boardName).build().toBundle()
-
-        val list = List("list_id","meo meo","board_id",List.STATUS_ACTIVE,0)
-        dataSource.listDao.insertOne(list)
-        val card = Card("card_id","cardName_1",0,"list_id")
+    fun check_delete_list_in_board_detail_fragment(args: Bundle) = mainCoroutine.runBlockingTest {
         dataSource.cardDao.insertOne(card)
-
         launchTestFragmentWithContainer(R.id.boardDetailFragment,args){
             onView(withId(R.id.board_detail_fragment_recyclerview)).perform(
                 RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(
@@ -293,74 +202,35 @@ val member = Member("h@1.1","Linh","","")
                     clickOptionMenuInToolbar(R.id.board_detail_list_item_toolbar)
                 )
             )
-            sleep(2000)
             onView(withText("Delete list card")).perform(click())
-            sleep(1000)
+            sleep(100)
             onView(withText("DO IT")).perform(click())
-            sleep(1000)
-            //onView(withText("cardName_1")).check(doesNotExist())
+            sleep(100)
             onView(withText("Delete successfully")).check(matches(isDisplayed()))
-            sleep(1000)
         }
     }
 
-    @Test
-    fun check_open_archived_card_with_no_card_in_board_detail_fragment() = mainCoroutine.runBlockingTest {
-        val workspace = Workspace("workspace_id","workspace_name")
-        val board = Board("board_id","board_name","workspace_id")
-        val memberWorkspaceRel = MemberWorkspaceRel(member.email,workspace.workspaceId)
-        // tao du lieu phai them cai nay vao
-        dataSource.workspaceDao.insertOne(workspace)
-        dataSource.boardDao.insertOne(board)
-        dataSource.memberWorkspaceDao.insertOne(memberWorkspaceRel)
-
-        //man hinh can doi so thi phai lam the nay
-        val args = BoardDetailFragmentArgs.Builder(workspace.workspaceId, board.boardId,board.boardName).build().toBundle()
-
-        val list = List("list_id","meo meo","board_id",List.STATUS_ACTIVE,0)
-        dataSource.listDao.insertOne(list)
-        val card = Card("card_id","cardName_1",0,"list_id")
+    fun check_open_archived_card_with_no_card_in_board_detail_fragment(args: Bundle) = mainCoroutine.runBlockingTest {
         dataSource.cardDao.insertOne(card)
-
         launchTestFragmentWithContainer(R.id.boardDetailFragment,args){
             onView(withId(R.id.two_action_toolbar_end_icon)).perform(click())
-            sleep(1000)
+            sleep(100)
             onView(withText("Archived cards")).perform(click())
             onView(withText("There is no archived card")).check(matches(isDisplayed()))
-            sleep(100)
         }
     }
 
-    @Test
-    fun check_open_archived_card_success_in_board_detail_fragment() = mainCoroutine.runBlockingTest {
-        val workspace = Workspace("workspace_id","workspace_name")
-        val board = Board("board_id","board_name","workspace_id")
-        val memberWorkspaceRel = MemberWorkspaceRel(member.email,workspace.workspaceId)
-        // tao du lieu phai them cai nay vao
-        dataSource.workspaceDao.insertOne(workspace)
-        dataSource.boardDao.insertOne(board)
-        dataSource.memberWorkspaceDao.insertOne(memberWorkspaceRel)
-
-        //man hinh can doi so thi phai lam the nay
-        val args = BoardDetailFragmentArgs.Builder(workspace.workspaceId, board.boardId,board.boardName).build().toBundle()
-
-        val list = List("list_id","meo meo","board_id",List.STATUS_ACTIVE,0)
-        dataSource.listDao.insertOne(list)
-        val card = Card("card_id","cardName_1",0,"list_id",cardStatus = Card.STATUS_ARCHIVED)
-        dataSource.cardDao.insertOne(card)
-
+    fun check_open_archived_card_success_in_board_detail_fragment(args: Bundle) = mainCoroutine.runBlockingTest {
+        dataSource.cardDao.insertOne(card.copy(cardStatus = Card.STATUS_ARCHIVED))
         launchTestFragmentWithContainer(R.id.boardDetailFragment,args){
             onView(withId(R.id.two_action_toolbar_end_icon)).perform(click())
-            sleep(1000)
             onView(withText("Archived cards")).perform(click())
-            onView(withText("cardName_1")).perform(click())
-            sleep(1000)
-
+            sleep(300)
+            onView(withText(card.cardName)).perform(click())
             onView(withId(R.id.two_action_toolbar_end_icon)).perform(click())
             onView(withText("Activate card")).perform(click())
-            sleep(1000)
+            sleep(100)
             onView(withText("Card activated")).check(matches(isDisplayed()))
-            sleep(1000)
         }
     }
 }
