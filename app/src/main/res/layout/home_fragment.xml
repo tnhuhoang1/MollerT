@@ -38,6 +38,7 @@
             app:boxCornerRadiusTopStart="8dp"
             app:boxBackgroundColor="#F1EEFB"
             app:endIconDrawable="@drawable/outline_search_24"
+            app:endIconContentDescription="search icon"
             app:endIconMode="custom"
             app:boxStrokeWidth="0dp"
             app:boxStrokeWidthFocused="0dp"

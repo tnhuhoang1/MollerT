@@ -380,7 +380,7 @@ class BoardDetailFragment: DataBindingFragment<BoardDetailFragmentBinding>(R.lay
             requireActivity().runOnUiThread {
                 binding.boardDetailFragmentToolbar.twoActionToolbarTitle.text = it.board.boardName
                 if(it.board.boardStatus == Board.STATUS_CLOSED){
-                    showToast("The board was closed")
+                    viewModel.setMessage("The board was closed")
                     findNavController().popBackStack(R.id.homeFragment, false)
                 }
                 binding.boardDetailFragmentBackground.bindImageUriOrHide(it.board.background)

@@ -85,10 +85,10 @@ abstract class ActivityTestWithDataBindingIdlingResources {
     inline fun launchTestFragmentWithContainer(
         @IdRes idNav: Int,
         args: Bundle? = bundleOf(),
-        action: () -> Unit = {}
+        action: ActivityScenario<MainActivity>.() -> Unit = {}
     ){
         launchTestFragment(idNav, args).apply {
-            action()
+            action(this)
             this.close()
         }
     }

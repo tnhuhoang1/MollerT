@@ -3,11 +3,14 @@ package com.tnh.mollert
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toolbar
 import androidx.core.view.children
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.tnh.tnhlibrary.logAny
 import org.hamcrest.Matcher
 
@@ -24,6 +27,25 @@ fun clickItemWithId(id: Int): ViewAction {
         override fun perform(uiController: UiController?, view: View?) {
             val v = view?.findViewById<View>(id)
             v?.performClick()
+        }
+    }
+}
+
+fun clickOptionMenuInToolbar(id: Int): ViewAction {
+    return object : ViewAction{
+        override fun getConstraints(): Matcher<View>? {
+            return isDisplayed()
+        }
+
+        override fun getDescription(): String {
+            return "Click option menu in toolbar"
+        }
+
+        override fun perform(uiController: UiController?, view: View?) {
+            val v = view?.findViewById<View>(id)
+            if(v is Toolbar){
+                v.showOverflowMenu()
+            }
         }
     }
 }

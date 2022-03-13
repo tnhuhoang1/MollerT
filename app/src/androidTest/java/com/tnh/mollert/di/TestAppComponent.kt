@@ -6,6 +6,7 @@ import com.tnh.mollert.FakeStorage
 import com.tnh.mollert.components.AppComponent
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.DataSource
+import com.tnh.mollert.utils.FirestoreAction
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.NotificationHelper
 import com.tnh.mollert.utils.StorageHelper
@@ -41,6 +42,11 @@ class TestAppComponent {
     @Provides
     fun psh(): StorageHelper {
         return StorageHelper.getInstance()
+    }
+
+    @Provides
+    fun pfa(): FirestoreAction{
+        return FakeFirestore()
     }
 
     @Provides

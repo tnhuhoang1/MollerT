@@ -52,9 +52,11 @@ class ProfileFragment: DataBindingFragment<ProfileFragmentBinding>(R.layout.prof
         safeObserve(viewModel.member){ member ->
             member?.let {
                 binding.apply {
-                    profileFragmentProfileName.text = member.name
-                    profileFragmentEmail.setText(member.email)
-                    profileFragmentBio.setText(member.biography)
+                    requireActivity().runOnUiThread {
+                        profileFragmentProfileName.text = member.name
+                        profileFragmentEmail.setText(member.email)
+                        profileFragmentBio.setText(member.biography)
+                    }
                 }
             }
         }

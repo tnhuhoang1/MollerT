@@ -13,7 +13,6 @@ import javax.inject.Inject
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val repository: DataSource,
-    private val firestore: FirestoreHelper
 ) : BaseViewModel(){
 
 

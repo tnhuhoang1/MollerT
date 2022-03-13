@@ -4,6 +4,7 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.tnh.mollert.datasource.DataSource
 import com.tnh.mollert.datasource.remote.model.RemoteLabel
+import com.tnh.mollert.utils.FirestoreAction
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.LabelPreset
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddEditLabelViewModel @Inject constructor(
-    private val firestore: FirestoreHelper,
+    private val firestore: FirestoreAction,
     private val repository: DataSource
 ): BaseViewModel() {
     var mode = MODE_CREATE

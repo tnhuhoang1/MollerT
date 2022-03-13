@@ -54,18 +54,18 @@ class BoardDetailAdapter(
                                     }else{
                                         l2.add(card)
                                     }
-                                    withContext(Dispatchers.Main){
+                                    binding.root.post{
                                         submitCardList(l2 + l1)
                                     }
                                 }
                             }
                             else->{
-                                withContext(Dispatchers.Main){
+                                binding.root.post{
                                     submitCardList(listCard)
                                 }
                             }
                         }
-                    } ?: withContext(Dispatchers.Main){
+                    } ?: binding.root.post{
                         submitCardList(listCard)
                     }
                 }

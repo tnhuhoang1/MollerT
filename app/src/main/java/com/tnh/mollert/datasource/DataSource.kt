@@ -1,6 +1,7 @@
 package com.tnh.mollert.datasource
 
 import android.content.Context
+import androidx.annotation.VisibleForTesting
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -11,6 +12,7 @@ import com.tnh.mollert.datasource.local.relation.CardLabelRel
 import com.tnh.mollert.datasource.local.relation.MemberBoardRel
 import com.tnh.mollert.datasource.local.relation.MemberCardRel
 import com.tnh.mollert.datasource.local.relation.MemberWorkspaceRel
+import kotlinx.coroutines.runBlocking
 
 
 @Database(
@@ -60,6 +62,18 @@ abstract class DataSource() : RoomDatabase() {
         fun enableTest(context: Context): DataSource{
             instance = Room.inMemoryDatabaseBuilder(context, DataSource::class.java).allowMainThreadQueries().build()
             return instance
+        }
+
+        private val look = Any()
+
+        @VisibleForTesting
+        fun resetRepository(){
+            synchronized(look){
+                instance.apply {
+                    clearAllTables()
+                    close()
+                }
+            }
         }
     }
 }

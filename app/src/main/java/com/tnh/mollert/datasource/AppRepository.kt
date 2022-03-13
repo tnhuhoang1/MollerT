@@ -254,8 +254,8 @@ class AppRepository private constructor(
                         "ref" to boardDoc.path
                     ))
                     firestore.insertToArrayField(tracking, "activities", activityDoc.path)
-                    onSuccess()
                 }
+                onSuccess()
             }
         }
     }

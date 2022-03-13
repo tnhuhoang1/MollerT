@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
  * Class represent workspace (team)
  */
 @Entity
-class Workspace(
+data class Workspace(
     @PrimaryKey
     val workspaceId: String,
     val workspaceName: String,

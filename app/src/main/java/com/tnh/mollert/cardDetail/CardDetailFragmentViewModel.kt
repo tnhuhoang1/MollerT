@@ -13,7 +13,7 @@ import com.tnh.mollert.datasource.local.compound.CardWithMembers
 import com.tnh.mollert.datasource.local.compound.MemberAndActivity
 import com.tnh.mollert.datasource.local.model.*
 import com.tnh.mollert.datasource.remote.model.*
-import com.tnh.mollert.utils.FirestoreHelper
+import com.tnh.mollert.utils.FirestoreAction
 import com.tnh.mollert.utils.StorageHelper
 import com.tnh.mollert.utils.UserWrapper
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
@@ -26,7 +26,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CardDetailFragmentViewModel @Inject constructor(
-    private val firestore: FirestoreHelper,
+    private val firestore: FirestoreAction,
     private val repository: DataSource,
     private val storage: StorageHelper
 ): BaseViewModel() {

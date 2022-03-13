@@ -1,6 +1,7 @@
 package com.tnh.mollert.home
 
 import android.content.ContentResolver
+import android.os.Message
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
@@ -9,6 +10,7 @@ import com.tnh.mollert.datasource.local.compound.MemberWithWorkspaces
 import com.tnh.mollert.datasource.local.model.Board
 import com.tnh.mollert.datasource.local.model.Workspace
 import com.tnh.mollert.utils.UserWrapper
+import com.tnh.tnhlibrary.liveData.EventLiveData
 import com.tnh.tnhlibrary.liveData.utils.toLiveData
 import com.tnh.tnhlibrary.preference.PrefManager
 import com.tnh.tnhlibrary.viewModel.BaseViewModel
@@ -22,6 +24,13 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val repository: AppRepository
 ): BaseViewModel() {
+
+    private val _boardMessage = MutableLiveData<EventLiveData<String>>()
+    val boardMessage = _boardMessage.toLiveData()
+
+    fun showBoardMessage(message: String){
+        _boardMessage.postValue(EventLiveData(message))
+    }
 
     var memberWithWorkspaces = MutableLiveData<MemberWithWorkspaces>(null).toLiveData()
     val boards = repository.local.boardDao.countOneFlow().asLiveData()
@@ -107,7 +116,7 @@ class HomeViewModel @Inject constructor(
                     contentResolver,
                     {
                         hideProgress()
-                        postMessage("Add board failed")
+                        showBoardMessage("Add board failed")
                     },
                     {
                         hideProgress()

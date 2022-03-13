@@ -87,7 +87,7 @@ class ProfileViewModel @Inject constructor(
         }
 
         // If user change password
-        if ((oldPassword.isBlank() && oldPassword.isNotBlank()) ||
+        if ((oldPassword.isBlank() && newPassword.isNotBlank()) ||
                 oldPassword.isNotBlank() && newPassword.isBlank()) {
             postMessage("You need old password and new password to change password")
             return ""

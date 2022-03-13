@@ -41,11 +41,15 @@ class HomeWorkSpaceAdapter(
 
         fun bindSetting(){
             if(email == memberWorkspaceRel!!.email && (memberWorkspaceRel!!.role == MemberWorkspaceRel.ROLE_LEADER || memberWorkspaceRel!!.role == MemberBoardRel.ROLE_OWNER)){
-                binding.workspaceItemSetting.show()
-                binding.workspaceItemInvite.gone()
+                binding.workspaceItemSetting.post {
+                    binding.workspaceItemSetting.show()
+                    binding.workspaceItemInvite.gone()
+                }
             }else{
-                binding.workspaceItemSetting.gone()
-                binding.workspaceItemInvite.show()
+                binding.workspaceItemSetting.post {
+                    binding.workspaceItemSetting.gone()
+                    binding.workspaceItemInvite.show()
+                }
             }
         }
 

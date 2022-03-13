@@ -3,6 +3,7 @@ package com.tnh.mollert.components
 import android.content.Context
 import com.tnh.mollert.datasource.AppRepository
 import com.tnh.mollert.datasource.DataSource
+import com.tnh.mollert.utils.FirestoreAction
 import com.tnh.mollert.utils.FirestoreHelper
 import com.tnh.mollert.utils.NotificationHelper
 import com.tnh.mollert.utils.StorageHelper
@@ -28,6 +29,11 @@ class AppComponent {
 
     @Provides
     fun pfh(): FirestoreHelper{
+        return FirestoreHelper.getInstance()
+    }
+
+    @Provides
+    fun pfa(): FirestoreAction{
         return FirestoreHelper.getInstance()
     }
 

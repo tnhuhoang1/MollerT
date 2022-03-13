@@ -27,6 +27,8 @@ import com.tnh.tnhlibrary.trace
 import com.tnh.tnhlibrary.view.gone
 import com.tnh.tnhlibrary.view.hideKeyboard
 import com.tnh.tnhlibrary.view.show
+import com.tnh.tnhlibrary.view.snackbar.showSnackBar
+import com.tnh.tnhlibrary.view.snackbar.showSnackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -118,6 +120,11 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         }
 
         eventObserve(viewModel.message){
+//            showToast(it)
+            binding.root.showSnackBar(it)
+        }
+
+        eventObserve(viewModel.boardMessage){
             showToast(it)
         }
 
@@ -209,16 +216,16 @@ class HomeFragment : DataBindingFragment<HomeFragmentBinding>(R.layout.home_frag
         }
         createBoardDialog.onConfirmClicked = { name, vis, url ->
             if(name.isBlank()){
-                viewModel.setMessage("Board name can't be empty")
+                viewModel.showBoardMessage("Board name can't be empty")
             }else{
                 if(vis == "null"){
-                    viewModel.setMessage("Please select visibility")
+                    viewModel.showBoardMessage("Please select visibility")
                 }else{
                     url?.let {
                         viewModel.createBoard(ws, name, vis!!, url, createBoardDialog.backgroundMode, requireContext().contentResolver){
                             createBoardDialog.dismiss()
                         }
-                    }?: viewModel.postMessage("Please select background")
+                    }?: viewModel.showBoardMessage("Please select background")
                 }
             }
         }
