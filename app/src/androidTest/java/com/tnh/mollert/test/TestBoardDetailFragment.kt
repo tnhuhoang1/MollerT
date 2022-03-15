@@ -111,6 +111,7 @@ class TestBoardDetailFragment : ActivityTestWithDataBindingIdlingResources() {
             onView(withId(R.id.create_board_dialog_public)).perform(click())
             onView(withId(R.id.two_action_toolbar_end_icon)).perform(click())
             dataSource.boardDao.insertOne(board)
+            sleep(100)
             onView(withText("Board added")).check(matches(isDisplayed()))
             onView(withText(board.boardName)).check(matches(isDisplayed()))
         }

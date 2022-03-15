@@ -46,10 +46,18 @@ class TaskAdapter(private val taskDao: TaskDao): SimpleDataBindingListAdapter<Ta
             }else{
                 taskItemName.text = item.taskName
             }
-            taskItemName.isChecked = item.checked
-            taskItemName.setOnCheckedChangeListener { _, isChecked ->
-                if(isChecked != item.checked){
-                    onCheckedChanged(item, isChecked)
+
+            if(item.checked){
+                taskItemName.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.vd_checked, 0, 0, 0)
+            }else{
+                taskItemName.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.vd_circle_default, 0, 0, 0)
+            }
+            taskItemName.setOnClickListener {
+                onCheckedChanged(item, item.checked.not())
+                if(item.checked.not()){
+                    taskItemName.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.vd_checked, 0, 0, 0)
+                }else{
+                    taskItemName.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.vd_circle_default, 0, 0, 0)
                 }
             }
             taskItemDelete.setOnClickListener {

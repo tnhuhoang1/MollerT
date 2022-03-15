@@ -896,7 +896,6 @@ class CardDetailFragmentViewModel @Inject constructor(
                                     }
                                 }
                             }
-                            "Task checked changed".logAny()
                         }
                     }
                 }

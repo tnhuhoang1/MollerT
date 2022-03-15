@@ -9,13 +9,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-        <CheckBox
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/task_item_name"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingVertical="8dp"
+            android:drawableStart="@drawable/vd_circle_default"
+            android:paddingHorizontal="@dimen/dimen_8"
+            android:drawablePadding="@dimen/dimen_8"
             app:layout_constraintEnd_toStartOf="@id/task_item_delete"
             android:maxLines="2"
             />
