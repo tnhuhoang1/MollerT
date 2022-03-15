@@ -8,6 +8,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+        storeFile file('C:\\Users\\ADMIN\\Desktop\\keystorefile.jks')
+            storePassword 'Hoang1607'
+            keyPassword 'Hoang1607'
+            keyAlias 'release'
+        }
+    }
     compileSdk 31
 
     defaultConfig {
@@ -28,6 +36,7 @@ android {
 
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

@@ -101,19 +101,20 @@ class RegisterFragmentViewModel @Inject constructor(
             // failure
             trace(it)
         }) {
+            registerTracking(email)
             // success
         }
     }
 
-//    private fun registerTracking(email: String){
-//        firestore.mergeDocument(
-//            firestore.getTrackingDoc(email),
-//            mapOf<String, List<String>>("workspaces" to listOf()),
-//            {}
-//        ){
-//
-//        }
-//    }
+    private fun registerTracking(email: String){
+        firestore.mergeDocument(
+            firestore.getTrackingDoc(email),
+            mapOf<String, List<String>>("workspaces" to listOf()),
+            {}
+        ){
+
+        }
+    }
 
     companion object {
 
