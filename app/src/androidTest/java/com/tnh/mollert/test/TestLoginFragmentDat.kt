@@ -97,6 +97,7 @@ class TestLoginFragmentDat : ActivityTestWithDataBindingIdlingResources() {
             onView(withId(R.id.login_fragment_email)).perform(scrollTo(), typeText("test@1.1"))
             onView(withId(R.id.login_fragment_password)).perform(scrollTo(), typeText("1234567"))
             onView(withId(R.id.login_fragment_sign_in)).perform(scrollTo(), click())
+            sleep(1000)
             onView(withText("This account is not exists")).check(matches(isDisplayed()))
         }
     }
